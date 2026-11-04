@@ -1,19 +1,20 @@
-# Proposed SIAM News pitch — NOT SENT
+# SIAM News editorial pitch — draft, NOT SENT
 
-**Section:** Software and Programming
+**Category:** Software and Programming  
+**Working title:** Who Counts as a Neighbor?  
+**Subtitle:** How ProximityGraphs Turns One Point Cloud into Many Mathematical Worlds  
+**Proposed byline (subject to all authors' approval):** Héctor Maravillo; Diego Villarreal de la Cerda; Heriberto Espino-Montelongo
 
-**Working title:** Who Counts as a Neighbor? Geometric Graphs from Water Stations to Sensor Networks
+We propose a visually driven article about a simple question in computational geometry: **when should two points be connected?** Different definitions of neighborhood produce different models, even when the coordinates stay fixed. Our MIT-licensed Python library [ProximityGraphs](https://github.com/ProximityGraphs/ProximityGraphs) brings classical proximity constructions together and makes them accessible for reproducible comparison.
 
-We propose an accessible visual feature about the idea that “nearby” is not a single mathematical relation. An ordinary collection of points can become a family of very different networks and boundaries depending on which empty region, nearest-site, or scale rule is used. Our Python library, ProximityGraphs, lets readers compare those constructions on the same coordinates.
+The proposed ~1,000-word feature follows three illustrated, **synthetic** application scenarios: (1) Euclidean Voronoi service regions and Delaunay adjacency for hypothetical water-distribution stations, with historically careful context about John Snow's 1854 investigation; (2) circular alpha-hulls tracing hypothetical ecological observations, showing why curved boundaries depend on scale; and (3) beta-skeletons for hypothetical sensor locations, explaining how an empty lens determines which candidate links survive.
 
-The story develops through three **synthetic and reproducible** applications: (i) Voronoi service regions for hypothetical drinking-water distribution points, with a historical nod to John Snow's 1854 cholera investigation and a clear distinction between Euclidean and walking-distance models; (ii) alpha-hulls with circular arcs that outline hypothetical habitat observation locations; and (iii) beta-skeletons that identify candidate geometric links in a hypothetical wireless sensor network. Each print-ready visualization will have a live GitHub Pages counterpart where readers can vary parameters and inspect geometric predicates.
+Each of the three print-ready figures has an editable [online companion](https://heri-espino.github.io/proximitygraphs-siam-figures/) where readers can drag, add, or delete points and inspect the geometric result. The original default figures were exported from ProximityGraphs; edited scenes are independently recomputed by the browser.
 
-We aim for approximately 1,100–1,300 words and three credited figures. We would welcome editorial advice on whether this is appropriate for SIAM News print or online and whether external interactive figures may be linked. We understand that SIAM News is a news publication, rather than a research journal.
+The goal is to teach the mathematical modeling choice first and invite readers to explore the open-source package second, following the tone of SIAM News's [*The Dynamics of Debt*](https://www.siam.org/publications/siam-news/articles/the-dynamics-of-debt/).
 
-**Library:** https://github.com/ProximityGraphs/ProximityGraphs
+We welcome guidance on print versus online placement and whether links to our external interactive diagrams can accompany the three static images.
 
-**Interactive companion (planned, not yet verified live):** https://heri-espino.github.io/proximitygraphs-siam-figures/
+**Materials:** [Full feature](feature.md) · [LaTeX proof](main.tex) · [Library](https://github.com/ProximityGraphs/ProximityGraphs) · [Interactive figures](https://heri-espino.github.io/proximitygraphs-siam-figures/)
 
-**Authors:** Pending confirmation with the ProximityGraphs contributors; see the draft manuscript.
-
-**Submission:** Do not send without contributor approval.
+**Submission status:** No pitch or manuscript has been sent to SIAM. Confirm author order, names, affiliations, biography, rights, and editorial conditions first.
