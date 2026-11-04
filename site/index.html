@@ -3,121 +3,276 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="Explore and edit Voronoi diagrams, circular alpha-hulls, and beta-skeletons. Discover the ProximityGraphs Python library for geometric networks.">
+  <meta name="theme-color" content="#132f3c">
+  <meta name="description" content="Interactive proximity graph laboratory: editable Voronoi and Delaunay diagrams, circular alpha-hulls, alpha-shapes, and beta-skeleton construction witnesses.">
   <meta property="og:type" content="website">
-  <meta property="og:title" content="One Point Cloud, Many Graphs | ProximityGraphs">
-  <meta property="og:description" content="When does a pair of points deserve an edge? Move a point, change a rule, and explore geometry with ProximityGraphs.">
+  <meta property="og:title" content="One Point Cloud, Many Graphs | ProximityGraphs Lab">
+  <meta property="og:description" content="Move points, inspect empty disks and blockers, compare alpha-shapes with alpha-hulls, and discover which geometric rules construct a graph.">
   <meta property="og:url" content="https://heri-espino.github.io/proximitygraphs-siam-figures/">
-  <title>Who Counts as a Neighbor? | ProximityGraphs interactive figures</title>
+  <title>ProximityGraphs Lab | Who Counts as a Neighbor?</title>
   <link rel="stylesheet" href="styles.css">
   <script src="editor.js" defer></script>
+  <script src="geometry-details.js" defer></script>
   <script src="app.js" defer></script>
 </head>
 <body>
   <header class="masthead">
-    <div class="wrap">
-      <div class="brand"><span class="mark">PG</span><span>ProximityGraphs <span class="muted">/ Interactive companion</span></span></div>
-      <nav aria-label="Figure navigation"><a href="#water">01 Water access</a><a href="#habitat">02 Curved boundaries</a><a href="#sensors">03 Sensor links</a></nav>
+    <div class="wrap masthead-inner">
+      <a class="brand" href="#top"><span class="mark">PG</span><span>ProximityGraphs <span class="muted">/ Geometry lab</span></span></a>
+      <nav aria-label="Sections">
+        <a href="#top">Home</a><a href="#water">Voronoi</a><a href="#habitat">Alpha</a>
+        <a href="#sensors">β-skeleton</a><a href="#compare">Compare</a><a href="#about">About</a>
+      </nav>
     </div>
   </header>
   <main class="wrap">
-    <section class="hero" aria-labelledby="page-title">
-      <p class="eyebrow">Computational geometry · Software and Programming · Proposed SIAM News companion</p>
-      <h1 id="page-title">Who counts as a neighbor?</h1>
-      <p class="lead">One point cloud. Many definitions of a neighbor. Explore how Voronoi diagrams, curved alpha-hulls, and beta-skeletons change—and try the open-source ProximityGraphs Python library behind the original examples.</p>
-      <p class="disclaimer">All plotted sites and observations are <strong>synthetic</strong> teaching examples, not historical pump coordinates, ecological field measurements, or validated wireless links.</p>
-      <div class="hero-actions"><a class="button primary" href="#water">Explore the figures</a><a class="button" href="https://github.com/ProximityGraphs/ProximityGraphs" target="_blank" rel="noopener noreferrer">Python source</a><a class="button" href="https://pypi.org/project/proximitygraphs/" target="_blank" rel="noopener noreferrer">Install the package</a><a class="button" href="https://github.com/heri-espino/proximitygraphs-siam-figures" target="_blank" rel="noopener noreferrer">Article source</a></div>
-      <p class="install-hint">Try it in Python: <code>pip install proximitygraphs</code> <span>· MIT-licensed research software</span></p>
-      <p class="source" id="source-status" role="status">Loading mathematical figure data…</p>
+    <section class="hero" id="top" aria-labelledby="page-title">
+      <div class="hero-copy">
+        <p class="eyebrow">OPEN-SOURCE COMPUTATIONAL GEOMETRY · INTERACTIVE COMPANION</p>
+        <h1 id="page-title">Who counts as a neighbor?</h1>
+        <p class="lead">The same points can form different graphs and boundaries. Change the points or the geometric rule, then inspect <em>why</em> each edge, cell, or circular arc exists.</p>
+        <div class="hero-actions">
+          <a class="button primary" href="#explore">Explore the mathematics</a>
+          <a class="button" href="https://github.com/ProximityGraphs/ProximityGraphs" target="_blank" rel="noopener noreferrer">Source code</a>
+          <a class="button" href="https://pypi.org/project/proximitygraphs/" target="_blank" rel="noopener noreferrer">Python package</a>
+        </div>
+        <p class="install-hint">Install: <code>pip install proximitygraphs</code><span>MIT-licensed research software</span></p>
+        <p class="source" id="source-status" role="status">Loading authoritative ProximityGraphs data…</p>
+      </div>
+      <div class="hero-visual">
+        <img src="assets/figure02-habitat.png" width="760" height="640" alt="Circular alpha-hull with a supporting circle and synthetic points">
+        <span>FIGURE 02 · GEOMETRY EXPOSED</span>
+      </div>
+    </section>
+
+    <section id="explore" class="directory" aria-labelledby="explore-title">
+      <div class="section-kicker">A guided mathematical laboratory</div>
+      <h2 id="explore-title">Choose a construction</h2>
+      <p class="section-intro">Each experiment has editable points, a final graph, optional construction geometry, and a computation inspector. All illustrated observations are <strong>synthetic</strong>.</p>
+      <div class="chapter-grid">
+        <a class="chapter-card" href="#water">
+          <img loading="lazy" src="assets/figure01-water.png" alt="Synthetic Voronoi cells with Delaunay adjacency">
+          <span class="chapter-meta">01 · SPATIAL PARTITIONS</span>
+          <strong>Voronoi &amp; Delaunay</strong>
+          <span>Nearest-site cells, bisectors, and empty circumcircles.</span>
+        </a>
+        <a class="chapter-card" href="#habitat">
+          <img loading="lazy" src="assets/figure02-habitat.png" alt="Synthetic curved alpha-hull and its circle">
+          <span class="chapter-meta">02 · SHAPE RECONSTRUCTION</span>
+          <strong>Alpha-Hull &amp; Alpha-Shape</strong>
+          <span>Curved arcs, straight boundaries, and retained simplices.</span>
+        </a>
+        <a class="chapter-card" href="#sensors">
+          <img loading="lazy" src="assets/figure03-sensors.png" alt="Synthetic beta-skeleton and empty lune">
+          <span class="chapter-meta">03 · EMPTY-REGION GRAPHS</span>
+          <strong>β-Skeleton</strong>
+          <span>Why a candidate edge survives—or which point blocks it.</span>
+        </a>
+      </div>
     </section>
 
     <section id="water" class="exhibit" aria-labelledby="water-title">
-      <div class="section-num">FIGURE 01 <span>SPATIAL ALLOCATION</span></div>
-      <h2 id="water-title">Who gets water from where?</h2>
-      <p class="intro">Every point in a Voronoi cell is closest—in <em>straight-line distance</em>—to one service station. The Delaunay dual connects neighboring stations whose cells share an edge.</p>
-
-      <div class="point-toolbar" role="group" aria-label="Edit water points">
-        <span class="point-toolbar-label">Edit points</span>
-        <button type="button" class="tool-mode" data-editor-scene="water" data-mode="move" aria-pressed="true">Move</button>
-        <button type="button" class="tool-mode" data-editor-scene="water" data-mode="add" aria-pressed="false">+ Add</button>
-        <button type="button" class="tool-mode" data-editor-scene="water" data-mode="delete" aria-pressed="false">− Delete</button>
-        <button type="button" class="reset-points" data-editor-reset="water">Reset points</button>
-        <span id="water-edit-help" class="point-help" aria-live="polite">Drag any point to move it. Click an edge or arc to inspect it.</span>
+      <div class="section-kicker">01 / Spatial allocation</div>
+      <div class="section-heading">
+        <div><h2 id="water-title">Voronoi &amp; Delaunay</h2>
+          <p class="intro">Nearest-site regions partition the plane; neighboring service cells define Delaunay edges. Reveal the bisector inequalities and an empty circumcircle behind the triangulation.</p></div>
+        <a class="section-next" href="#habitat">Next: Alpha geometry →</a>
       </div>
-      <p id="water-edit-source" class="geometry-source">Original points · geometry exported by the ProximityGraphs Python library.</p>
-      <div class="chart-frame"><div class="chart-top"><span>Hypothetical water distribution stations</span><span class="legend"><i class="dot"></i> Site <i class="line"></i> Delaunay dual</span></div><svg id="water-plot" role="img" aria-label="Interactive Voronoi service cells showing the nearest hypothetical water stations" viewBox="0 0 920 600"></svg></div>
-      <div class="controls">
-        <label><input id="water-dual" type="checkbox"> Reveal Delaunay connections</label>
-        <label><input id="water-cells" type="checkbox" checked> Show service regions</label>
-        <span id="water-stat" class="stat" aria-live="polite"></span>
-        <button type="button" class="export" data-export="water-plot">Export SVG</button>
-        <button type="button" class="export" data-png="water-plot">Export PNG</button>
+      <div class="studio">
+        <aside class="studio-panel" aria-label="Voronoi controls">
+          <h3>Display &amp; construction</h3>
+          <label class="control-label" for="water-view">Preset</label>
+          <select id="water-view" class="control-select"><option value="final">Final geometry</option><option value="construction">Construction</option><option value="both" selected>Both</option></select>
+          <label class="toggle"><input id="water-cells" type="checkbox" checked> Voronoi cells</label>
+          <label class="toggle"><input id="water-dual" type="checkbox" checked> Delaunay edges</label>
+          <label class="toggle"><input id="water-bisectors" type="checkbox"> Selected-site bisectors</label>
+          <label class="toggle"><input id="water-circumcircle" type="checkbox" checked> Triangle circumcircle</label>
+          <label class="toggle"><input id="water-triangles" type="checkbox"> Delaunay triangles</label>
+          <button id="water-next-triangle" type="button" class="utility">Next triangle</button>
+          <div class="panel-divider"></div>
+          <div class="point-toolbar" role="group" aria-label="Edit water points">
+            <span class="point-toolbar-label">Edit points</span>
+            <button type="button" class="tool-mode" data-editor-scene="water" data-mode="move" aria-pressed="true">Move</button>
+            <button type="button" class="tool-mode" data-editor-scene="water" data-mode="add" aria-pressed="false">+ Add</button>
+            <button type="button" class="tool-mode" data-editor-scene="water" data-mode="delete" aria-pressed="false">− Delete</button>
+            <button type="button" class="reset-points" data-editor-reset="water">Reset points</button>
+            <span id="water-edit-help" class="point-help" aria-live="polite">Drag a station to move it.</span>
+          </div>
+        </aside>
+        <div class="studio-main">
+          <div class="chart-frame">
+            <div class="chart-top"><span>Synthetic water-service sites</span><span>EUCLIDEAN · 2D</span></div>
+            <svg id="water-plot" role="img" aria-label="Interactive Voronoi cells, bisectors, Delaunay triangles and circumcircles" viewBox="0 0 640 600"></svg>
+          </div>
+          <p id="water-edit-source" class="geometry-source">Loading original point set.</p>
+          <div class="figure-actions"><span id="water-stat" class="stat" aria-live="polite"></span><button type="button" class="export" data-export="water-plot">Export SVG</button><button type="button" class="export" data-png="water-plot">Export PNG</button></div>
+        </div>
+        <aside class="studio-panel insight" aria-label="Voronoi computation details">
+          <h3>Computation inspector</h3>
+          <p class="insight-label">Selected station</p>
+          <p id="water-details" class="insight-result" aria-live="polite">Select a point to inspect its nearest-site cell.</p>
+          <p class="formula">Vᵢ = { x : ‖x−pᵢ‖ ≤ ‖x−pⱼ‖ ∀j }</p>
+          <p class="insight-note" id="water-note">Every cell is the intersection of nearest-site half-planes.</p>
+        </aside>
       </div>
-      <p class="annotation" id="water-note" aria-live="polite">Select any site to highlight its service area.</p>
-      <p class="context">Historical connection: John Snow mapped cholera deaths and water pumps in London in 1854. Later researchers used Voronoi-style regions and walking-distance models to analyze pump catchments. This is a new synthetic Euclidean illustration—not Snow's map or his original method. For emergency-water allocation, realistic extensions would include walking times, demand, and station capacity.</p>
+      <p class="context">Application: service-area allocation is a starting model, not a routing solution. John Snow's 1854 London cholera investigation motivates the question historically; the plotted coordinates are invented and do not reproduce his map. Road distance, capacity, and demand change real catchments.</p>
     </section>
 
     <section id="habitat" class="exhibit" aria-labelledby="habitat-title">
-      <div class="section-num">FIGURE 02 <span>GEOMETRIC MORPHOLOGY</span></div>
-      <h2 id="habitat-title">Where does a spatial footprint end?</h2>
-      <p class="intro">A convex hull cannot represent inlets and notches. An <em>alpha-hull</em> uses circular arcs to trace an observation cloud at a chosen scale. Select an arc to reveal its supporting circle.</p>
-
-      <div class="point-toolbar" role="group" aria-label="Edit habitat points">
-        <span class="point-toolbar-label">Edit points</span>
-        <button type="button" class="tool-mode" data-editor-scene="habitat" data-mode="move" aria-pressed="true">Move</button>
-        <button type="button" class="tool-mode" data-editor-scene="habitat" data-mode="add" aria-pressed="false">+ Add</button>
-        <button type="button" class="tool-mode" data-editor-scene="habitat" data-mode="delete" aria-pressed="false">− Delete</button>
-        <button type="button" class="reset-points" data-editor-reset="habitat">Reset points</button>
-        <span id="habitat-edit-help" class="point-help" aria-live="polite">Drag any point to move it. Click an edge or arc to inspect it.</span>
+      <div class="section-kicker">02 / Geometric morphology</div>
+      <div class="section-heading">
+        <div><h2 id="habitat-title">Alpha-Hull &amp; Alpha-Shape</h2>
+          <p class="intro">The <strong>alpha-shape</strong> is a straight-edge boundary of retained Delaunay triangles. The related <strong>alpha-hull</strong> replaces those edges with circular arcs. Their geometry becomes visible when the construction is shown.</p></div>
+        <a class="section-next" href="#sensors">Next: Empty regions →</a>
       </div>
-      <p id="habitat-edit-source" class="geometry-source">Original points · geometry exported by the ProximityGraphs Python library.</p>
-      <div class="chart-frame"><div class="chart-top"><span>Hypothetical habitat observation coordinates</span><span class="legend"><i class="dot"></i> Observation <i class="curve"></i> Circular arc</span></div><svg id="habitat-plot" role="img" aria-label="Interactive circular alpha-hull boundary around synthetic ecological observations" viewBox="0 0 920 600"></svg></div>
-      <div class="controls">
-        <label for="alpha-slider">Curvature scale <strong id="alpha-value">α = −4</strong></label>
-        <input id="alpha-slider" type="range" min="0" max="3" step="1" value="1">
-        <label><input id="alpha-circle" type="checkbox" checked> Show supporting circle</label>
-        <span id="habitat-stat" class="stat" aria-live="polite"></span>
-        <button type="button" class="export" data-export="habitat-plot">Export SVG</button>
-        <button type="button" class="export" data-png="habitat-plot">Export PNG</button>
+      <div class="studio">
+        <aside class="studio-panel" aria-label="Alpha-shape and alpha-hull controls">
+          <h3>Layers &amp; scale</h3>
+          <label class="control-label" for="alpha-view">Preset</label>
+          <select id="alpha-view" class="control-select"><option value="final">Final comparison</option><option value="construction">Construction</option><option value="both" selected>Both</option></select>
+          <label class="control-label" for="alpha-slider">Curvature scale <strong id="alpha-value">α = −3</strong></label>
+          <input id="alpha-slider" type="range" min="0" max="3" step="1" value="1">
+          <label class="toggle"><input id="alpha-hull" type="checkbox" checked> Alpha-hull · circular arcs</label>
+          <label class="toggle"><input id="alpha-shape" type="checkbox" checked> Alpha-shape · straight edges</label>
+          <label class="toggle"><input id="alpha-triangulation" type="checkbox"> Delaunay triangulation</label>
+          <label class="toggle"><input id="alpha-kept" type="checkbox"> Retained simplices</label>
+          <label class="toggle"><input id="alpha-circle" type="checkbox" checked> Selected arc circle</label>
+          <label class="toggle"><input id="alpha-all-circles" type="checkbox"> All supporting circles</label>
+          <label class="toggle"><input id="alpha-centers" type="checkbox"> Circle centers</label>
+          <div class="panel-divider"></div>
+          <div class="point-toolbar" role="group" aria-label="Edit habitat points">
+            <span class="point-toolbar-label">Edit points</span>
+            <button type="button" class="tool-mode" data-editor-scene="habitat" data-mode="move" aria-pressed="true">Move</button>
+            <button type="button" class="tool-mode" data-editor-scene="habitat" data-mode="add" aria-pressed="false">+ Add</button>
+            <button type="button" class="tool-mode" data-editor-scene="habitat" data-mode="delete" aria-pressed="false">− Delete</button>
+            <button type="button" class="reset-points" data-editor-reset="habitat">Reset points</button>
+            <span id="habitat-edit-help" class="point-help" aria-live="polite">Drag an observation to change the boundary.</span>
+          </div>
+        </aside>
+        <div class="studio-main">
+          <div class="chart-frame">
+            <div class="chart-top"><span>Synthetic habitat observations</span><span>NEGATIVE α · 2D</span></div>
+            <svg id="habitat-plot" role="img" aria-label="Interactive circular alpha-hull, straight alpha-shape, Delaunay simplices and supporting circles" viewBox="0 0 640 600"></svg>
+          </div>
+          <p id="habitat-edit-source" class="geometry-source">Loading original point set.</p>
+          <div class="figure-actions"><span id="habitat-stat" class="stat" aria-live="polite"></span><button type="button" class="export" data-export="habitat-plot">Export SVG</button><button type="button" class="export" data-png="habitat-plot">Export PNG</button></div>
+        </div>
+        <aside class="studio-panel insight" aria-label="Alpha construction details">
+          <h3>Computation inspector</h3>
+          <p class="insight-label">Selected circular arc</p>
+          <p id="habitat-details" class="insight-result" aria-live="polite">Select an arc to inspect its radius and supporting circle.</p>
+          <p class="formula">R = 1 / |α|</p>
+          <p class="insight-note" id="habitat-note">Triangles with circumradius at most R form the displayed alpha-shape construction.</p>
+        </aside>
       </div>
-      <p class="annotation" id="habitat-note" aria-live="polite">Select an arc to reveal the defining circle. Negative α gives outward arcs in this library.</p>
-      <p class="context">Interpretation: the reconstructed contour is a geometric summary of sampled locations, not an estimated habitat probability, species range, or uncertainty interval. An ecological interpretation would require a sampling model and validation.</p>
+      <p class="context">The displayed alpha-shape is the library's boundary of triangles retained by its circumradius rule; it is not the alpha-complex itself. An alpha-hull is a different curved representation. These synthetic observations do not establish a statistical habitat boundary.</p>
     </section>
 
     <section id="sensors" class="exhibit" aria-labelledby="sensors-title">
-      <div class="section-num">FIGURE 03 <span>SPARSE NETWORKS</span></div>
-      <h2 id="sensors-title">Which sensors deserve a connection?</h2>
-      <p class="intro">For an edge to belong to a beta-skeleton, its associated lens-shaped region must contain no other sites. Increasing β changes this emptiness condition and can remove candidate links.</p>
-
-      <div class="point-toolbar" role="group" aria-label="Edit sensors points">
-        <span class="point-toolbar-label">Edit points</span>
-        <button type="button" class="tool-mode" data-editor-scene="sensors" data-mode="move" aria-pressed="true">Move</button>
-        <button type="button" class="tool-mode" data-editor-scene="sensors" data-mode="add" aria-pressed="false">+ Add</button>
-        <button type="button" class="tool-mode" data-editor-scene="sensors" data-mode="delete" aria-pressed="false">− Delete</button>
-        <button type="button" class="reset-points" data-editor-reset="sensors">Reset points</button>
-        <span id="sensors-edit-help" class="point-help" aria-live="polite">Drag any point to move it. Click an edge or arc to inspect it.</span>
+      <div class="section-kicker">03 / Empty-region proximity</div>
+      <div class="section-heading">
+        <div><h2 id="sensors-title">β-Skeleton</h2>
+          <p class="intro">An edge survives only when its lune contains no other site. Inspect a successful pair or a rejected candidate to see the two defining disks and any <strong>blocking points</strong>.</p></div>
+        <a class="section-next" href="#compare">Next: Compare graphs →</a>
       </div>
-      <p id="sensors-edit-source" class="geometry-source">Original points · geometry exported by the ProximityGraphs Python library.</p>
-      <div class="chart-frame"><div class="chart-top"><span>Hypothetical wireless sensor positions</span><span class="legend"><i class="dot"></i> Sensor <i class="line"></i> Candidate link</span></div><svg id="sensors-plot" role="img" aria-label="Interactive beta skeleton graph with selected empty lune between two synthetic wireless sensors" viewBox="0 0 920 600"></svg></div>
-      <div class="controls">
-        <label for="beta-slider">Empty-region parameter <strong id="beta-value">β = 1.5</strong></label>
-        <input id="beta-slider" type="range" min="0" max="4" step="1" value="2">
-        <label><input id="beta-lune" type="checkbox" checked> Show empty lens</label>
-        <span id="sensors-stat" class="stat" aria-live="polite"></span>
-        <button type="button" class="export" data-export="sensors-plot">Export SVG</button>
-        <button type="button" class="export" data-png="sensors-plot">Export PNG</button>
+      <div class="studio">
+        <aside class="studio-panel" aria-label="Beta-skeleton controls">
+          <h3>Layers &amp; candidates</h3>
+          <label class="control-label" for="beta-view">Preset</label>
+          <select id="beta-view" class="control-select"><option value="final">Final graph</option><option value="construction" selected>Construction</option><option value="both">Both</option></select>
+          <label class="control-label" for="beta-slider">Lune parameter <strong id="beta-value">β = 1.5</strong></label>
+          <input id="beta-slider" type="range" min="0" max="4" step="1" value="2">
+          <label class="toggle"><input id="beta-edges" type="checkbox" checked> Valid graph edges</label>
+          <label class="toggle"><input id="beta-invalid" type="checkbox"> Rejected candidate pairs</label>
+          <label class="toggle"><input id="beta-lune" type="checkbox" checked> Selected lune</label>
+          <label class="toggle"><input id="beta-disks" type="checkbox" checked> Defining disks</label>
+          <label class="toggle"><input id="beta-blockers" type="checkbox" checked> Highlight blocking points</label>
+          <button type="button" class="utility" id="beta-show-blocked">Show a rejected pair</button>
+          <button type="button" class="utility" id="beta-next-pair">Next candidate pair</button>
+          <div class="panel-divider"></div>
+          <div class="point-toolbar" role="group" aria-label="Edit sensors points">
+            <span class="point-toolbar-label">Edit / inspect sites</span>
+            <button type="button" class="tool-mode" data-editor-scene="sensors" data-mode="move" aria-pressed="true">Move</button>
+            <button type="button" class="tool-mode" data-editor-scene="sensors" data-mode="add" aria-pressed="false">+ Add</button>
+            <button type="button" class="tool-mode" data-editor-scene="sensors" data-mode="delete" aria-pressed="false">− Delete</button>
+            <button type="button" class="tool-mode" data-editor-scene="sensors" data-mode="inspect" aria-pressed="false">Inspect pair</button>
+            <button type="button" class="reset-points" data-editor-reset="sensors">Reset points</button>
+            <span id="sensors-edit-help" class="point-help" aria-live="polite">Click two sensors in Inspect pair mode.</span>
+          </div>
+        </aside>
+        <div class="studio-main">
+          <div class="chart-frame">
+            <div class="chart-top"><span>Synthetic wireless sensor positions</span><span>OPEN LUNE · β ≥ 1</span></div>
+            <svg id="sensors-plot" role="img" aria-label="Interactive beta-skeleton with candidate valid and rejected pairs and their lune blockers" viewBox="0 0 640 600"></svg>
+          </div>
+          <p id="sensors-edit-source" class="geometry-source">Loading original point set.</p>
+          <div class="figure-actions"><span id="sensors-stat" class="stat" aria-live="polite"></span><button type="button" class="export" data-export="sensors-plot">Export SVG</button><button type="button" class="export" data-png="sensors-plot">Export PNG</button></div>
+        </div>
+        <aside class="studio-panel insight" aria-label="Beta-skeleton computation details">
+          <h3>Computation inspector</h3>
+          <p class="insight-label">Selected pair</p>
+          <p id="sensors-details" class="insight-result" aria-live="polite">Select a candidate to inspect its empty-region test.</p>
+          <p class="formula">edge(p,q) ⇔ lune(p,q) ∩ (P\{p,q}) = ∅</p>
+          <p class="insight-note" id="sensors-note">A rejected pair has at least one point strictly inside both defining disks.</p>
+        </aside>
       </div>
-      <p class="annotation" id="sensors-note" aria-live="polite">Select a link to inspect the empty region responsible for that geometric connection.</p>
-      <p class="context">Interpretation: this graph only tests Euclidean geometry. Actual wireless design also requires interference, range, terrain, reliability, routing and power constraints; these links are not claims of physical connectivity.</p>
+      <p class="context">This is a geometric candidate graph, not a validated radio network. Obstacles, propagation, interference, power and routing are additional physical requirements.</p>
     </section>
 
-    <section class="methods">
-      <h2>From the library to the browser</h2>
-      <p>Reproducible Python code computes the authoritative graph edges and alpha-hull arcs with <code>proximitygraphs</code>; the browser then displays the exported geometry. When points are moved, added, or deleted, the website instead recomputes the results locally in JavaScript and labels them as edited. Voronoi polygons are computed separately by half-plane clipping because the library's Voronoi class provides <em>site adjacency</em>, not polygon vertices. Until the generated JSON is present, the website uses a clearly labeled self-contained browser preview.</p>
-      <p>Every SVG can be exported as a static figure for an editorial PDF, while its interactive counterpart remains available here. This website and manuscript are independent of SIAM and have not been submitted to or endorsed by the publication.</p>
-      <div class="links"><a href="https://pypi.org/project/proximitygraphs/" target="_blank" rel="noopener noreferrer">Install ProximityGraphs</a><a href="https://www.siam.org/publications/siam-news/articles/the-dynamics-of-debt/" target="_blank" rel="noopener noreferrer">Comparable SIAM News software feature</a><a href="https://github.com/heri-espino/proximitygraphs-siam-figures/tree/main/article" target="_blank" rel="noopener noreferrer">LaTeX article draft</a><a href="https://github.com/heri-espino/proximitygraphs-siam-figures/tree/main/scripts" target="_blank" rel="noopener noreferrer">Reproduction scripts</a></div>
+    <section id="compare" class="exhibit compare-exhibit" aria-labelledby="compare-title">
+      <div class="section-kicker">04 / Controlled comparison</div>
+      <h2 id="compare-title">One point set. Two definitions.</h2>
+      <p class="intro">Compare Delaunay, Gabriel, relative neighborhood, β-skeleton, and alpha-shape graphs on the <strong>same synthetic sensor coordinates</strong>. Changes you make to the sensors above carry into both panels.</p>
+      <div class="compare-controls">
+        <label for="compare-left">Left graph
+          <select id="compare-left" class="control-select">
+            <option value="delaunay">Delaunay</option><option value="gabriel" selected>Gabriel</option>
+            <option value="rng">Relative neighborhood</option><option value="beta">β-skeleton (β = 1.5)</option>
+            <option value="alpha-shape">Alpha-shape (α = −4)</option>
+          </select>
+        </label>
+        <label for="compare-right">Right graph
+          <select id="compare-right" class="control-select">
+            <option value="delaunay">Delaunay</option><option value="gabriel">Gabriel</option>
+            <option value="rng" selected>Relative neighborhood</option><option value="beta">β-skeleton (β = 1.5)</option>
+            <option value="alpha-shape">Alpha-shape (α = −4)</option>
+          </select>
+        </label>
+        <button id="compare-swap" class="utility" type="button">Swap</button>
+        <button id="compare-reset" class="utility" type="button">Reset to defaults</button>
+      </div>
+      <div class="compare-grid">
+        <div class="chart-frame">
+          <div class="chart-top"><span id="compare-left-label">Gabriel graph</span><span id="compare-left-count"></span></div>
+          <svg id="compare-left-plot" role="img" aria-label="Left geometric graph comparison" viewBox="0 0 640 600"></svg>
+          <div class="figure-actions"><button type="button" class="export" data-export="compare-left-plot">Export SVG</button><button type="button" class="export" data-png="compare-left-plot">Export PNG</button></div>
+        </div>
+        <div class="chart-frame">
+          <div class="chart-top"><span id="compare-right-label">Relative neighborhood graph</span><span id="compare-right-count"></span></div>
+          <svg id="compare-right-plot" role="img" aria-label="Right geometric graph comparison" viewBox="0 0 640 600"></svg>
+          <div class="figure-actions"><button type="button" class="export" data-export="compare-right-plot">Export SVG</button><button type="button" class="export" data-png="compare-right-plot">Export PNG</button></div>
+        </div>
+      </div>
+      <p id="compare-details" class="compare-insight" aria-live="polite">Identical coordinates; different definitions of adjacency.</p>
+      <p class="geometry-source">Original comparison edges come from the pinned Python ProximityGraphs library. Edited sensor coordinates trigger independent JavaScript recomputation; this section is illustrative, not a benchmark.</p>
+    </section>
+
+    <section id="about" class="about-section" aria-labelledby="about-title">
+      <div>
+        <div class="section-kicker">Source · Reproducibility · Scope</div>
+        <h2 id="about-title">Geometry you can inspect</h2>
+        <p>Original diagrams and the alpha-shape boundaries are exported from the pinned <a href="https://github.com/ProximityGraphs/ProximityGraphs" target="_blank" rel="noopener noreferrer">ProximityGraphs Python library</a>. Voronoi cells are separately clipped by Euclidean half-planes. Edited configurations are recomputed by documented browser algorithms and are labeled accordingly.</p>
+        <p>The mathematical families extend beyond the plane, but these demonstrations and most current package constructors are two-dimensional. The examples are synthetic, and the accompanying SIAM News manuscript has not been submitted or endorsed.</p>
+      </div>
+      <div class="resource-links">
+        <h3>Continue exploring</h3>
+        <a href="https://pypi.org/project/proximitygraphs/" target="_blank" rel="noopener noreferrer">Install ProximityGraphs</a>
+        <a href="https://github.com/ProximityGraphs/ProximityGraphs" target="_blank" rel="noopener noreferrer">Library source and documentation</a>
+        <a href="https://github.com/heri-espino/proximitygraphs-siam-figures/blob/main/article/feature.md" target="_blank" rel="noopener noreferrer">Read the SIAM News article draft</a>
+        <a href="https://github.com/heri-espino/proximitygraphs-siam-figures" target="_blank" rel="noopener noreferrer">Reproduce the figures and website</a>
+      </div>
     </section>
   </main>
-  <footer><div class="wrap"><span>ProximityGraphs · Mathematical software outreach, draft project</span><span>Synthetic figures · No real-world decisions should be based on these examples</span></div></footer>
+  <footer><div class="wrap"><span>ProximityGraphs · Computational geometry outreach project</span><a href="#top">Back to top ↑</a><span>Synthetic examples · Not a substitute for field validation</span></div></footer>
 </body>
 </html>
