@@ -101,8 +101,10 @@ def inline_md(value: str) -> str:
                      "≥": r"\(\geq\)", "≤": r"\(\leq\)"}.items():
         value = value.replace(c, hold(macro))
     value = tex_escape(value)
-    for i, preserved in enumerate(placeholders):
-        value = value.replace(f"ZZZPROXPLACEHOLDER{i}ZZZ", preserved)
+    # Restore in reverse order: nested Markdown (e.g. bold hyperlinks) can
+    # contain a previously allocated placeholder inside a later one.
+    for i in reversed(range(len(placeholders))):
+        value = value.replace(f"ZZZPROXPLACEHOLDER{i}ZZZ", placeholders[i])
     return value
 
 
@@ -171,6 +173,8 @@ def main() -> None:
     source = SOURCE.read_text(encoding="utf-8")
     out = PREAMBLE + make_body(source) + "\n" + make_references(source) + \
           "\n" + make_bios(source) + "\n" + FOOTER
+    if "ZZZPROXPLACEHOLDER" in out:
+        raise ValueError("Unresolved inline formatting placeholder in generated TeX")
     DESTINATION.write_text(out, encoding="utf-8")
     print(f"Rendered {DESTINATION.relative_to(ROOT)} from article/feature.md")
 
