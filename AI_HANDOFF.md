@@ -40,3 +40,12 @@ Produce a polished outreach article for SIAM News (Software and Programming), su
 - An intermediate older run failed on push because concurrent commits advanced main; later build passed. CI has now acquired concurrency cancellation to avoid that race.
 - The LaTeX manuscript is written, with approximately 1,037 main-text words before the later brief water-planning expansion. It has a provisional 3-author byline; human confirmation is required.
 - Owners still need to enable GitHub Pages (Settings > Pages > Source GitHub Actions) and set repository Actions variable DEPLOY_PAGES=true, then manually run the workflow. Public site availability has not been verified.
+
+## Point editor extension (November 3, 2026)
+- User requested the ability to add, remove, and drag points on all three interactive figures, and to open external links in new tabs.
+- Added `site/editor.js` with per-scene mutable coordinates, mode controls, pointer capture, touch and keyboard input, duplicate avoidance, plot clamping, reset, 80-point cap, and per-scene data provenance labels.
+- Updated `site/index.html` with toolbars for all three scenes and secure external-link attributes; updated CSS for touch-friendly interaction and enlarged SVG point hit targets.
+- Updated `site/app.js` to switch from original authoritative library scene JSON to **independent local JavaScript recomputation after edits**. Added incremental Delaunay triangulation, retained beta empty-lune tests and alpha-hull reconstruction. Original library-generated scenes remain unchanged.
+- Added Node `tests/test_editor.js`: compare default browser geometry with authoritative pinned ProximityGraphs data, check altered inputs, verify circle radii, point separation and external link behavior. GitHub Actions executes Node and Python checks before Pages deployment.
+- Do not claim edited geometry comes from the Python library. Exported SVG and PNG depict the browser-rendered state.
+- Follow-up: test interaction visually on an actual mobile device, especially pointer capture, and confirm public Pages URL after final workflow. SIAM article is still a draft and not submitted.
