@@ -332,13 +332,14 @@ function drawHabitat(){
   }
   const circles=allAlphaCircles(arcs);
   if(arcs.length && state.alphaArc>=arcs.length)state.alphaArc=0;
+  const chosenCircle=circles.find(c=>c.index===state.alphaArc);
   const clipped=squareClip(svg,"alpha-circles-square");
   if(hasLayer("alpha-all-circles")){
     for(const c of circles)circleOverlay(svg,c.center,c.radius,"#93a8ba",1.25,true,"none",clipped)
       .setAttribute("stroke-opacity",.45);
   }
-  if(hasLayer("alpha-circle")&&circles[state.alphaArc]){
-    const c=circles[state.alphaArc];
+  if(hasLayer("alpha-circle")&&chosenCircle){
+    const c=chosenCircle;
     circleOverlay(svg,c.center,c.radius,"#b56e41",2.4,true,"none",clipped);
   }
   if(hasLayer("alpha-centers")){
@@ -373,7 +374,7 @@ function drawHabitat(){
   points.forEach(function(p,i){site(svg,p,i,false);});
   detail("habitat-stat",points.length+" sites · "+boundary.length+
     " shape edges · "+arcs.length+" arcs");
-  const c=circles[state.alphaArc];
+  const c=chosenCircle;
   detail("habitat-details","α = −"+alpha+" gives radius R = "+(1/alpha).toFixed(3)+
     ". "+kept.length+" of "+triangles.length+" Delaunay triangles satisfy the radius cutoff. "+
     boundary.length+" straight boundary edges, "+arcs.length+" sampled circular arcs."+
