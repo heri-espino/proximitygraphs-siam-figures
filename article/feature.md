@@ -1,92 +1,86 @@
 # Who Counts as a Neighbor?
-*How ProximityGraphs turns one point cloud into many mathematical worlds*
+*From empty regions to AI, topology, and stochastic geometry*
 
-**Proposed venue:** SIAM News — Software and Programming  
-**Status:** Author draft, not submitted or accepted  
-**Proposed authors:** Héctor Maravillo; Diego Villarreal de la Cerda; Heriberto Espino-Montelongo (order and biographies subject to confirmation)
+**SIAM News — Software and Programming | Revised author draft, not submitted**
 
-A planner studying a map of water stations wants to know which station serves each home. An ecologist wants to trace the outer boundary of scattered observations. A network engineer wants to decide which sensors might reasonably be connected. All three begin with points in the plane, but their questions require different meanings of *neighbor*.
+**Héctor Maravillo** — Universidad Autónoma Metropolitana (UAM), Mexico; **Diego Villarreal de la Cerda** — T-Systems; **Heriberto Espino-Montelongo** — Universidad de las Américas Puebla (UDLAP). *Byline and affiliations remain subject to the coauthors’ approval.*
 
-That distinction matters. Distance alone does not tell us which connections should exist: a pair of points may share a nearest-site boundary, belong to the same geometric envelope, or qualify as neighbors because a particular region between them contains no other point. Each choice produces a different mathematical structure—and potentially a different scientific interpretation.
+A cloud of points has no edges until someone defines what *neighbor* means. That definition determines which information can flow through a graph, which gaps count as meaningful, and which geometric structures survive noise. It may also determine the output of a graph neural network or the topology inferred from a dataset. **[ProximityGraphs](https://github.com/ProximityGraphs/ProximityGraphs)** is an open-source Python toolkit that turns this modeling decision into an experiment: construct multiple geometric graphs on the same point set, compare their structure, and examine what changes when the neighborhood rule changes.
 
-[ProximityGraphs](https://github.com/ProximityGraphs/ProximityGraphs) is an open-source Python library that makes these choices explicit. It brings together classic constructions such as Voronoi and Delaunay, Gabriel and relative neighborhood graphs, beta-skeletons, alpha-hulls, nearest-neighbor graphs, and related families under a common point-set workflow. Instead of coding every geometric rule from scratch, users can build, visualize, and compare alternatives on the same data.
+## From locations to structure
 
-## A city divided by distance
+Voronoi diagrams divide space by the nearest site; their Delaunay dual connects sites with adjacent cells. The same construction can organize emergency-water stations, emergency-response territories, facility allocation, spatial interpolation, and adaptive meshes for partial differential equations. John Snow's 1854 cholera investigation makes the nearest-water-source question historically recognizable, although our example uses invented sites and straight-line distances, not Snow's data or street-network distances.
 
-Consider a hypothetical city with temporary drinking-water stations. If people always visit their closest station *as the crow flies*, each station occupies a Voronoi cell: the set of locations closer to it than to any other station. Formally, for sites \(P=\{p_1,\ldots,p_n\}\), the cell of site \(p_i\) is
+**Figure 1.** *Service areas and their dual network.* Synthetic water stations, Euclidean Voronoi cells, and Delaunay edges. Move a station, add another, or inspect which cells exchange territory. [Explore the interactive geometry](https://heri-espino.github.io/proximitygraphs-siam-figures/#water).
 
+Geometry also structures observations that cannot conveniently be placed on a map. In an astronomical catalog, observations are points in a space of measured features; in single-cell biology, coordinates and molecular markers describe a tissue; in robotics, LiDAR returns millions of 3D samples. Converting these locations to neighborhoods supplies the computational substrate for local estimation, spatial clustering, graph signal processing, and mesh-based simulation. A particularly concrete example appeared in 2026: the **SpaCEy** explainable graph-neural-network model constructs Delaunay graphs between tissue cells to learn spatial patterns associated with clinical outcomes (Rifaioglu et al., 2026). The geometry specifies which cells can exchange information; the learning algorithm decides what to infer from it.
+
+The general mathematical setting is **\(\mathbb R^d\), for any \(d\geq1\)**: points can be geographic coordinates, 3D positions, gene-expression measurements, or learned embeddings. The current **ProximityGraphs implementation concentrates on planar algorithms**; although its point-set container accommodates other coordinate dimensions, not every graph constructor is yet dimension-general.
+
+## Shape, holes, and scale
+
+A convex hull covers a point cloud but hides indentations. Alpha-shapes and circular-arc **alpha-hulls** recover scale-dependent envelopes: tightening the underlying geometric radius can expose bays, separated clusters, and gaps. That scale choice matters when delineating observed habitats, outlining archaeological sites, reconstructing scanned objects, analyzing porous materials, or approximating regions in microscopy. The boundary is a geometric summary—not automatically a confidence region or a physical surface.
+
+**Figure 2.** *An envelope made from circles.* A circular alpha-hull around synthetic ecological observations; selecting an arc reveals its supporting circle, while changing \(\alpha\) changes the scale. [Manipulate the boundary](https://heri-espino.github.io/proximitygraphs-siam-figures/#habitat).
+
+The connection to topology goes deeper than an outline. **Alpha complexes**, related to—but mathematically distinct from—the plotted alpha-hulls, form a filtration as the scale varies. Persistent homology can then follow connected components, loops, and higher-dimensional voids: features useful when studying molecular cavities, brain-imaging point clouds, porous structures, or the shape of a learned latent space. Likewise, Isomap replaces straight-line distances with shortest paths on a neighborhood graph to reconstruct nonlinear manifolds (Tenenbaum et al., 2000). In both settings, **the topology or geodesic geometry discovered downstream depends on which neighborhoods were constructed upstream**. ProximityGraphs offers a way to compare such graph choices; it does not itself claim to compute persistent homology or perform manifold learning.
+
+## Empty regions as computational decisions
+
+In a **beta-skeleton**, two points are joined when a prescribed region between them contains no competing point. The empty lune for \(\beta=2\) yields the relative neighborhood graph; at \(\beta=1\), the Gabriel graph arises. For planar point sets in general position, a familiar hierarchy is
 \[
-V_i=\{x:\|x-p_i\|\leq\|x-p_j\| \text{ for every } j\}.
+\mathrm{MST}\subseteq\mathrm{RNG}\subseteq\mathrm{GG}\subseteq\mathrm{Delaunay}.
 \]
+The inclusions expose different degrees of geometric sparsity, which matters for sensor-network candidates, decentralized communication, geometric routing, spatial anomaly detection, image morphology, and the skeleton of an observed shape. They do **not** guarantee that a wireless edge is physically viable or that a graph is an optimal routing network.
 
-Connecting sites whose Voronoi cells share a boundary gives the Delaunay dual. The first object answers a coverage question; the second reveals which service territories meet. Both emerge from the same coordinates.
+**Figure 3.** *An edge justified by emptiness.* Synthetic sensor locations with a beta-skeleton and its defining lens. Adding a point inside that lens may eliminate the selected edge. [Explore the empty-region test](https://heri-espino.github.io/proximitygraphs-siam-figures/#sensors).
 
-There is a compelling historical connection. During London's 1854 cholera outbreak, physician John Snow investigated the geographic relationship between deaths and water pumps. Later spatial analyses revisited nearest-pump catchments. Our diagram is **not** Snow's original map, and straight-line Voronoi regions are not a substitute for realistic travel-time, capacity, or demand models. They are a transparent starting point for explaining spatial allocation.
+This notion of selective adjacency is also consequential in AI. A graph neural network aggregates messages over chosen edges; different neighborhood rules therefore impose different **inductive biases**—assumptions about which observations should influence one another. In manifold learning, a bridge between nearby but separate structures can create an artificial geodesic shortcut. In graph-based vector search, navigable small-world graphs connect high-dimensional embeddings so that approximate nearest-neighbor queries can traverse only part of a database (Malkov & Yashunin, 2020), a mechanism relevant to retrieval systems and recommendation pipelines. Such indexes are **related research applications of proximity graphs**, not HNSW features provided by the present library.
 
-**Figure 1.** *Water-station geometry.* Hypothetical stations with Euclidean Voronoi service cells and Delaunay-adjacency edges. Select or move a station to see which regions change. Synthetic data; static geometry generated with ProximityGraphs. [Interactive Figure 1](https://heri-espino.github.io/proximitygraphs-siam-figures/#water).
+## One-line stochastic geometry
 
-## A boundary made from circles
+What happens when the sites themselves are random? Devroye (1988) studied empty-region graphs in \(\mathbb R^d\) and showed that remarkably simple asymptotic degree laws emerge across broad sampling densities. For a stationary Poisson process of intensity \(\rho\), suppose the exclusion region of a pair at separation \(r\) has volume \(a\,r^d\). Writing \(v_d\) for the unit-ball volume gives
+\[
+\Pr(\text{edge}\mid r)=e^{-\rho a r^d},
+\qquad
+\mathbb E[\deg]=\frac{v_d}{a}.
+\]
+Thus **shape enters through a unit-region volume, and the mean degree does not depend on point intensity** under this homogeneous model. In two dimensions, the Gabriel graph has mean degree **4**; the relative neighborhood graph has mean degree approximately **2.558**. Penrose and Yukich (2001) further studied central limit theorems for geometric-graph statistics, including total edge length and component counts under specified random-point models. The same constructions therefore connect visual geometry to sampling theory, uncertainty quantification, and statistical tests for spatial organization.
 
-Now imagine ecological observations distributed around an irregular landscape. The familiar convex hull—like a rubber band stretched around the outermost points—ignores bays and indentations. It may enclose regions with no observations and conceal the outline's geometry.
+## A geometry laboratory in Python
 
-The alpha-shape family introduces a scale into boundary construction. Its circular-arc relative, the *alpha-hull*, can trace a boundary with arcs rather than straight segments. In the ProximityGraphs convention used in our example, an arc's supporting circle has radius \(R=1/|\alpha|\), with a negative alpha parameter. Changing this radius changes which concavities become visible.
+ProximityGraphs combines point generators (including random spatial processes), graph constructors, visualization, graph summaries, and repeated-experiment helpers. For instance, `pg.GG(points)`, `pg.RNG(points)`, and `pg.DelaunayG(points)` let researchers compare adjacency on unchanged coordinates; the resulting graphs can inform, rather than replace, downstream learning or topological analysis. Its source is MIT-licensed, and optional GIS utilities connect the workflow with geospatial data.
 
-The second visualization makes those circles tangible: select an arc to reveal its supporting circle, or move an observation and watch the envelope change. The outcome is a **geometric description of sampled points**, not a statistical estimate of habitat occupancy. Whether an outline represents a real ecological boundary depends on survey design and additional modeling.
+The [interactive companion](https://heri-espino.github.io/proximitygraphs-siam-figures/) makes three examples editable without installation: the default geometries are exported by the Python library, while user-edited points are recomputed separately in the browser. The scientific contribution is not a claim that one graph is always best. It is the ability to **make geometric assumptions explicit, change them reproducibly, and study their consequences**.
 
-**Figure 2.** *A curved spatial envelope.* Alpha-hull arcs around synthetic habitat observations, highlighting one supporting circle. The interactive version lets readers adjust alpha and the point positions; original static arcs come from ProximityGraphs. [Interactive Figure 2](https://heri-espino.github.io/proximitygraphs-siam-figures/#habitat).
-
-## When an empty region creates an edge
-
-A third problem arises when points represent wireless sensors. Connecting every pair yields a dense network that says little about local structure. Connecting only the nearest pairs imposes a different rule. A *beta-skeleton* provides an interpretable alternative: connect two sites only when a region determined by that pair is empty of other sites.
-
-In the lune-based family, the relevant region is a lens formed by two overlapping disks. The parameter \(\beta\) controls its shape. At \(\beta=1\), the construction gives the Gabriel graph; at \(\beta=2\), the relative neighborhood graph, under standard general-position conventions. A point added inside the relevant lens can eliminate a previously permissible edge.
-
-That local cause-and-effect is the focus of the third visualization. Readers can change \(\beta\), inspect a candidate edge, and see the two disks whose intersection must be empty. The graph identifies *geometric candidates*, not guaranteed radio connections: physical deployment also requires propagation, terrain, power, and reliability models.
-
-**Figure 3.** *Sparse geometric candidates.* A beta-skeleton over hypothetical sensor locations with the selected edge's empty lens shown. Moving or adding a point can change the edge set. Synthetic coordinates; the static graph was generated with ProximityGraphs. [Interactive Figure 3](https://heri-espino.github.io/proximitygraphs-siam-figures/#sensors).
-
-## One point set, several answers
-
-These examples suggest a practical question for researchers: **What changes when we change the neighborhood rule but keep the data fixed?** ProximityGraphs is designed for precisely that comparison. Its point-set objects, graph constructors, visualization tools, and experiment helpers create a workflow in which a hypothesis about spatial structure can be tested rather than merely illustrated.
-
-A small Python example captures the idea:
-
-```python
-import proximitygraphs as pg
-
-points = pg.SetPoints.grid(shape=(3, 3))
-gabriel = pg.GG(points)
-relative = pg.RNG(points)
-delaunay = pg.DelaunayG(points)
-```
-
-The same nine sites produce three graph constructions that encode different definitions of adjacency. The library also provides utilities for repeated experiments and optional geospatial-data integration. It complements general graph and scientific-computing packages by focusing on the geometry that determines which edges exist.
-
-To let readers explore the distinctions without installing Python, we built an [interactive companion](https://heri-espino.github.io/proximitygraphs-siam-figures/). Its original examples use geometry exported by ProximityGraphs; when readers add, delete, or drag points, independent browser code recomputes the demonstrations and labels them accordingly. The source, figures, and generation scripts are public and reproducible.
-
-**A graph begins with a definition, not a drawing.** Before treating any line as a road, relationship, or possible communication link, ask which rule created it—and which scientific assumptions make that rule useful. ProximityGraphs provides a place to ask the question with code, and the interactive diagrams let anyone see the answer change.
-
-**Explore:** [Python package and source](https://github.com/ProximityGraphs/ProximityGraphs) · [Installation on PyPI](https://pypi.org/project/proximitygraphs/) · [Interactive figures](https://heri-espino.github.io/proximitygraphs-siam-figures/)  
-**Install:** `pip install proximitygraphs` (MIT license).
+**Try the library:** [Source and examples](https://github.com/ProximityGraphs/ProximityGraphs) · [PyPI](https://pypi.org/project/proximitygraphs/) · `pip install proximitygraphs`. The Python release is currently a pre-release; selected algorithms and models are planar.
 
 ## References
+
+Devroye, L. (1988). The expected size of some graphs in computational geometry. *Computers & Mathematics with Applications, 15*(1), 53–64.
 
 Edelsbrunner, H., Kirkpatrick, D. G., & Seidel, R. (1983). On the shape of a set of points in the plane. *IEEE Transactions on Information Theory, 29*(4), 551–559.
 
 Gabriel, K. R., & Sokal, R. R. (1969). A new statistical approach to geographic variation analysis. *Systematic Zoology, 18*(3), 259–278.
 
+Malkov, Y. A., & Yashunin, D. A. (2020). Efficient and robust approximate nearest neighbor search using hierarchical navigable small world graphs. *IEEE Transactions on Pattern Analysis and Machine Intelligence, 42*(4), 824–836.
+
 Maravillo, H., Villarreal de la Cerda, D., & Espino-Montelongo, H. (2026). *ProximityGraphs* [Computer software]. Zenodo. https://doi.org/10.5281/zenodo.21088183
 
-Snow, J. (1855). *On the mode of communication of cholera* (2nd ed.). John Churchill.
+Penrose, M. D., & Yukich, J. E. (2001). Central limit theorems for some graphs in computational geometry. *Annals of Applied Probability, 11*(4), 1005–1041.
+
+Rifaioglu, A. S., Ervin, E. H., Sarigun, A., et al. (2026). SpaCEy links spatial tissue patterns to clinical outcomes using explainable graph neural networks. *Nature Communications, 17*, 10232. https://doi.org/10.1038/s41467-026-77924-z
+
+Tenenbaum, J. B., de Silva, V., & Langford, J. C. (2000). A global geometric framework for nonlinear dimensionality reduction. *Science, 290*(5500), 2319–2323.
 
 Toussaint, G. T. (1980). The relative neighbourhood graph of a finite planar set. *Pattern Recognition, 12*(4), 261–268.
 
 ## About the authors
 
-Héctor Maravillo develops mathematical and computational research involving proximity graphs. **[Confirm affiliation and biography.]**
+Héctor Maravillo works on computational geometry and proximity graphs at Universidad Autónoma Metropolitana (UAM), Mexico.
 
-Diego Villarreal de la Cerda contributes to ProximityGraphs and its computational development. **[Confirm affiliation and biography.]**
+Diego Villarreal de la Cerda works at T-Systems and contributes to the computational development of ProximityGraphs.
 
-Heriberto Espino-Montelongo studies actuarial science and data science at Universidad de las Américas Puebla and works on geometric and computational methods. **[Confirm preferred biography.]**
+Heriberto Espino-Montelongo studies stochastic geometry, spatial statistics, and computational mathematics at Universidad de las Américas Puebla.
 
-*Editorial note: The figures depict synthetic, illustrative data. Browser-edited geometries are recomputed independently of the Python package. The article has not been submitted to or endorsed by SIAM News; all authors must approve the byline and text before submission.*
+*Editorial note: Provisional author-approved-byline status; the article has not been submitted to SIAM News. All three figures use synthetic locations. The general mathematical applications described are not assertions of implemented, validated workflows in the package.*
