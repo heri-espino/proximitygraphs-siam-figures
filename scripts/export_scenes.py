@@ -16,6 +16,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import proximitygraphs as pg
 from matplotlib.patches import Circle, Polygon
+from scipy.spatial import Delaunay
 
 ROOT = Path(__file__).resolve().parents[1]
 DATA = ROOT / "site" / "data"
@@ -74,6 +75,28 @@ def cells(points):
     return result
 
 
+def triangulation_data(points):
+    """Planar Delaunay triangles plus circumradii for construction overlays.
+
+    The alpha-shape constructor uses this same Qhull Delaunay triangulation
+    with negative alpha; these diagnostic simplices do not replace it.
+    """
+    if len(points) < 3:
+        return []
+    triangles = Delaunay(points).simplices
+    out = []
+    for simplex in triangles:
+        i, j, k = [int(t) for t in simplex]
+        p, q, r = points[[i, j, k]]
+        a = float(np.linalg.norm(q - r))
+        b = float(np.linalg.norm(p - r))
+        c = float(np.linalg.norm(p - q))
+        det = float(abs(np.cross(q - p, r - p)))
+        radius = (a * b * c) / (2 * det) if det > 1e-12 else float("inf")
+        out.append({"vertices": sorted([i, j, k]), "r": round(radius, 9)})
+    return sorted(out, key=lambda t: tuple(t["vertices"]))
+
+
 def build():
     """Uses actual ProximityGraphs constructors, not browser approximations."""
     water=pg.SetPoints(WATER.copy())
@@ -90,23 +113,38 @@ def build():
         "voronoi":{
             "points":arr(WATER),"cells":cells(WATER),
             "adjacency":edges(pg.Voronoi(water)),
-            "delaunay":edges(pg.DelaunayG(water))
+            "delaunay":edges(pg.DelaunayG(water)),
+            "triangles":triangulation_data(WATER)
         },
-        "alpha":{"points":arr(HABITAT),"options":{}},
-        "beta":{"points":arr(BETA),"options":{}}
+        "alpha":{"points":arr(HABITAT),"triangles":triangulation_data(HABITAT),"options":{}},
+        "beta":{"points":arr(BETA),"options":{}},
+        "compare":{"points":arr(BETA),"options":{}}
     }
     hp=pg.SetPoints(HABITAT.copy())
     for a in ALPHAS:
         hull=pg.Alpha_Hull(hp, alpha=-float(a), n_points_per_arc=72)
+        shape=pg.Alpha_Shape(hp,alpha=-float(a))
+        radius=1/a
+        kept=[t["vertices"] for t in output["alpha"]["triangles"]
+              if t["r"] <= radius+1e-12]
         output["alpha"]["options"][str(a)]={
             "parameter_alpha":-a,"radius":1/a,
             "arcs":[arr(arc) for arc in hull.arcs],
-            "segments":edges(hull)
+            "segments":edges(hull),
+            "shape_edges":edges(shape),
+            "kept_triangles":kept
         }
     bp=pg.SetPoints(BETA.copy())
     for b in BETAS:
         graph=pg.Beta_Skeleton(bp,beta=float(b),type_region="lune",closed=False)
         output["beta"]["options"][str(b)]=edges(graph)
+    output["compare"]["options"]={
+        "delaunay":edges(pg.DelaunayG(bp)),
+        "gabriel":edges(pg.GG(bp)),
+        "rng":edges(pg.RNG(bp)),
+        "beta":output["beta"]["options"]["1.5"],
+        "alpha-shape":edges(pg.Alpha_Shape(bp,alpha=-4.0))
+    }
     return output
 
 
@@ -203,6 +241,11 @@ def render_sensors(s):
 
 def main():
     scene=build()
+    assert all(
+        scene["alpha"]["options"][str(a)]["shape_edges"] ==
+        scene["alpha"]["options"][str(a)]["segments"]
+        for a in ALPHAS
+    ), "Alpha_Shape and Alpha_Hull must have identical boundary segments"
     assert all(scene["alpha"]["options"][str(a)]["arcs"] for a in ALPHAS), (
         "A requested alpha value has no closed circular arcs; inspect the parameters."
     )
