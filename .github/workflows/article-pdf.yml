@@ -1,0 +1,66 @@
+name: Build editorial PDF from LaTeX
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'article/main.tex'
+      - 'site/assets/**'
+      - '.github/workflows/article-pdf.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: article-pdf-main
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout committed article and figure assets
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - name: Install LaTeX toolchain
+        run: |
+          sudo apt-get update -qq
+          sudo DEBIAN_FRONTEND=noninteractive apt-get install -y -qq \
+            texlive-latex-base texlive-latex-recommended \
+            texlive-latex-extra texlive-fonts-recommended poppler-utils
+      - name: Verify figure assets
+        run: |
+          test -s site/assets/figure01-water.png
+          test -s site/assets/figure02-habitat.png
+          test -s site/assets/figure03-sensors.png
+      - name: Compile polished editorial PDF
+        working-directory: article
+        run: |
+          pdflatex -interaction=nonstopmode -halt-on-error -file-line-error main.tex
+          pdflatex -interaction=nonstopmode -halt-on-error -file-line-error main.tex
+      - name: Verify real images and article content
+        run: |
+          pdfinfo article/main.pdf | grep -E '^Pages:|^Page size:'
+          pdftotext article/main.pdf - | grep -q 'Who Counts as a Neighbor'
+          pdftotext article/main.pdf - | grep -q 'ProximityGraphs'
+          pdfimages -list article/main.pdf | grep -E 'image'
+          mkdir -p article/output
+          cp article/main.pdf article/output/proximitygraphs-siam-news-draft.pdf
+      - name: Upload editorial proof artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: proximitygraphs-siam-news-proof
+          path: article/output/proximitygraphs-siam-news-draft.pdf
+      - name: Commit PDF proof into repository
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add article/output/proximitygraphs-siam-news-draft.pdf
+          if ! git diff --cached --quiet; then
+            git commit -m "Export SIAM News editorial PDF proof"
+            git pull --rebase origin main
+            git push origin HEAD:main
+          fi
