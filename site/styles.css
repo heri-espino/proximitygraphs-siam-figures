@@ -15,3 +15,7 @@ svg[data-mode="add"]{cursor:crosshair}
 svg[data-mode="delete"] .editable-site{cursor:not-allowed}
 svg .editable-site{pointer-events:all}
 @media(max-width:650px){.point-toolbar{gap:7px}.point-toolbar-label{flex-basis:100%}.tool-mode,.reset-points{padding:8px 10px}.reset-points{margin-left:0}}
+
+/* Preserve pointer streams during a drag on touch devices (avoid scroll cancellation). */
+#water-plot,#habitat-plot,#sensors-plot{touch-action:none}
+svg .editable-site:focus-visible{stroke:#be6c41;stroke-width:3}
