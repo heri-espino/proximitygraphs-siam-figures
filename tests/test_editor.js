@@ -10,7 +10,7 @@ const path=require("node:path");
 const vm=require("node:vm");
 const root=path.resolve(__dirname,"..");
 const context=vm.createContext({console});
-for(const file of ["site/editor.js","site/app.js"]){
+for(const file of ["site/editor.js","site/geometry-details.js","site/app.js"]){
   vm.runInContext(fs.readFileSync(path.join(root,file),"utf8"),context,{filename:file});
 }
 const scene=JSON.parse(fs.readFileSync(path.join(root,"site/data/scenes.json"),"utf8"));
@@ -59,6 +59,56 @@ function testBeta(){
   assert.notDeepEqual(normalizedEdges(context.betaEdges(moved,1.5)),
     normalizedEdges(scene.beta.options["1.5"]));
 }
+function testGeometryWitnesses(){
+  const points=scene.beta.points;
+  const pairs=context.allPointPairs(points);
+  assert.equal(pairs.length,points.length*(points.length-1)/2);
+  for(const beta of [1,1.25,1.5,1.75,2]){
+    const authoritative=new Set(normalizedEdges(scene.beta.options[String(beta)]));
+    for(const pair of pairs){
+      const report=context.betaPairDetails(points,beta,...pair);
+      assert.equal(report.valid,authoritative.has(pair.join(":")),
+        "Every beta witness must agree with the pinned library for β="+beta);
+      if(report.valid)assert.equal(report.blockers.length,0);
+      else assert.ok(report.blockers.length>0);
+    }
+  }
+  const blocked=context.findBlockedBetaPair(points,1.5);
+  assert.ok(blocked,"The default example should include a rejected pair.");
+  const witness=context.betaPairDetails(points,1.5,...blocked);
+  assert.equal(witness.valid,false);
+  assert.ok(witness.blockers.every(x=>x.index!==blocked[0]&&x.index!==blocked[1]));
+  const v=scene.voronoi.points[0],q=scene.voronoi.points[1];
+  const bis=context.bisectorClippedToUnitSquare(v,q);
+  assert.ok(bis && bis.length===2);
+  for(const x of bis){
+    assert.ok(x.every(t=>t>=0&&t<=1));
+    const d=Math.abs(Math.hypot(x[0]-v[0],x[1]-v[1])-
+      Math.hypot(x[0]-q[0],x[1]-q[1]));
+    assert.ok(d<1e-8,"Bisector points are equidistant from both sites.");
+  }
+}
+function testShapeAndComparison(){
+  const points=scene.alpha.points;
+  for(const alpha of [2,3,4,5]){
+    const exported=scene.alpha.options[String(alpha)];
+    const js=context.alphaSimplices(points,-alpha);
+    assertEdgeSets(js.boundary,exported.shape_edges,
+      "The alpha-shape boundary should match the actual Alpha_Shape class.");
+    assertEdgeSets(exported.shape_edges,exported.segments,
+      "Library alpha-hull straight segments must equal shape edges.");
+    assert.equal(js.kept.length,exported.kept_triangles.length);
+    for(const kept of js.kept)assert.ok(kept.r<=1/alpha+1e-12);
+    for(const rejected of js.discarded)assert.ok(rejected.r>1/alpha-1e-12);
+    assert.equal(context.allAlphaCircles(exported.arcs).length,exported.arcs.length);
+  }
+  const sample=scene.compare.points;
+  for(const key of ["delaunay","gabriel","rng","beta","alpha-shape"]){
+    assertEdgeSets(context.compareGraphEdges(sample,key),
+      scene.compare.options[key],
+      "Compare-panel graph "+key+" must match authoritative library.");
+  }
+}
 function testPointValidation(){
   const pts=[[.2,.2],[.5,.5]];
   assert.equal(context.validPoint(pts,[.8,.7]),true);
@@ -71,6 +121,10 @@ function testUI(){
   const html=fs.readFileSync(path.join(root,"site/index.html"),"utf8");
   const css=fs.readFileSync(path.join(root,"site/styles.css"),"utf8");
   assert.ok(html.indexOf('src="editor.js"') < html.indexOf('src="app.js"'));
+  assert.ok(html.includes('src="geometry-details.js"'));
+  for(const section of ["top","explore","water","habitat","sensors","compare","about"]){
+    assert.match(html,new RegExp('id="'+section+'"'),"Missing section "+section);
+  }
   for(const name of ["water","habitat","sensors"]){
     assert.match(html,new RegExp('data-editor-scene="'+name+'" data-mode="move"'));
     assert.match(html,new RegExp('data-editor-scene="'+name+'" data-mode="add"'));
@@ -82,11 +136,20 @@ function testUI(){
     assert.match(link,/target="_blank"/,"External links open in new tabs: "+link);
     assert.match(link,/rel="noopener noreferrer"/,"External links prevent opener access: "+link);
   }
+  for(const element of ["alpha-shape","alpha-all-circles","alpha-kept",
+    "beta-show-blocked","beta-invalid","beta-blockers","beta-disks",
+    "water-bisectors","water-circumcircle","compare-left","compare-right"]){
+    assert.match(html,new RegExp('id="'+element+'"'),"Missing control "+element);
+  }
+  assert.match(html,/data-editor-scene="sensors" data-mode="inspect"/);
   assert.ok(css.includes(".point-toolbar"));
+  assert.ok(css.includes(".studio"));
 }
 testDelaunay();
 testAlpha();
 testBeta();
+testGeometryWitnesses();
+testShapeAndComparison();
 testPointValidation();
 testUI();
-console.log("Browser geometry, point validation, and link behavior checks passed.");
+console.log("Construction witnesses, alpha shape, comparison, responsive sections and link checks passed.");
