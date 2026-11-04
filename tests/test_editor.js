@@ -14,7 +14,7 @@ for(const file of ["site/editor.js","site/app.js"]){
   vm.runInContext(fs.readFileSync(path.join(root,file),"utf8"),context,{filename:file});
 }
 const scene=JSON.parse(fs.readFileSync(path.join(root,"site/data/scenes.json"),"utf8"));
-const normalizedEdges=edges=>edges.map(edge=>edge.slice().sort((a,b)=>a-b).join(":")).sort();
+const normalizedEdges=edges=>Array.from(edges,edge=>Array.from(edge).sort((a,b)=>a-b).join(":")).sort();
 function assertEdgeSets(actual,expected,desc){
   assert.deepEqual(normalizedEdges(actual),normalizedEdges(expected),desc);
 }
