@@ -1,20 +1,20 @@
-# SIAM News editorial pitch — draft, NOT SENT
+# SIAM News pitch — revised after literature audit (NOT SENT)
 
-**Category:** Software and Programming  
-**Working title:** Who Counts as a Neighbor?  
-**Subtitle:** How ProximityGraphs Turns One Point Cloud into Many Mathematical Worlds  
-**Proposed byline (subject to all authors' approval):** Héctor Maravillo; Diego Villarreal de la Cerda; Heriberto Espino-Montelongo
+**Section:** Software and Programming  
+**Title:** Who Counts as a Neighbor?  
+**Subtitle:** From Empty Regions to AI, Topology, and Stochastic Geometry  
+**Proposed authors (approval pending):** Héctor Maravillo (Universidad Autónoma Metropolitana, Mexico); Diego Villarreal de la Cerda (T-Systems); Heriberto Espino-Montelongo (Universidad de las Américas Puebla)
 
-We propose a visually driven article about a simple question in computational geometry: **when should two points be connected?** Different definitions of neighborhood produce different models, even when the coordinates stay fixed. Our MIT-licensed Python library [ProximityGraphs](https://github.com/ProximityGraphs/ProximityGraphs) brings classical proximity constructions together and makes them accessible for reproducible comparison.
+A cloud of points has no edges until somebody defines a neighborhood. That choice controls everything downstream: how service areas are partitioned, whether a road-like network balances total length against detours, which local connections preserve a sampled manifold, which spatial voids persist, and what a learning algorithm can propagate between observations. Our open-source Python library **ProximityGraphs** makes these geometric choices reproducible and comparable on the same point cloud.
 
-The proposed ~1,000-word feature follows three illustrated, **synthetic** application scenarios: (1) Euclidean Voronoi service regions and Delaunay adjacency for hypothetical water-distribution stations, with historically careful context about John Snow's 1854 investigation; (2) circular alpha-hulls tracing hypothetical ecological observations, showing why curved boundaries depend on scale; and (3) beta-skeletons for hypothetical sensor locations, explaining how an empty lens determines which candidate links survive.
+We propose an approximately **1,150-word** SIAM News Software and Programming feature, supported by three static figures linked to an interactive companion. Readers can explore Euclidean Voronoi/Delaunay station allocation, circular alpha-hull shape reconstruction, and beta-skeleton empty-region adjacency. The examples use clearly labeled synthetic coordinates; none is presented as a validated field deployment.
 
-Each of the three print-ready figures has an editable [online companion](https://heri-espino.github.io/proximitygraphs-siam-figures/) where readers can drag, add, or delete points and inspect the geometric result. The original default figures were exported from ProximityGraphs; edited scenes are independently recomputed by the browser.
+The narrative connects these illustrations to **specific published literature**: adaptive Gabriel neighborhoods for manifold learning (Dyballa & Zucker, 2023); β-skeleton street-network tilings (Maravillo Gómez et al., 2023); the spatial-network length/route-efficiency trade-off (Aldous & Shun, 2010); homology recovery from random manifold samples (Niyogi, Smale & Weinberger, 2008); and graph-based filtered embedding search relevant to RAG (Iff et al., 2026). A compact stochastic-geometry equation, linked to Devroye's empty-region results, conveys the depth behind the figures.
 
-The goal is to teach the mathematical modeling choice first and invite readers to explore the open-source package second, following the tone of SIAM News's [*The Dynamics of Debt*](https://www.siam.org/publications/siam-news/articles/the-dynamics-of-debt/).
+The mathematics generalizes to \(\mathbb R^d\); the present software release primarily implements **planar** algorithms. The purpose of the article is scientific explanation, not a claim that the library itself implements manifold learning, persistent homology, AI retrieval, wireless routing, or all high-dimensional graph types.
 
-We welcome guidance on print versus online placement and whether links to our external interactive diagrams can accompany the three static images.
+The manuscript and graphics follow the [SIAM News style guide](https://www.siam.org/media/gfbjvzck/siam-news-info-and-style-guide.pdf), with ten or fewer references and three credited images.
 
-**Materials:** [Full feature](feature.md) · [LaTeX proof](main.tex) · [Library](https://github.com/ProximityGraphs/ProximityGraphs) · [Interactive figures](https://heri-espino.github.io/proximitygraphs-siam-figures/)
+**Review materials:** [Complete article](feature.md) · [Expanded literature audit](../docs/LITERATURE_EVIDENCE.md) · [Python library](https://github.com/ProximityGraphs/ProximityGraphs) · [Interactive figures](https://heri-espino.github.io/proximitygraphs-siam-figures/) · [LaTeX proof](main.tex).
 
-**Submission status:** No pitch or manuscript has been sent to SIAM. Confirm author order, names, affiliations, biography, rights, and editorial conditions first.
+We would welcome editorial guidance on online versus print presentation and links to external interactive figures. **This pitch has not been sent, and all three coauthors must approve the final byline and text before submission.**
