@@ -45,6 +45,39 @@ class GeometryTests(unittest.TestCase):
                 center = np.linalg.solve(mat, rhs)
                 self.assertAlmostEqual(float(np.linalg.norm(p-center)), 1/a, places=4)
 
+    def test_alpha_shapes_and_retained_simplices(self):
+        dataset = self.scenes["alpha"]
+        triangles = dataset["triangles"]
+        self.assertTrue(triangles)
+        for alpha in ALPHAS:
+            option = dataset["options"][str(alpha)]
+            self.assertEqual(option["segments"], option["shape_edges"])
+            boundary = set(map(tuple, option["shape_edges"]))
+            self.assertTrue(boundary)
+            for tri in option["kept_triangles"]:
+                self.assertEqual(len(tri), 3)
+                self.assertTrue(all(0 <= index < len(dataset["points"]) for index in tri))
+            computed = [
+                tri["vertices"] for tri in triangles
+                if tri["r"] <= 1 / alpha + 1e-12
+            ]
+            self.assertEqual(sorted(computed),
+                             sorted(option["kept_triangles"]))
+
+    def test_compare_reference_graphs(self):
+        compare = self.scenes["compare"]
+        self.assertEqual(len(compare["points"]), len(BETA))
+        keys = {"delaunay", "gabriel", "rng", "beta", "alpha-shape"}
+        self.assertEqual(set(compare["options"]), keys)
+        for edges in compare["options"].values():
+            self.assertTrue(all(0 <= a < b < len(BETA) for a, b in edges))
+        g = set(map(tuple, compare["options"]["gabriel"]))
+        r = set(map(tuple, compare["options"]["rng"]))
+        d = set(map(tuple, compare["options"]["delaunay"]))
+        self.assertTrue(r <= g <= d)
+        self.assertEqual(compare["options"]["beta"],
+                         self.scenes["beta"]["options"]["1.5"])
+
     def test_beta_edges_nested_for_increasing_beta(self):
         graphs = [set(map(tuple, self.scenes["beta"]["options"][str(b)]))
                   for b in BETAS]
