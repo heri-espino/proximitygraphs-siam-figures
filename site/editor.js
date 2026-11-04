@@ -76,7 +76,7 @@ function recomputeNotice(name) {
 }
 function setEditorMode(name,mode) {
   const editor=pointEditors[name];
-  if(!editor || !["move","add","delete"].includes(mode))return;
+  if(!editor || !["move","add","delete","inspect"].includes(mode) || (mode==="inspect" && name!=="sensors"))return;
   editor.mode=mode;
   editor.svg.dataset.mode=mode;
   for(const btn of document.querySelectorAll('[data-editor-scene="'+name+'"][data-mode]')){
@@ -86,7 +86,8 @@ function setEditorMode(name,mode) {
   help.textContent=({
     move:"Drag any point to move it. Click an edge or arc to inspect it.",
     add:"Click a blank spot inside the square to add a point.",
-    delete:"Click a point to remove it. Reset restores the original layout."
+    delete:"Click a point to remove it. Reset restores the original layout.",
+    inspect:"Click two distinct sensors to test their candidate edge and identify any blockers."
   })[mode];
 }
 function sceneCoords(svg,event) {
@@ -111,6 +112,7 @@ function refreshEditor(name) {
   if(name==="habitat")state.alphaArc=0;
   if(name==="sensors")state.betaEdge=null;
   editor.render();
+  if(name==="sensors" && typeof drawCompare==="function")drawCompare();
 }
 function resetEditor(name) {
   const editor=pointEditors[name];
@@ -120,9 +122,10 @@ function resetEditor(name) {
   editor.generation=(editor.generation||0)+1;
   if(name==="water")state.waterSite=0;
   if(name==="habitat")state.alphaArc=0;
-  if(name==="sensors")state.betaEdge=null;
+  if(name==="sensors"){state.betaEdge=null;state.betaPair=null;state.betaInspectFirst=null;}
   recomputeNotice(name);
   editor.render();
+  if(name==="sensors" && typeof drawCompare==="function")drawCompare();
 }
 function setupPointEditors(sceneData) {
   const defaults={
@@ -147,9 +150,14 @@ function setupPointEditors(sceneData) {
       const node=event.target.closest("[data-point-index]");
       if(!node)return;
       const index=Number(node.getAttribute("data-point-index"));
+      if(name==="sensors" && editor.mode==="inspect" &&
+          (event.key==="Enter"||event.key===" ")){
+        event.preventDefault();inspectBetaPoint(index);return;
+      }
       if(editor.mode==="delete" && (event.key==="Enter" || event.key==="Delete" || event.key==="Backspace")){
         event.preventDefault();
         editor.points.splice(index,1);
+        if(name==="sensors")state.betaPair=null;
         refreshEditor(name);
       } else if(editor.mode==="move" && event.key.startsWith("Arrow")){
         const steps={ArrowLeft:[-.012,0],ArrowRight:[.012,0],
@@ -167,6 +175,11 @@ function setupPointEditors(sceneData) {
       if(!coord || coord.some(x=>x<0 || x>1))return;
       const point=event.target.closest("[data-point-index]");
       const index=point ? Number(point.getAttribute("data-point-index")) : -1;
+      if(editor.mode==="inspect"){
+        event.preventDefault();
+        if(index>=0 && name==="sensors")inspectBetaPoint(index);
+        return;
+      }
       if(editor.mode==="add"){
         if(index>=0)return;
         if(editor.points.length>=EDIT_MAX){
@@ -183,6 +196,7 @@ function setupPointEditors(sceneData) {
       if(editor.mode==="delete"){
         if(index<0)return;
         editor.points.splice(index,1);
+        if(name==="sensors")state.betaPair=null;
         event.preventDefault();
         refreshEditor(name);
         return;
