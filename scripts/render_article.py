@@ -83,6 +83,7 @@ def inline_md(value: str) -> str:
         return f"ZZZPROXPLACEHOLDER{i}ZZZ"
 
     # First protect literal math, links and inline code, before escaping prose.
+    value = re.sub(r"\\\[[\s\S]*?\\\]", lambda m: hold(m.group(0)), value)
     value = re.sub(r"\\\([\s\S]*?\\\)", lambda m: hold(m.group(0)), value)
     value = re.sub(
         r"\[([^\]]+)\]\((https?://[^)]+)\)",
@@ -175,6 +176,8 @@ def main() -> None:
           "\n" + make_bios(source) + "\n" + FOOTER
     if "ZZZPROXPLACEHOLDER" in out:
         raise ValueError("Unresolved inline formatting placeholder in generated TeX")
+    if r"\textbackslash{}[" in out or r"\textbackslash{}]" in out:
+        raise ValueError("Escaped display-math delimiter in generated TeX")
     DESTINATION.write_text(out, encoding="utf-8")
     print(f"Rendered {DESTINATION.relative_to(ROOT)} from article/feature.md")
 
