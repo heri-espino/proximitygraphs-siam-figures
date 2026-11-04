@@ -56,9 +56,18 @@ function site(svg,p,i,selected,handler) {
   const v=xy(p);
   const c=el("circle",{cx:v[0],cy:v[1],r:selected?8:6.2,fill:selected?orange:teal,stroke:"#fff","stroke-width":2.4,class:"selectable editable-site",role:"button",tabindex:0,"data-point-index":i,"aria-label":"Select or drag site "+(i+1)},svg);
   el("title",{},c,"Site "+(i+1)+" · select to inspect");
+  // A larger transparent hit area keeps small scientific markers usable on touch screens.
+  const hit=el("circle",{cx:v[0],cy:v[1],r:18,fill:"transparent",
+    class:"selectable editable-site",role:"button",tabindex:0,
+    "data-point-index":i,"aria-label":"Site "+(i+1)+"; drag to move or use arrow keys"},svg);
+  el("title",{},hit,"Site "+(i+1)+" · drag to move, use edit controls to add or delete");
   if(handler){
-    c.addEventListener("click",function(){ handler(i); });
-    c.addEventListener("keydown",function(e){if(e.key==="Enter" || e.key===" "){e.preventDefault();handler(i);}});
+    for(const target of [c,hit]){
+      target.addEventListener("click",function(){handler(i);});
+      target.addEventListener("keydown",function(e){
+        if(e.key==="Enter" || e.key===" "){e.preventDefault();handler(i);}
+      });
+    }
   }
   return c;
 }
