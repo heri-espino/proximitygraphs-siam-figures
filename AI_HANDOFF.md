@@ -49,3 +49,18 @@ Produce a polished outreach article for SIAM News (Software and Programming), su
 - Added Node `tests/test_editor.js`: compare default browser geometry with authoritative pinned ProximityGraphs data, check altered inputs, verify circle radii, point separation and external link behavior. GitHub Actions executes Node and Python checks before Pages deployment.
 - Do not claim edited geometry comes from the Python library. Exported SVG and PNG depict the browser-rendered state.
 - Follow-up: test interaction visually on an actual mobile device, especially pointer capture, and confirm public Pages URL after final workflow. SIAM article is still a draft and not submitted.
+
+
+## SIAM News feature and library outreach (November 3–4, 2026)
+
+- **Readable feature:** \`article/feature.md\` (approximately 1,010 words excluding code, references and bios). This is the proposed SIAM News Software and Programming article, titled "Who Counts as a Neighbor? How ProximityGraphs Turns One Point Cloud into Many Mathematical Worlds."
+- **LaTeX proof:** \`article/main.tex\`, magazine-style rather than a research-journal template, incorporating three already-generated PNG scientific figures and hyperlinks to the interactive companion.
+- **Archived PDF:** \`article/output/proximitygraphs-siam-news-draft.pdf\`, compiled in GitHub Actions. Successful run: https://github.com/heri-espino/proximitygraphs-siam-figures/actions/runs/41768989183 . Automated PDF validation shows six US Letter pages and three embedded RGB images (on pages 2–4). This is an editorial **proof**, not an SIAM formatted/accepted article; visually proofread it manually before submission.
+- **Outreach kit:** \`article/marketing-kit.md\` provides accurate product positioning, editor pitch, PyPI and GitHub calls to action, and ready-to-review LinkedIn/newsletter/short-form copy. Nothing has been posted or sent.
+- **Updated pitch:** \`article/pitch.md\` matches the finished feature and stresses mathematical choices over promotional language.
+- **Website:** \`site/index.html\` has sharpened open-source library messaging, an installation CTA, and social metadata. Its three visuals remain illustrative and synthetic.
+- **Editorial preflight:** \`scripts/check_article.py\` checks article word-count range, 3 figures, <=10 references, required links and submission-status disclaimers.
+- The first PDF workflow (run 41768543329) compiled the manuscript but failed to commit it because main advanced concurrently; the revised workflow uses repeated fetch/rebase/push and run 41768989183 completed successfully.
+- PyPI installation was independently confirmed at https://pypi.org/project/proximitygraphs/ (version 0.1.0a2 is labeled pre-release). Avoid exaggerated performance/stability claims.
+- **Still needed from collaborators:** confirm author ordering and affiliations, biographies, rights/credits for figures, complete visual PDF proofreading, and approval to pitch or submit. Verify that editorial use and prior public draft availability are acceptable to SIAM.
+- SIAM's publication is a **newsjournal**, not peer-reviewed research. JOSS is a separate software-review pathway.

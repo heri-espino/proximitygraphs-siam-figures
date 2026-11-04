@@ -36,3 +36,11 @@ This repository is the source of truth for every editorial and computational art
 - Respect minimum spacing 0.008, normalized plot limits, 80-point cap, and touch-friendly hit areas. Preserve accessibility and prevent pointercancel by touch scrolling inside editing plots.
 - Validate browser logic with `node --check site/editor.js`, `node --check site/app.js`, and `node tests/test_editor.js`, in addition to the Python tests. CI must complete with success before claiming publication of site updates.
 - Links with external http(s) destinations use `target="_blank" rel="noopener noreferrer"`; in-page anchor links remain in same tab.
+
+
+## Article and promotional content (November 2026)
+- Keep \`article/feature.md\` and \`article/main.tex\` substantively synchronized. The MD article is the readable editorial draft; the LaTeX version produces a portable magazine-style proof.
+- Include only sourced, grounded library capabilities: PyPI \`proximitygraphs\` (currently a pre-release), MIT license, common point-set workflow, proximity-graph constructors, experiment helpers, optional GIS. Never promise performance advantages or production readiness without measurements.
+- The preflight \`scripts/check_article.py\` enforces approximately 800–1,400 words, 3 captions and <=10 references. The LaTeX workflow \`.github/workflows/article-pdf.yml\` compiles and commits the PDF proof under \`article/output/\`. Resolve Git push collisions with fetch/rebase retries.
+- \`article/marketing-kit.md\` contains draft public-facing outreach copy only. Do not claim material is posted, SIAM-approved, or accepted; never send or publish through external channels without authorization.
+- The proof PDF is an **editorial draft**, not SIAM's typeset galley. The final human author review must include typography, figure legibility, attribution, hyperlink functionality and reference accuracy.
