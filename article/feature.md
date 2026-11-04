@@ -5,6 +5,8 @@
 
 **Héctor Maravillo** — Universidad Autónoma Metropolitana (UAM), Mexico; **Diego Villarreal de la Cerda** — T-Systems; **Heriberto Espino-Montelongo** — Universidad de las Américas Puebla (UDLAP). *Byline and affiliations remain subject to the coauthors’ approval.*
 
+<!-- ARTICLE_BODY_START -->
+
 A cloud of points has no edges until someone defines what *neighbor* means. That definition determines which information can flow through a graph, which gaps count as meaningful, and which geometric structures survive noise. It may also determine the output of a graph neural network or the topology inferred from a dataset. **[ProximityGraphs](https://github.com/ProximityGraphs/ProximityGraphs)** is an open-source Python toolkit that turns this modeling decision into an experiment: construct multiple geometric graphs on the same point set, compare their structure, and examine what changes when the neighborhood rule changes.
 
 ## From locations to structure
