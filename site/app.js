@@ -54,7 +54,7 @@ function background(svg, tag) {
 }
 function site(svg,p,i,selected,handler) {
   const v=xy(p);
-  const c=el("circle",{cx:v[0],cy:v[1],r:selected?8:6.2,fill:selected?orange:teal,stroke:"#fff","stroke-width":2.4,class:"selectable",role:"button",tabindex:0,"aria-label":"Select site "+(i+1)},svg);
+  const c=el("circle",{cx:v[0],cy:v[1],r:selected?8:6.2,fill:selected?orange:teal,stroke:"#fff","stroke-width":2.4,class:"selectable editable-site",role:"button",tabindex:0,"data-point-index":i,"aria-label":"Select or drag site "+(i+1)},svg);
   el("title",{},c,"Site "+(i+1)+" · select to inspect");
   if(handler){
     c.addEventListener("click",function(){ handler(i); });
@@ -99,14 +99,7 @@ function circumcircle(a,b,c){
   const center=[ux,uy];return {center:center,r:dist(a,center)};
 }
 function delaunayTriangles(points){
-  const tris=[];
-  for(let i=0;i<points.length;i++)for(let j=i+1;j<points.length;j++)for(let k=j+1;k<points.length;k++){
-    const circle=circumcircle(points[i],points[j],points[k]);
-    if(!circle)continue;
-    const empty=points.every(function(p,l){return l===i||l===j||l===k||dist(p,circle.center)>=circle.r-1e-8;});
-    if(empty)tris.push({vertices:[i,j,k],r:circle.r});
-  }
-  return tris;
+  return triangulate(points);
 }
 function trianglesEdges(tris){
   const seen=new Map();
@@ -182,9 +175,10 @@ function arcCircle(arc){
 }
 function drawWater(){
   const svg=document.getElementById("water-plot"),source=dataset&&dataset.voronoi;
-  const points=source?source.points:waterPoints;
-  const poly=source?source.cells:cells(points);
-  const edges=source?source.delaunay:trianglesEdges(delaunayTriangles(points));
+  const points=editablePoints("water",source?source.points:waterPoints);
+  const poly=source&&!edited("water")?source.cells:cells(points);
+  const edges=source&&!edited("water")?source.delaunay:
+    (points.length===2?[[0,1]]:trianglesEdges(delaunayTriangles(points)));
   background(svg,"01 / nearest-site partition");
   if(document.getElementById("water-cells").checked){
     const palette=["#e0edf0","#e7e8de","#d8e7e0","#eae2d7","#deedf2","#f2e9df","#e1e9d7","#e6e6ed","#f3e7e4","#deede8","#e7eaf1","#f3eadf"];
@@ -197,12 +191,15 @@ function drawWater(){
     edges.forEach(function(e){segment(svg,points[e[0]],points[e[1]],"#a66b47",2.1,.72);});
   points.forEach(function(p,i){site(svg,p,i,i===state.waterSite,function(v){state.waterSite=v;drawWater();});});
   document.getElementById("water-stat").textContent=points.length+" sites · "+edges.length+" Delaunay edges";
-  document.getElementById("water-note").textContent="Selected: station "+(state.waterSite+1)+". Its cell contains positions closer to this station than to any other (Euclidean distance).";
+  document.getElementById("water-note").textContent=points.length?
+    "Selected: station "+(state.waterSite+1)+". Its cell contains locations closest to it in Euclidean distance.":
+    "No stations remain. Select Add to place a new point.";
 }
 function drawHabitat(){
   const svg=document.getElementById("habitat-plot"),source=dataset&&dataset.alpha;
-  const points=source?source.points:habitatPoints;
-  const alpha=alphaValues[state.alphaIndex],shape=source?source.options[String(alpha)]:fallbackAlpha(points,-alpha);
+  const points=editablePoints("habitat",source?source.points:habitatPoints);
+  const alpha=alphaValues[state.alphaIndex],
+    shape=source&&!edited("habitat")?source.options[String(alpha)]:fallbackAlpha(points,-alpha);
   const arcs=shape&&shape.arcs?shape.arcs:[];
   background(svg,"02 / circular-arc alpha-hull");
   document.getElementById("alpha-value").textContent="α = −"+alpha+" · R = "+(1/alpha).toFixed(3);
@@ -222,14 +219,14 @@ function drawHabitat(){
       el("title",{},line,"Boundary arc "+(i+1));
     });
   }
-  points.forEach(function(p,i){const v=xy(p);el("circle",{cx:v[0],cy:v[1],r:4.4,fill:dark,stroke:"#fff","stroke-width":1.5},svg);});
+  points.forEach(function(p,i){site(svg,p,i,false);});
   document.getElementById("habitat-stat").textContent=arcs.length+" arcs · "+points.length+" observations";
   document.getElementById("habitat-note").textContent=arcs.length?"Highlighted arc "+(state.alphaArc+1)+" of "+arcs.length+" · circle radius "+(1/alpha).toFixed(3)+" normalized units.":"No closed boundary at this scale; adjust α.";
 }
 function drawSensors(){
   const svg=document.getElementById("sensors-plot"),source=dataset&&dataset.beta;
-  const points=source?source.points:betaPoints,beta=betaValues[state.betaIndex];
-  const edges=source?source.options[String(beta)]:betaEdges(points,beta);
+  const points=editablePoints("sensors",source?source.points:betaPoints),beta=betaValues[state.betaIndex];
+  const edges=source&&!edited("sensors")?source.options[String(beta)]:betaEdges(points,beta);
   background(svg,"03 / empty-lune proximity");
   document.getElementById("beta-value").textContent="β = "+beta;
   if(!state.betaEdge || !edges.some(function(e){return edgeKey(e[0],e[1])===edgeKey(state.betaEdge[0],state.betaEdge[1]);}))
@@ -301,10 +298,15 @@ async function start(){
     const loaded=await response.json();
     if(loaded.format_version!==1 || !loaded.voronoi||!loaded.alpha||!loaded.beta)throw new Error("Incomplete generated data");
     dataset=loaded;
-    document.getElementById("source-status").textContent="Graph geometry: exported by ProximityGraphs · "+(loaded.metadata&&loaded.metadata.library_version||"version not reported")+". Changes select precomputed library outputs.";
+    document.getElementById("source-status").textContent="Original geometries: ProximityGraphs "+(loaded.metadata&&loaded.metadata.library_version||"version not reported")+". Modified point sets are recomputed locally in JavaScript.";
   }catch(error){
     document.getElementById("source-status").textContent="Browser preview (independent geometry implementation). Run the documented Python generator to replace this with ProximityGraphs exports.";
   }
+  setupPointEditors(dataset);
   drawWater();drawHabitat();drawSensors();
 }
-document.addEventListener("DOMContentLoaded",start);
+if(typeof document!=="undefined")document.addEventListener("DOMContentLoaded",start);
+if(typeof module!=="undefined" && module.exports){
+  module.exports={circumcircle,delaunayTriangles,trianglesEdges,betaEdges,cells,
+    fallbackAlpha,arcCircle,alphaValues,betaValues,waterPoints,betaPoints,habitatPoints};
+}
