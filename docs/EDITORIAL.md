@@ -32,7 +32,7 @@ SIAM permits videos in online articles and links in the web version. The guides 
 ## Completed proof and outreach deliverables (2026-11-03)
 - Proposed feature: [article/feature.md](../article/feature.md) (~1,010 words).
 - Matching TeX proof: [article/main.tex](../article/main.tex); PDF: [article/output/proximitygraphs-siam-news-draft.pdf](../article/output/proximitygraphs-siam-news-draft.pdf).
-- Verified successful [LaTeX and image-embedding workflow](https://github.com/heri-espino/proximitygraphs-siam-figures/actions/runs/41768989183): US Letter, 6 pages, 3 embedded raster figures. Do not call this a final SIAM layout.
+- Verified successful [revised LaTeX and image-embedding workflow](https://github.com/heri-espino/proximitygraphs-siam-figures/actions/runs/41769671238): US Letter, 5 pages, 3 embedded raster figures. The initial proof had an orphan sixth page and was corrected after rendering. Do not call this a final SIAM layout.
 - Separate [outreach kit](../article/marketing-kit.md) with optional marketing copy; no external posts or editorial emails have been sent.
 - Prioritize truthful scientific communication over hard product advertising. The manuscript explains geometric choices, demonstrates synthetic use cases, and offers verified GitHub/PyPI calls to action.
 - Pending: in-person visual proof, consent/affiliations, final caption permissions, SIAM editor pitch approval and confirmation of editorial policy on publicly accessible drafts.
