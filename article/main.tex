@@ -38,7 +38,7 @@
 {\scriptsize\color{ProxGray} Affiliations and byline subject to coauthor approval; not submitted.}
 \end{center}
 \vspace{3pt}\hrule\vspace{8pt}
-A cloud of points has no edges until someone defines what \emph{neighbor} means. That definition determines which information can flow through a graph, which gaps count as meaningful, and which geometric structures survive noise. It may also determine the output of a graph neural network or the topology inferred from a dataset. \textbf{ZZZPROXPLACEHOLDER0ZZZ} is an open-source Python toolkit that turns this modeling decision into an experiment: construct multiple geometric graphs on the same point set, compare their structure, and examine what changes when the neighborhood rule changes.
+A cloud of points has no edges until someone defines what \emph{neighbor} means. That definition determines which information can flow through a graph, which gaps count as meaningful, and which geometric structures survive noise. It may also determine the output of a graph neural network or the topology inferred from a dataset. \textbf{\href{https://github.com/ProximityGraphs/ProximityGraphs}{ProximityGraphs}} is an open-source Python toolkit that turns this modeling decision into an experiment: construct multiple geometric graphs on the same point set, compare their structure, and examine what changes when the neighborhood rule changes.
 
 \section*{From locations to structure}
 
@@ -50,7 +50,7 @@ The same tension governs road networks. Aldous and Shun (2010) quantify the conf
 
 Away from geography, images, gene-expression profiles, astronomical spectra, and learned embeddings are points in high-dimensional feature spaces. Costa and Hero (2004) estimate intrinsic dimension and entropy from geodesic minimum-spanning-tree lengths; more directly, Dyballa and Zucker (2023) initialize adaptive manifold neighborhoods with a \textbf{Gabriel graph}, then sparsify it to improve geodesic computation and dimension estimation. Choosing neighbors is already part of the learning algorithm, not merely a preliminary visualization.
 
-The general mathematical setting is \textbf{ZZZPROXPLACEHOLDER0ZZZ, for any ZZZPROXPLACEHOLDER1ZZZ}: points can be geographic coordinates, 3D positions, gene-expression measurements, or learned embeddings. The current \textbf{ProximityGraphs implementation concentrates on planar algorithms}; although its point-set container accommodates other coordinate dimensions, not every graph constructor is yet dimension-general.
+The general mathematical setting is \textbf{\(\mathbb R^d\), for any \(d\geq1\)}: points can be geographic coordinates, 3D positions, gene-expression measurements, or learned embeddings. The current \textbf{ProximityGraphs implementation concentrates on planar algorithms}; although its point-set container accommodates other coordinate dimensions, not every graph constructor is yet dimension-general.
 
 \section*{Shape, holes, and scale}
 
