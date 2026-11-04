@@ -91,7 +91,7 @@ def triangulation_data(points):
         a = float(np.linalg.norm(q - r))
         b = float(np.linalg.norm(p - r))
         c = float(np.linalg.norm(p - q))
-        det = float(abs(np.cross(q - p, r - p)))
+        det = float(abs((q[0]-p[0])*(r[1]-p[1]) - (q[1]-p[1])*(r[0]-p[0])))
         radius = (a * b * c) / (2 * det) if det > 1e-12 else float("inf")
         out.append({"vertices": sorted([i, j, k]), "r": round(radius, 9)})
     return sorted(out, key=lambda t: tuple(t["vertices"]))
