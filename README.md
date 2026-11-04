@@ -124,3 +124,20 @@ The revised [canonical article](article/feature.md) draws on **61 extracted rese
 The mathematical theory extends to Euclidean spaces of arbitrary dimension, but the present package's graph constructors are **primarily planar**; do not describe the library as an implemented high-dimensional ANN, manifold-learning, or topological-inference engine.
 
 Proposed authors and affiliations: Héctor Maravillo (Universidad Autónoma Metropolitana, Mexico), Diego Villarreal de la Cerda (T-Systems), Heriberto Espino-Montelongo (Universidad de las Américas Puebla). Final editorial approval is pending.
+
+
+## Visual proof and browser-level validation
+
+The GitHub Actions [visual QA workflow](https://github.com/heri-espino/proximitygraphs-siam-figures/actions/workflows/visual-qa.yml) uses pinned Playwright and Chromium to inspect the live browser rendering from committed site sources, capture **seven reproducible screenshots**, and archive them under [\`docs/visual-qa/\`](docs/visual-qa/). The [machine-readable visual summary](docs/visual-qa/visual-summary.json) records which tests passed.
+
+| Voronoi construction | Alpha construction | Blocked β-skeleton candidate |
+| --- | --- | --- |
+| ![Voronoi bisectors and Delaunay circumcircle](docs/visual-qa/02-voronoi-construction.png) | ![Alpha-shape boundary, alpha-hull arcs and all supporting circles](docs/visual-qa/03-alpha-construction.png) | ![Rejected beta pair with two disks and a blocking point](docs/visual-qa/04-beta-blocked.png) |
+
+Recreate the browser screenshots locally (after installing Playwright 1.57.0 and Chromium) with:
+
+\`\`\`bash
+python tests/visual_smoke.py --output docs/visual-qa
+\`\`\`
+
+The visual QA job also tests touch-sized/mobile layout, individual sensor-pair inspection, dragging, and graph comparisons. Automated screenshots are reproducible figures and remain committed; they are **not** measurements of performance or validated deployment case studies.
