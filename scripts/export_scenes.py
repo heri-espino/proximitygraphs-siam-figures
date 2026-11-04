@@ -157,6 +157,17 @@ def render_habitat(s):
         p=np.asarray(a)
         ax.plot(p[:,0],p[:,1],c="#be6c41" if i==0 else "#166b75",
                 lw=3 if i==0 else 2.2,zorder=5,solid_capstyle="round")
+    # Draw the supporting circle of the highlighted library-generated arc.
+    exemplar=np.asarray(s["alpha"]["options"]["4"]["arcs"][0])
+    p,q,r=exemplar[[0,len(exemplar)//2,-1]]
+    matrix=2*np.stack([q-p,r-p])
+    rhs=np.array([q@q-p@p,r@r-p@p])
+    if abs(np.linalg.det(matrix))>1e-12:
+        center=np.linalg.solve(matrix,rhs)
+        ax.add_patch(Circle(center,np.linalg.norm(p-center),
+                            fill=False,edgecolor="#bd895f",linestyle="--",
+                            linewidth=1.4,alpha=.78,zorder=3))
+        ax.scatter([center[0]],[center[1]],s=24,color="#bd895f",zorder=4)
     sites(ax,HABITAT)
     save(fig,"figure02-habitat")
 
@@ -168,7 +179,14 @@ def render_sensors(s):
     if selected:
         p,q=BETA[selected[0]],BETA[selected[1]]
         h=.75
-        for center in [h*p+(1-h)*q,h*q+(1-h)*p]:
+        c1,c2=h*p+(1-h)*q,h*q+(1-h)*p
+        xs=np.linspace(0,1,300)
+        X,Y=np.meshgrid(xs,xs)
+        within=((X-c1[0])**2+(Y-c1[1])**2<=(h*np.linalg.norm(p-q))**2) & (
+            (X-c2[0])**2+(Y-c2[1])**2<=(h*np.linalg.norm(p-q))**2)
+        ax.contourf(X,Y,within.astype(float),levels=[.5,1.5],
+                    colors=["#dca781"],alpha=.27,zorder=2)
+        for center in [c1,c2]:
             ax.add_patch(Circle(center,h*np.linalg.norm(p-q),edgecolor="#bd895f",
                                 fill=False,linestyle="--",linewidth=1.1,zorder=3))
     for i,j in graph:
