@@ -88,3 +88,25 @@ Nothing has been sent to SIAM editors or posted to social media. Final byline, b
 - Downloaded the actual workflow PDF and rendered it with Poppler (November 4, 2026): **4 US Letter pages**, all three figures embedded, display equations visibly correct, no clipped or orphaned content observed. Generated and archived PDF: \`article/output/proximitygraphs-siam-news-draft.pdf\`. Local checked copy: \`/mnt/data/siam_literature_final/proximitygraphs-siam-news-draft.pdf\`.
 - The generator had two separate issues caught by rendered inspection: nested bold-link placeholders and escaped display math. Both were fixed; \`scripts/render_article.py\` fails fast on unresolved placeholders or escaped math delimiters.
 - The article remains a scientific outreach **draft**, not a SIAM-reviewed, accepted, or published article. Final byline/affiliations, actual contributor permissions, external figure-link editorial policy and submission still require author approval.
+
+
+## November 4, 2026 — Implemented navigable construction laboratory
+
+User asked for direct implementation in \`heri-espino/proximitygraphs-siam-figures\` of a sectioned website, expanded construction overlays, an alpha-shape layer, alpha-hull supporting circles, beta-skeleton blocking points, and a graph comparison. Work was committed directly to \`main\` (no PR/merge).
+
+**Site**: \`site/index.html\` now contains Home/overview cards, Voronoi & Delaunay, Alpha-Hull & Alpha-Shape, β-Skeleton, Compare, About. The original \`#water\`, \`#habitat\`, \`#sensors\` anchors are preserved. Each studio has a control rail, large SVG plot, computation inspector and SVG/PNG exports. \`site/styles.css\` implements responsive desktop/mobile layouts.
+
+**Mathematics**: \`site/geometry-details.js\` adds pure reusable alpha simplices, exact open-lune blockers, clipped Voronoi bisectors, circle witnesses and graph comparisons. \`site/app.js\` renders selected Delaunay circumcircles, all/selected alpha-hull supporting circles, alpha-shape straight edges, kept Delaunay triangles, rejected beta candidate pairs with a visible blocking site and its two disks. \`site/editor.js\` preserves add/delete/drag/reset and adds two-click arbitrary pair inspection in beta mode. The compare section reuses sensor coordinates for two graphs selected from Delaunay, Gabriel, RNG, β=1.5, alpha-shape.
+
+**Authoritative source**: \`scripts/export_scenes.py\` uses pinned \`pg.Alpha_Shape\`, \`pg.Alpha_Hull\`, \`pg.Voronoi\`, \`pg.DelaunayG\`, \`pg.GG\`, \`pg.RNG\`, \`pg.Beta_Skeleton\`, plus SciPy Delaunay triangulations for construction witnesses. Default source JSON and static PNG/SVG figures are committed by CI. Recalculated edited plots are separate JavaScript geometry, visibly labeled. NumPy 2.5 removed the old 2D \`np.cross\` behavior; exporter now uses an explicit 2D determinant.
+
+**Validation**:
+- \`tests/test_editor.js\`: all beta candidate statuses agree with pinned Python across five beta values; alpha-shape edges, kept triangles, circles, comparison graphs, Voronoi bisectors, controls, anchors, and safe external links.
+- \`tests/test_geometry.py\`: Python default graph/shape boundaries, shape/alpha-hull equality, triangles and graph inclusion.
+- Successful mathematical CI and GitHub Pages deployment: https://github.com/heri-espino/proximitygraphs-siam-figures/actions/runs/41915500770 .
+- A full site preview was downloaded from that CI run and inspected in a headless Chromium browser using local embedded site JS/CSS/JSON. Checked desktop and mobile screenshots, constructing all alpha circles, beta rejected example with blocker, two-click inspection, drag/edit updates, compare graph switching; no browser JavaScript exceptions were observed.
+- Added \`tests/visual_smoke.py\` and \`.github/workflows/visual-qa.yml\` so future agents can reproduce these browser tests and commit screenshots/summary under \`docs/visual-qa/\`. Verify workflow run success and that screenshots were archived, then include exact run URL in the handoff.
+
+**Docs**: \`docs/CONSTRUCTIONS.md\` contains all predicates and scope limits; README has navigable sections and reproducibility commands. The SIAM draft and PDF were not altered or submitted. All plotted points are synthetic; pages must never imply field validation.
+
+**Pending**: Review final screenshot artifacts and visual smoke CI result, confirm latest GitHub Pages deployment; fix any errors before claiming completion. Optional improvements later: add an alpha-complex filtration to a research demo (not the same as alpha-shape), extend constructions to generic high-dimensional APIs, validate real use cases separately.
