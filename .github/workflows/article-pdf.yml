@@ -5,6 +5,8 @@ on:
     branches: [main]
     paths:
       - 'article/main.tex'
+      - 'article/feature.md'
+      - 'scripts/render_article.py'
       - 'site/assets/**'
       - '.github/workflows/article-pdf.yml'
   workflow_dispatch:
@@ -35,6 +37,8 @@ jobs:
           test -s site/assets/figure01-water.png
           test -s site/assets/figure02-habitat.png
           test -s site/assets/figure03-sensors.png
+      - name: Render LaTeX deterministically from the canonical Markdown article
+        run: python scripts/render_article.py
       - name: Compile polished editorial PDF
         working-directory: article
         run: |
@@ -58,9 +62,9 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add article/output/proximitygraphs-siam-news-draft.pdf
+          git add article/main.tex article/output/proximitygraphs-siam-news-draft.pdf
           if ! git diff --cached --quiet; then
-            git commit -m "Export SIAM News editorial PDF proof"
+            git commit -m "Render canonical article as TeX and archive editorial PDF proof"
             for attempt in 1 2 3 4 5 6 7 8; do
               git fetch origin main
               git rebase origin/main
