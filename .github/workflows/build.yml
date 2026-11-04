@@ -50,7 +50,17 @@ jobs:
           git add -f site/data/scenes.json site/assets/
           if ! git diff --cached --quiet; then
             git commit -m "Export checked ProximityGraphs data and print figures"
-            git push origin HEAD:main
+            for attempt in 1 2 3 4 5 6 7 8; do
+              git fetch origin main
+              git rebase origin/main
+              if git push origin HEAD:main; then
+                exit 0
+              fi
+              echo "Concurrent update to main; retrying figures push ($attempt/8)"
+              sleep 3
+            done
+            echo "Failed to publish verified figures after 8 attempts"
+            exit 1
           fi
 
   # GitHub Pages requires a human owner to enable Source: GitHub Actions.

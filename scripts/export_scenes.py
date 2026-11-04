@@ -10,6 +10,8 @@ from pathlib import Path
 
 import matplotlib
 matplotlib.use("Agg")
+# Stable SVG element IDs and metadata across independent CI builds.
+matplotlib.rcParams["svg.hashsalt"] = "proximitygraphs-siam-figures-2026"
 import matplotlib.pyplot as plt
 import numpy as np
 import proximitygraphs as pg
@@ -129,8 +131,9 @@ def sites(ax,points):
 def save(fig,stem):
     ASSETS.mkdir(parents=True,exist_ok=True)
     for ext in ("png","svg"):
+        kwargs = {"dpi": 240, "metadata": {"Software": "ProximityGraphs-SIAM"}} if ext == "png" else {"metadata": {"Date": None}}
         fig.savefig(ASSETS/(stem+"."+ext),bbox_inches="tight",
-                    facecolor="white",**({"dpi":240} if ext=="png" else {}))
+                    facecolor="white",**kwargs)
     plt.close(fig)
 
 
