@@ -475,6 +475,11 @@ function drawSensors(){
         stroke:"#c65a50","stroke-width":1.6},svg);
     }
     site(svg,p,i,selected);
+    if(blocker&&hasLayer("beta-blockers")){
+      const v=xy(p);
+      el("circle",{cx:v[0],cy:v[1],r:6.3,fill:"#c54f4b",
+        stroke:"#fff","stroke-width":1.8,"pointer-events":"none"},svg);
+    }
   });
   if(state.betaInspectFirst!==null && points[state.betaInspectFirst]){
     const v=xy(points[state.betaInspectFirst]);

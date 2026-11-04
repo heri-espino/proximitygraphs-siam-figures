@@ -78,6 +78,8 @@ function setEditorMode(name,mode) {
   const editor=pointEditors[name];
   if(!editor || !["move","add","delete","inspect"].includes(mode) || (mode==="inspect" && name!=="sensors"))return;
   editor.mode=mode;
+  if(name==="sensors" && mode!=="inspect" && typeof state!=="undefined")
+    state.betaInspectFirst=null;
   editor.svg.dataset.mode=mode;
   for(const btn of document.querySelectorAll('[data-editor-scene="'+name+'"][data-mode]')){
     btn.setAttribute("aria-pressed",String(btn.dataset.mode===mode));
