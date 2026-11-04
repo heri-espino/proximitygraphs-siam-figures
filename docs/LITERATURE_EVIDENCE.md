@@ -31,7 +31,7 @@
 | Work | Grounded connection | Do not overclaim |
 | --- | --- | --- |
 | [Niyogi, Smale & Weinberger, 2008](https://github.com/heri-espino/ProximityGraphs-ML/blob/main/literature/extracted/Niyogi-Smale-Weinberger_2008_Homology-Submanifolds-Random-Samples.md) | Recovery of manifold homology from random samples under curvature/reach and sample-size assumptions | Distinguish union-of-balls / topological inference from the *displayed* circular alpha-hull |
-| [Edelsbrunner et al., 1983](https://github.com/heri-espino/ProximityGraphs-ML/blob/main/literature/extracted/Niyogi-Smale-Weinberger_2008_Homology-Submanifolds-Random-Samples.md) | Classical alpha-shape background | The article's alpha-hull is related but not identical to an alpha complex filtration |
+| [Cardinal et al., 2009](https://github.com/heri-espino/ProximityGraphs-ML/blob/main/literature/extracted/Cardinal_2009_Empty-Region-Graphs.md) | General empty-region graph theory | Preserve the distinction between graph construction, topological complexes and statistical inference |
 | [Iff et al., SIGIR 2026](https://github.com/heri-espino/ProximityGraphs-ML/blob/main/literature/extracted/Iff_2026_Filtered-Approximate-NN-Search-Embeddings.md) | More than 2.7M arXiv abstract transformer embeddings and multiple nearest-neighbor filtering methods | *Related high-dimensional research*, not a built-in HNSW/filtered ANN/vector DB feature |
 | [Eppstein, 2002](https://github.com/heri-espino/ProximityGraphs-ML/blob/main/literature/extracted/Eppstein_2002_Beta-Skeletons-Unbounded-Dilation.md) | β-skeletons have unbounded dilation in worst-case point configurations | Sparsity does not automatically guarantee short routes or good geometric-spanner stretch |
 | [Hayashi et al., 2026](https://github.com/heri-espino/ProximityGraphs-ML/blob/main/literature/extracted/Hayashi-Nomoto-Suzuki_2026_Curvature-Corrections-Random-Geometric-Graphs.md) | Curvature corrections for *intrinsic distance-threshold* random geometric graphs, not identical to ambient empty-region rules | Do not describe as a proved curvature correction for this library's beta-skeleton/ERG models |
@@ -50,12 +50,12 @@ The **SIAM News article** is constrained to approximately 10 references. The abo
 
 ## 5. Editorial selection
 
-The revised `article/feature.md` cites or discusses ten highly useful sources, chosen to form four causal links in prose:
+The revised \`article/feature.md\` cites or discusses ten highly useful sources, chosen to form four causal links in prose:
 
-[
-	ext{point cloud}	o	ext{neighborhood rule}	o
-{	ext{routes},	ext{geodesics},	ext{topology},	ext{search}}
-	o	ext{statistical observables}.
-]
+\[
+\text{point cloud}\to\text{neighborhood rule}
+\to\{\text{routes},\text{geodesics},\text{topology},\text{search}\}
+\to\text{statistical observables}.
+\]
 
 The outreach article should not advertise curvature-estimation theorems that have not yet been proved in the separate ProximityGraphs-ML research project. Similarly, it must distinguish general (d)-dimensional mathematics from present **primarily planar** implementations in the software library.
