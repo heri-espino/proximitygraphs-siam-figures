@@ -6,6 +6,7 @@
   <meta name="description" content="Explore Voronoi cells, circular alpha-hulls, and beta-skeletons with reproducible interactive diagrams for a proposed SIAM News feature on ProximityGraphs.">
   <title>Who Counts as a Neighbor? | ProximityGraphs interactive figures</title>
   <link rel="stylesheet" href="styles.css">
+  <script src="editor.js" defer></script>
   <script src="app.js" defer></script>
 </head>
 <body>
@@ -21,7 +22,7 @@
       <h1 id="page-title">Who counts as a neighbor?</h1>
       <p class="lead">The same points can describe service areas, smooth spatial boundaries, or sparse networks. Change a geometric rule and watch the mathematical answer change.</p>
       <p class="disclaimer">All plotted sites and observations are <strong>synthetic</strong> teaching examples, not historical pump coordinates, ecological field measurements, or validated wireless links.</p>
-      <div class="hero-actions"><a class="button primary" href="#water">Explore the figures</a><a class="button" href="https://github.com/ProximityGraphs/ProximityGraphs">The Python library</a><a class="button" href="https://github.com/heri-espino/proximitygraphs-siam-figures">Article source</a></div>
+      <div class="hero-actions"><a class="button primary" href="#water">Explore the figures</a><a class="button" href="https://github.com/ProximityGraphs/ProximityGraphs" target="_blank" rel="noopener noreferrer">The Python library</a><a class="button" href="https://github.com/heri-espino/proximitygraphs-siam-figures" target="_blank" rel="noopener noreferrer">Article source</a></div>
       <p class="source" id="source-status" role="status">Loading mathematical figure data…</p>
     </section>
 
@@ -29,6 +30,16 @@
       <div class="section-num">FIGURE 01 <span>SPATIAL ALLOCATION</span></div>
       <h2 id="water-title">Who gets water from where?</h2>
       <p class="intro">Every point in a Voronoi cell is closest—in <em>straight-line distance</em>—to one service station. The Delaunay dual connects neighboring stations whose cells share an edge.</p>
+
+      <div class="point-toolbar" role="group" aria-label="Edit water points">
+        <span class="point-toolbar-label">Edit points</span>
+        <button type="button" class="tool-mode" data-editor-scene="water" data-mode="move" aria-pressed="true">Move</button>
+        <button type="button" class="tool-mode" data-editor-scene="water" data-mode="add" aria-pressed="false">+ Add</button>
+        <button type="button" class="tool-mode" data-editor-scene="water" data-mode="delete" aria-pressed="false">− Delete</button>
+        <button type="button" class="reset-points" data-editor-reset="water">Reset points</button>
+        <span id="water-edit-help" class="point-help" aria-live="polite">Drag any point to move it. Click an edge or arc to inspect it.</span>
+      </div>
+      <p id="water-edit-source" class="geometry-source">Original points · geometry exported by the ProximityGraphs Python library.</p>
       <div class="chart-frame"><div class="chart-top"><span>Hypothetical water distribution stations</span><span class="legend"><i class="dot"></i> Site <i class="line"></i> Delaunay dual</span></div><svg id="water-plot" role="img" aria-label="Interactive Voronoi service cells showing the nearest hypothetical water stations" viewBox="0 0 920 600"></svg></div>
       <div class="controls">
         <label><input id="water-dual" type="checkbox"> Reveal Delaunay connections</label>
@@ -45,6 +56,16 @@
       <div class="section-num">FIGURE 02 <span>GEOMETRIC MORPHOLOGY</span></div>
       <h2 id="habitat-title">Where does a spatial footprint end?</h2>
       <p class="intro">A convex hull cannot represent inlets and notches. An <em>alpha-hull</em> uses circular arcs to trace an observation cloud at a chosen scale. Select an arc to reveal its supporting circle.</p>
+
+      <div class="point-toolbar" role="group" aria-label="Edit habitat points">
+        <span class="point-toolbar-label">Edit points</span>
+        <button type="button" class="tool-mode" data-editor-scene="habitat" data-mode="move" aria-pressed="true">Move</button>
+        <button type="button" class="tool-mode" data-editor-scene="habitat" data-mode="add" aria-pressed="false">+ Add</button>
+        <button type="button" class="tool-mode" data-editor-scene="habitat" data-mode="delete" aria-pressed="false">− Delete</button>
+        <button type="button" class="reset-points" data-editor-reset="habitat">Reset points</button>
+        <span id="habitat-edit-help" class="point-help" aria-live="polite">Drag any point to move it. Click an edge or arc to inspect it.</span>
+      </div>
+      <p id="habitat-edit-source" class="geometry-source">Original points · geometry exported by the ProximityGraphs Python library.</p>
       <div class="chart-frame"><div class="chart-top"><span>Hypothetical habitat observation coordinates</span><span class="legend"><i class="dot"></i> Observation <i class="curve"></i> Circular arc</span></div><svg id="habitat-plot" role="img" aria-label="Interactive circular alpha-hull boundary around synthetic ecological observations" viewBox="0 0 920 600"></svg></div>
       <div class="controls">
         <label for="alpha-slider">Curvature scale <strong id="alpha-value">α = −4</strong></label>
@@ -62,6 +83,16 @@
       <div class="section-num">FIGURE 03 <span>SPARSE NETWORKS</span></div>
       <h2 id="sensors-title">Which sensors deserve a connection?</h2>
       <p class="intro">For an edge to belong to a beta-skeleton, its associated lens-shaped region must contain no other sites. Increasing β changes this emptiness condition and can remove candidate links.</p>
+
+      <div class="point-toolbar" role="group" aria-label="Edit sensors points">
+        <span class="point-toolbar-label">Edit points</span>
+        <button type="button" class="tool-mode" data-editor-scene="sensors" data-mode="move" aria-pressed="true">Move</button>
+        <button type="button" class="tool-mode" data-editor-scene="sensors" data-mode="add" aria-pressed="false">+ Add</button>
+        <button type="button" class="tool-mode" data-editor-scene="sensors" data-mode="delete" aria-pressed="false">− Delete</button>
+        <button type="button" class="reset-points" data-editor-reset="sensors">Reset points</button>
+        <span id="sensors-edit-help" class="point-help" aria-live="polite">Drag any point to move it. Click an edge or arc to inspect it.</span>
+      </div>
+      <p id="sensors-edit-source" class="geometry-source">Original points · geometry exported by the ProximityGraphs Python library.</p>
       <div class="chart-frame"><div class="chart-top"><span>Hypothetical wireless sensor positions</span><span class="legend"><i class="dot"></i> Sensor <i class="line"></i> Candidate link</span></div><svg id="sensors-plot" role="img" aria-label="Interactive beta skeleton graph with selected empty lune between two synthetic wireless sensors" viewBox="0 0 920 600"></svg></div>
       <div class="controls">
         <label for="beta-slider">Empty-region parameter <strong id="beta-value">β = 1.5</strong></label>
@@ -77,9 +108,9 @@
 
     <section class="methods">
       <h2>From the library to the browser</h2>
-      <p>Reproducible Python code computes the authoritative graph edges and alpha-hull arcs with <code>proximitygraphs</code>; the browser then displays the exported geometry. Voronoi polygons are computed separately by half-plane clipping because the library's Voronoi class provides <em>site adjacency</em>, not polygon vertices. Until the generated JSON is present, the website uses a clearly labeled self-contained browser preview.</p>
+      <p>Reproducible Python code computes the authoritative graph edges and alpha-hull arcs with <code>proximitygraphs</code>; the browser then displays the exported geometry. When points are moved, added, or deleted, the website instead recomputes the results locally in JavaScript and labels them as edited. Voronoi polygons are computed separately by half-plane clipping because the library's Voronoi class provides <em>site adjacency</em>, not polygon vertices. Until the generated JSON is present, the website uses a clearly labeled self-contained browser preview.</p>
       <p>Every SVG can be exported as a static figure for an editorial PDF, while its interactive counterpart remains available here. This website and manuscript are independent of SIAM and have not been submitted to or endorsed by the publication.</p>
-      <div class="links"><a href="https://www.siam.org/publications/siam-news/articles/the-dynamics-of-debt/">Comparable SIAM News software feature</a><a href="https://github.com/heri-espino/proximitygraphs-siam-figures/tree/main/article">LaTeX article draft</a><a href="https://github.com/heri-espino/proximitygraphs-siam-figures/tree/main/scripts">Reproduction scripts</a></div>
+      <div class="links"><a href="https://www.siam.org/publications/siam-news/articles/the-dynamics-of-debt/" target="_blank" rel="noopener noreferrer">Comparable SIAM News software feature</a><a href="https://github.com/heri-espino/proximitygraphs-siam-figures/tree/main/article" target="_blank" rel="noopener noreferrer">LaTeX article draft</a><a href="https://github.com/heri-espino/proximitygraphs-siam-figures/tree/main/scripts" target="_blank" rel="noopener noreferrer">Reproduction scripts</a></div>
     </section>
   </main>
   <footer><div class="wrap"><span>ProximityGraphs · Mathematical software outreach, draft project</span><span>Synthetic figures · No real-world decisions should be based on these examples</span></div></footer>
