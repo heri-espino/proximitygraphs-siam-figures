@@ -23,7 +23,7 @@ PREAMBLE = r"""% AUTO-GENERATED from article/feature.md by scripts/render_articl
 \usepackage[T1]{fontenc}
 \usepackage[utf8]{inputenc}
 \usepackage[margin=20mm]{geometry}
-\usepackage{lmodern,microtype,graphicx,amsmath,amssym,xcolor,parskip,hyperref,caption,float}
+\usepackage{lmodern,microtype,graphicx,amsmath,amssymb,xcolor,parskip,hyperref,caption,float}
 \definecolor{ProxTeal}{HTML}{166B75}
 \definecolor{ProxInk}{HTML}{253C49}
 \definecolor{ProxGray}{HTML}{60717B}
