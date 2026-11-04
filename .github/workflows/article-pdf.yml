@@ -61,6 +61,15 @@ jobs:
           git add article/output/proximitygraphs-siam-news-draft.pdf
           if ! git diff --cached --quiet; then
             git commit -m "Export SIAM News editorial PDF proof"
-            git pull --rebase origin main
-            git push origin HEAD:main
+            for attempt in 1 2 3 4 5 6 7 8; do
+              git fetch origin main
+              git rebase origin/main
+              if git push origin HEAD:main; then
+                exit 0
+              fi
+              echo "Concurrent update to main; retrying rebased PDF commit ($attempt/8)"
+              sleep 3
+            done
+            echo "Could not publish PDF proof after 8 attempts"
+            exit 1
           fi
