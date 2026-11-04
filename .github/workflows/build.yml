@@ -42,6 +42,11 @@ jobs:
           path: |
             site/data/scenes.json
             site/assets/
+      - name: Upload complete interactive website for visual inspection
+        uses: actions/upload-artifact@v4
+        with:
+          name: proximitygraphs-siam-site-preview
+          path: site/
       - name: Commit verified generated results
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         run: |
