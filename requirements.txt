@@ -1,0 +1,7 @@
+# Generate figures using the actual ProximityGraphs library.
+# Library repository inspected at d1a216d7255cbebea68dcaad6a97382168a3ec55.
+# Install from its public repository for reproducible code, not a mutable PyPI latest.
+git+https://github.com/ProximityGraphs/ProximityGraphs.git@d1a216d7255cbebea68dcaad6a97382168a3ec55
+numpy>=1.26
+scipy>=1.11
+matplotlib>=3.8
