@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Explore Voronoi cells, circular alpha-hulls, and beta-skeletons with reproducible interactive diagrams for a proposed SIAM News feature on ProximityGraphs.">
+  <title>Who Counts as a Neighbor? | ProximityGraphs interactive figures</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="app.js" defer></script>
+</head>
+<body>
+  <header class="masthead">
+    <div class="wrap">
+      <div class="brand"><span class="mark">PG</span><span>ProximityGraphs <span class="muted">/ Interactive companion</span></span></div>
+      <nav aria-label="Figure navigation"><a href="#water">01 Water access</a><a href="#habitat">02 Curved boundaries</a><a href="#sensors">03 Sensor links</a></nav>
+    </div>
+  </header>
+  <main class="wrap">
+    <section class="hero" aria-labelledby="page-title">
+      <p class="eyebrow">Computational geometry · Software and Programming · Proposed SIAM News companion</p>
+      <h1 id="page-title">Who counts as a neighbor?</h1>
+      <p class="lead">The same points can describe service areas, smooth spatial boundaries, or sparse networks. Change a geometric rule and watch the mathematical answer change.</p>
+      <p class="disclaimer">All plotted sites and observations are <strong>synthetic</strong> teaching examples, not historical pump coordinates, ecological field measurements, or validated wireless links.</p>
+      <div class="hero-actions"><a class="button primary" href="#water">Explore the figures</a><a class="button" href="https://github.com/ProximityGraphs/ProximityGraphs">The Python library</a><a class="button" href="https://github.com/heri-espino/proximitygraphs-siam-figures">Article source</a></div>
+      <p class="source" id="source-status" role="status">Loading mathematical figure data…</p>
+    </section>
+
+    <section id="water" class="exhibit" aria-labelledby="water-title">
+      <div class="section-num">FIGURE 01 <span>SPATIAL ALLOCATION</span></div>
+      <h2 id="water-title">Who gets water from where?</h2>
+      <p class="intro">Every point in a Voronoi cell is closest—in <em>straight-line distance</em>—to one service station. The Delaunay dual connects neighboring stations whose cells share an edge.</p>
+      <div class="chart-frame"><div class="chart-top"><span>Hypothetical water distribution stations</span><span class="legend"><i class="dot"></i> Site <i class="line"></i> Delaunay dual</span></div><svg id="water-plot" role="img" aria-label="Interactive Voronoi service cells showing the nearest hypothetical water stations" viewBox="0 0 920 600"></svg></div>
+      <div class="controls">
+        <label><input id="water-dual" type="checkbox"> Reveal Delaunay connections</label>
+        <label><input id="water-cells" type="checkbox" checked> Show service regions</label>
+        <span id="water-stat" class="stat" aria-live="polite"></span>
+        <button type="button" class="export" data-export="water-plot">Export SVG</button>
+        <button type="button" class="export" data-png="water-plot">Export PNG</button>
+      </div>
+      <p class="annotation" id="water-note" aria-live="polite">Select any site to highlight its service area.</p>
+      <p class="context">Historical connection: John Snow mapped cholera deaths and water pumps in London in 1854. Later researchers used Voronoi-style regions and walking-distance models to analyze pump catchments. This is a new synthetic Euclidean illustration—not Snow's map or his original method.</p>
+    </section>
+
+    <section id="habitat" class="exhibit" aria-labelledby="habitat-title">
+      <div class="section-num">FIGURE 02 <span>GEOMETRIC MORPHOLOGY</span></div>
+      <h2 id="habitat-title">Where does a spatial footprint end?</h2>
+      <p class="intro">A convex hull cannot represent inlets and notches. An <em>alpha-hull</em> uses circular arcs to trace an observation cloud at a chosen scale. Select an arc to reveal its supporting circle.</p>
+      <div class="chart-frame"><div class="chart-top"><span>Hypothetical habitat observation coordinates</span><span class="legend"><i class="dot"></i> Observation <i class="curve"></i> Circular arc</span></div><svg id="habitat-plot" role="img" aria-label="Interactive circular alpha-hull boundary around synthetic ecological observations" viewBox="0 0 920 600"></svg></div>
+      <div class="controls">
+        <label for="alpha-slider">Curvature scale <strong id="alpha-value">α = −4</strong></label>
+        <input id="alpha-slider" type="range" min="0" max="3" step="1" value="1">
+        <label><input id="alpha-circle" type="checkbox" checked> Show supporting circle</label>
+        <span id="habitat-stat" class="stat" aria-live="polite"></span>
+        <button type="button" class="export" data-export="habitat-plot">Export SVG</button>
+        <button type="button" class="export" data-png="habitat-plot">Export PNG</button>
+      </div>
+      <p class="annotation" id="habitat-note" aria-live="polite">Select an arc to reveal the defining circle. Negative α gives outward arcs in this library.</p>
+      <p class="context">Interpretation: the reconstructed contour is a geometric summary of sampled locations, not an estimated habitat probability, species range, or uncertainty interval. An ecological interpretation would require a sampling model and validation.</p>
+    </section>
+
+    <section id="sensors" class="exhibit" aria-labelledby="sensors-title">
+      <div class="section-num">FIGURE 03 <span>SPARSE NETWORKS</span></div>
+      <h2 id="sensors-title">Which sensors deserve a connection?</h2>
+      <p class="intro">For an edge to belong to a beta-skeleton, its associated lens-shaped region must contain no other sites. Increasing β changes this emptiness condition and can remove candidate links.</p>
+      <div class="chart-frame"><div class="chart-top"><span>Hypothetical wireless sensor positions</span><span class="legend"><i class="dot"></i> Sensor <i class="line"></i> Candidate link</span></div><svg id="sensors-plot" role="img" aria-label="Interactive beta skeleton graph with selected empty lune between two synthetic wireless sensors" viewBox="0 0 920 600"></svg></div>
+      <div class="controls">
+        <label for="beta-slider">Empty-region parameter <strong id="beta-value">β = 1.5</strong></label>
+        <input id="beta-slider" type="range" min="0" max="4" step="1" value="2">
+        <label><input id="beta-lune" type="checkbox" checked> Show empty lens</label>
+        <span id="sensors-stat" class="stat" aria-live="polite"></span>
+        <button type="button" class="export" data-export="sensors-plot">Export SVG</button>
+        <button type="button" class="export" data-png="sensors-plot">Export PNG</button>
+      </div>
+      <p class="annotation" id="sensors-note" aria-live="polite">Select a link to inspect the empty region responsible for that geometric connection.</p>
+      <p class="context">Interpretation: this graph only tests Euclidean geometry. Actual wireless design also requires interference, range, terrain, reliability, routing and power constraints; these links are not claims of physical connectivity.</p>
+    </section>
+
+    <section class="methods">
+      <h2>From the library to the browser</h2>
+      <p>Reproducible Python code computes the authoritative graph edges and alpha-hull arcs with <code>proximitygraphs</code>; the browser then displays the exported geometry. Voronoi polygons are computed separately by half-plane clipping because the library's Voronoi class provides <em>site adjacency</em>, not polygon vertices. Until the generated JSON is present, the website uses a clearly labeled self-contained browser preview.</p>
+      <p>Every SVG can be exported as a static figure for an editorial PDF, while its interactive counterpart remains available here. This website and manuscript are independent of SIAM and have not been submitted to or endorsed by the publication.</p>
+      <div class="links"><a href="https://www.siam.org/publications/siam-news/articles/the-dynamics-of-debt/">Comparable SIAM News software feature</a><a href="https://github.com/heri-espino/proximitygraphs-siam-figures/tree/main/article">LaTeX article draft</a><a href="https://github.com/heri-espino/proximitygraphs-siam-figures/tree/main/scripts">Reproduction scripts</a></div>
+    </section>
+  </main>
+  <footer><div class="wrap"><span>ProximityGraphs · Mathematical software outreach, draft project</span><span>Synthetic figures · No real-world decisions should be based on these examples</span></div></footer>
+</body>
+</html>
