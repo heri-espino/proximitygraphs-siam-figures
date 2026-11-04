@@ -13,7 +13,9 @@ Voronoi diagrams divide space by the nearest site; their Delaunay dual connects 
 
 **Figure 1.** *Service areas and their dual network.* Synthetic water stations, Euclidean Voronoi cells, and Delaunay edges. Move a station, add another, or inspect which cells exchange territory. [Explore the interactive geometry](https://heri-espino.github.io/proximitygraphs-siam-figures/#water).
 
-Geometry also structures observations that cannot conveniently be placed on a map. In an astronomical catalog, observations are points in a space of measured features; in single-cell biology, coordinates and molecular markers describe a tissue; in robotics, LiDAR returns millions of 3D samples. Converting these locations to neighborhoods supplies the computational substrate for local estimation, spatial clustering, graph signal processing, and mesh-based simulation. A particularly concrete example appeared in 2026: the **SpaCEy** explainable graph-neural-network model constructs Delaunay graphs between tissue cells to learn spatial patterns associated with clinical outcomes (Rifaioglu et al., 2026). The geometry specifies which cells can exchange information; the learning algorithm decides what to infer from it.
+The same tension governs road networks. Aldous and Shun (2010) quantify the conflict between construction length and travel efficiency, while Maravillo Gómez and collaborators (2023) show how β-skeletons recover idealized cyclic street tilings and approximate real urban patterns. Sparse adjacency thus encodes more than appearance: it determines whether useful routes require costly detours.
+
+Away from geography, images, gene-expression profiles, astronomical spectra, and learned embeddings are points in high-dimensional feature spaces. Costa and Hero (2004) estimate intrinsic dimension and entropy from geodesic minimum-spanning-tree lengths; more directly, Dyballa and Zucker (2023) initialize adaptive manifold neighborhoods with a **Gabriel graph**, then sparsify it to improve geodesic computation and dimension estimation. Choosing neighbors is already part of the learning algorithm, not merely a preliminary visualization.
 
 The general mathematical setting is **\(\mathbb R^d\), for any \(d\geq1\)**: points can be geographic coordinates, 3D positions, gene-expression measurements, or learned embeddings. The current **ProximityGraphs implementation concentrates on planar algorithms**; although its point-set container accommodates other coordinate dimensions, not every graph constructor is yet dimension-general.
 
@@ -23,7 +25,7 @@ A convex hull covers a point cloud but hides indentations. Alpha-shapes and circ
 
 **Figure 2.** *An envelope made from circles.* A circular alpha-hull around synthetic ecological observations; selecting an arc reveals its supporting circle, while changing \(\alpha\) changes the scale. [Manipulate the boundary](https://heri-espino.github.io/proximitygraphs-siam-figures/#habitat).
 
-The connection to topology goes deeper than an outline. **Alpha complexes**, related to—but mathematically distinct from—the plotted alpha-hulls, form a filtration as the scale varies. Persistent homology can then follow connected components, loops, and higher-dimensional voids: features useful when studying molecular cavities, brain-imaging point clouds, porous structures, or the shape of a learned latent space. Likewise, Isomap replaces straight-line distances with shortest paths on a neighborhood graph to reconstruct nonlinear manifolds (Tenenbaum et al., 2000). In both settings, **the topology or geodesic geometry discovered downstream depends on which neighborhoods were constructed upstream**. ProximityGraphs offers a way to compare such graph choices; it does not itself claim to compute persistent homology or perform manifold learning.
+Topology makes the scale question more consequential. **Alpha complexes**, related to but distinct from the displayed alpha-hulls, form filtrations in which persistent homology tracks connected components, loops, and higher-dimensional voids. Niyogi, Smale, and Weinberger (2008) establish conditions under which homology of an unknown manifold can be recovered reliably from random samples. Such ideas connect molecular cavities, porous materials, brain imaging, and the topology of learned representations. Graph geodesics similarly underpin nonlinear dimensionality reduction, where one misplaced edge can create a false shortcut between manifold folds. **The inferred structure is conditional on the neighborhood model.** ProximityGraphs provides graph constructions for investigating that choice, not a built-in persistent-homology engine.
 
 ## Empty regions as computational decisions
 
@@ -35,7 +37,7 @@ The inclusions expose different degrees of geometric sparsity, which matters for
 
 **Figure 3.** *An edge justified by emptiness.* Synthetic sensor locations with a beta-skeleton and its defining lens. Adding a point inside that lens may eliminate the selected edge. [Explore the empty-region test](https://heri-espino.github.io/proximitygraphs-siam-figures/#sensors).
 
-This notion of selective adjacency is also consequential in AI. A graph neural network aggregates messages over chosen edges; different neighborhood rules therefore impose different **inductive biases**—assumptions about which observations should influence one another. In manifold learning, a bridge between nearby but separate structures can create an artificial geodesic shortcut. In graph-based vector search, navigable small-world graphs connect high-dimensional embeddings so that approximate nearest-neighbor queries can traverse only part of a database (Malkov & Yashunin, 2020), a mechanism relevant to retrieval systems and recommendation pipelines. Such indexes are **related research applications of proximity graphs**, not HNSW features provided by the present library.
+This selective adjacency reaches AI systems through **inductive bias**: in a graph neural network, the edges define which objects exchange messages. In transformer-based search, neighborhood structures support approximate retrieval of relevant text, images, and other embeddings; Iff and collaborators (2026) benchmark filtered nearest-neighbor methods on embeddings from more than 2.7 million research papers, a setting relevant to retrieval-augmented generation and recommendation. The underlying question is shared—**which neighbors preserve useful information without making every pair adjacent?**—but ProximityGraphs is a geometric-graph toolkit, not a transformer index or a vector database.
 
 ## One-line stochastic geometry
 
@@ -45,7 +47,7 @@ What happens when the sites themselves are random? Devroye (1988) studied empty-
 \qquad
 \mathbb E[\deg]=\frac{v_d}{a}.
 \]
-Thus **shape enters through a unit-region volume, and the mean degree does not depend on point intensity** under this homogeneous model. In two dimensions, the Gabriel graph has mean degree **4**; the relative neighborhood graph has mean degree approximately **2.558**. Penrose and Yukich (2001) further studied central limit theorems for geometric-graph statistics, including total edge length and component counts under specified random-point models. The same constructions therefore connect visual geometry to sampling theory, uncertainty quantification, and statistical tests for spatial organization.
+Thus **shape enters through a unit-region volume, and the mean degree does not depend on point intensity** under this homogeneous model. In two dimensions, the Gabriel graph has mean degree **4**; the relative neighborhood graph has mean degree approximately **2.558**. Penrose and Yukich (2013) show that many local geometric statistics of random samples on a smooth manifold have limiting laws governed by Poisson processes on its intrinsic-dimensional tangent planes. This connects ambient coordinates, hidden dimension, and statistical uncertainty, although curvature corrections beyond the tangent limit remain a separate mathematical problem.
 
 ## A geometry laboratory in Python
 
@@ -57,23 +59,25 @@ The [interactive companion](https://heri-espino.github.io/proximitygraphs-siam-f
 
 ## References
 
+Aldous, D. J., & Shun, J. (2010). Connected spatial networks over random points and a route-length statistic. *Statistical Science, 25*(3), 275–288. https://doi.org/10.1214/10-STS335
+
+Costa, J. A., & Hero, A. O. (2004). Geodesic entropic graphs for dimension and entropy estimation in manifold learning. *IEEE Transactions on Signal Processing, 52*(8), 2210–2221. https://doi.org/10.1109/TSP.2004.831130
+
 Devroye, L. (1988). The expected size of some graphs in computational geometry. *Computers & Mathematics with Applications, 15*(1), 53–64.
+
+Dyballa, L., & Zucker, S. W. (2023). IAN: Iterated adaptive neighborhoods for manifold learning and dimensionality estimation. *Neural Computation, 35*(3), 453–524. https://doi.org/10.1162/neco_a_01566
 
 Edelsbrunner, H., Kirkpatrick, D. G., & Seidel, R. (1983). On the shape of a set of points in the plane. *IEEE Transactions on Information Theory, 29*(4), 551–559.
 
-Gabriel, K. R., & Sokal, R. R. (1969). A new statistical approach to geographic variation analysis. *Systematic Zoology, 18*(3), 259–278.
+Iff, P., Brügger, P., Chrapek, M., Kochergin, D., Besta, M., & Hoefler, T. (2026). Benchmarking filtered approximate nearest neighbor search algorithms on transformer-based embedding vectors. *Proceedings of SIGIR 2026*, 610–622. https://doi.org/10.1145/3805712.3809731
 
-Malkov, Y. A., & Yashunin, D. A. (2020). Efficient and robust approximate nearest neighbor search using hierarchical navigable small world graphs. *IEEE Transactions on Pattern Analysis and Machine Intelligence, 42*(4), 824–836.
+Maravillo Gómez, H. S., Calvillo Vives, G., & Treviño Aguilar, E. (2023). Recovering cyclic tilings through β-skeletons. *Procedia Computer Science, 223*, 343–351. https://doi.org/10.1016/j.procs.2023.08.246
 
 Maravillo, H., Villarreal de la Cerda, D., & Espino-Montelongo, H. (2026). *ProximityGraphs* [Computer software]. Zenodo. https://doi.org/10.5281/zenodo.21088183
 
-Penrose, M. D., & Yukich, J. E. (2001). Central limit theorems for some graphs in computational geometry. *Annals of Applied Probability, 11*(4), 1005–1041.
+Niyogi, P., Smale, S., & Weinberger, S. (2008). Finding the homology of submanifolds with high confidence from random samples. *Discrete & Computational Geometry, 39*, 419–441. https://doi.org/10.1007/s00454-008-9053-2
 
-Rifaioglu, A. S., Ervin, E. H., Sarigun, A., et al. (2026). SpaCEy links spatial tissue patterns to clinical outcomes using explainable graph neural networks. *Nature Communications, 17*, 10232. https://doi.org/10.1038/s41467-026-77924-z
-
-Tenenbaum, J. B., de Silva, V., & Langford, J. C. (2000). A global geometric framework for nonlinear dimensionality reduction. *Science, 290*(5500), 2319–2323.
-
-Toussaint, G. T. (1980). The relative neighbourhood graph of a finite planar set. *Pattern Recognition, 12*(4), 261–268.
+Penrose, M. D., & Yukich, J. E. (2013). Limit theory for point processes in manifolds. *Annals of Applied Probability, 23*(6), 2161–2211. https://doi.org/10.1214/12-AAP897
 
 ## About the authors
 
@@ -81,6 +85,6 @@ Héctor Maravillo works on computational geometry and proximity graphs at Univer
 
 Diego Villarreal de la Cerda works at T-Systems and contributes to the computational development of ProximityGraphs.
 
-Heriberto Espino-Montelongo studies stochastic geometry, spatial statistics, and computational mathematics at Universidad de las Américas Puebla.
+Heriberto Espino-Montelongo develops mathematical research in geometric probability, stochastic geometry, and spatial networks at Universidad de las Américas Puebla.
 
 *Editorial note: Provisional author-approved-byline status; the article has not been submitted to SIAM News. All three figures use synthetic locations. The general mathematical applications described are not assertions of implemented, validated workflows in the package.*
