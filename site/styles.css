@@ -19,3 +19,8 @@ svg .editable-site{pointer-events:all}
 /* Preserve pointer streams during a drag on touch devices (avoid scroll cancellation). */
 #water-plot,#habitat-plot,#sensors-plot{touch-action:none}
 svg .editable-site:focus-visible{stroke:#be6c41;stroke-width:3}
+
+/* Clear installation prompt to connect the interactive demo with the actual package. */
+.install-hint{display:flex;align-items:center;gap:11px;flex-wrap:wrap;font-size:13px;font-weight:600;color:var(--ink);margin:24px 0 0}
+.install-hint code{padding:7px 11px;background:#e7f1f1;border:1px solid #c6dedd;color:#175c64;border-radius:7px;font-size:13px;user-select:all}
+.install-hint span{font-size:11px;color:var(--sub);font-weight:400}
