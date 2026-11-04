@@ -66,3 +66,17 @@ Produce a polished outreach article for SIAM News (Software and Programming), su
 - SIAM's publication is a **newsjournal**, not peer-reviewed research. JOSS is a separate software-review pathway.
 
 - Final PDF was rendered at 120 dpi and visually inspected as a five-page montage. Figures and text were visible without clipping; the first six-page proof was rejected due to an orphan note page and duplicated bibliography heading. No further layout changes needed for this magazine-style editorial proof.
+
+## November 4, 2026 — Dense mathematical article informed by ProximityGraphs-ML
+
+The user requested a far denser SIAM News Software and Programming article: general d-dimensional geometric theory (with transparent present-day software limits), Devroye's expected degree in a line, AI / ML / topology / computation / spatial applications woven into prose instead of a list, and improved biographies. Author-affiliation updates supplied directly: **Héctor Maravillo — Universidad Autónoma Metropolitana (UAM), Mexico; Diego Villarreal de la Cerda — T-Systems; Heriberto Espino-Montelongo — Universidad de las Américas Puebla**. These still require author approval for editorial submission.
+
+The user then linked the separate research literature corpus https://github.com/heri-espino/ProximityGraphs-ML/tree/main/literature/extracted : **61 extracted Markdown papers**, approximately **6.8 MB**, with corresponding PDFs and source indices. I inspected the ProximityGraphs-ML README, handoff, roadmap, novelty context and selected excerpts.
+
+New source audit: \`docs/LITERATURE_EVIDENCE.md\` distinguishes direct documented applications from broader analogies and unimplemented ProximityGraphs functions. Core works: Dyballa–Zucker 2023 (Gabriel graph initializes IAN adaptive manifold learning), Costa–Hero 2004 (geodesic MST dimension/entropy), Aldous–Shun 2010 (network length versus route efficiency), Maravillo Gómez et al. 2023 (β-skeleton urban tilings), Iff et al. SIGIR 2026 (filtered ANN on transformer embeddings), Niyogi–Smale–Weinberger 2008 (manifold homology from samples), Devroye 1988 (expected size), Penrose–Yukich 2013 (tangent-Poisson limit). The research manuscript in ProximityGraphs-ML explicitly warns that curvature corrections remain **unproved targets**, not completed results.
+
+Canonical revised manuscript: \`article/feature.md\`, approx 1,150 words before references and author bios, exactly ten scholarly references, three figures linked to GitHub Pages. New editorial pitch: \`article/pitch.md\`. Present-day library implementation concentrates on planar algorithms, whereas the mathematical theory generalizes to Euclidean dimensions d≥1.
+
+**Reproducible source:** \`scripts/render_article.py\` generates \`article/main.tex\` from \`article/feature.md\`, including figures, bibliography, authors, and links. The article GitHub Actions workflow compiles and archives \`article/output/proximitygraphs-siam-news-draft.pdf\`. The first renderer failed because it mistakenly used \`amssym\` rather than the correct \`amssymb\` LaTeX package; that error was corrected. The next proof exposed nested Markdown link placeholders (e.g. bold ProximityGraphs link). The renderer now restores nested placeholders in reverse allocation order and raises on unresolved \`ZZZPROXPLACEHOLDER\` tokens. Check final workflow run and PDF contents for success, and visually inspect pages.
+
+Nothing has been sent to SIAM editors or posted to social media. Final byline, biographies, rights, and PDF proofreading require human sign-off.
