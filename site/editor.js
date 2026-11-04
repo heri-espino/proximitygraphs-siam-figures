@@ -70,7 +70,9 @@ function recomputeNotice(name) {
   if(!editor || !element)return;
   element.textContent=editor.dirty ?
     "Edited points · recalculated locally in the browser (not a new ProximityGraphs library export)." :
-    "Original points · geometry exported by the ProximityGraphs Python library.";
+    (typeof dataset!=="undefined" && dataset ?
+      "Original points · geometry exported by the ProximityGraphs Python library." :
+      "Browser preview · ProximityGraphs source data were not loaded.");
 }
 function setEditorMode(name,mode) {
   const editor=pointEditors[name];
@@ -115,6 +117,7 @@ function resetEditor(name) {
   editor.points=editor.original.map(p=>p.slice());
   editor.dirty=false;
   editor.active=null;
+  editor.generation=(editor.generation||0)+1;
   if(name==="water")state.waterSite=0;
   if(name==="habitat")state.alphaArc=0;
   if(name==="sensors")state.betaEdge=null;
@@ -132,7 +135,7 @@ function setupPointEditors(sceneData) {
     const original=defaults[name].map(p=>p.slice());
     const editor={
       original,points:original.map(p=>p.slice()),dirty:false,
-      mode:"move",svg,active:null,render:()=>window[config.draw]()
+      mode:"move",svg,active:null,generation:0,render:()=>{}
     };
     // Functions defined by top-level declarations in app.js are available to
     // script-loaded siblings as globals in browsers.
@@ -140,6 +143,24 @@ function setupPointEditors(sceneData) {
     pointEditors[name]=editor;
     setEditorMode(name,"move");
     recomputeNotice(name);
+    svg.addEventListener("keydown",function(event){
+      const node=event.target.closest("[data-point-index]");
+      if(!node)return;
+      const index=Number(node.getAttribute("data-point-index"));
+      if(editor.mode==="delete" && (event.key==="Enter" || event.key==="Delete" || event.key==="Backspace")){
+        event.preventDefault();
+        editor.points.splice(index,1);
+        refreshEditor(name);
+      } else if(editor.mode==="move" && event.key.startsWith("Arrow")){
+        const steps={ArrowLeft:[-.012,0],ArrowRight:[.012,0],
+          ArrowUp:[0,.012],ArrowDown:[0,-.012]};
+        const delta=steps[event.key];
+        if(!delta)return;
+        event.preventDefault();
+        const p=editor.points[index].map((v,i)=>Math.max(0,Math.min(1,v+delta[i])));
+        if(validPoint(editor.points,p,index)){editor.points[index]=p;refreshEditor(name);}
+      }
+    });
     svg.addEventListener("pointerdown",function(event){
       if(event.button!==undefined && event.button!==0)return;
       const coord=sceneCoords(svg,event);
@@ -186,9 +207,10 @@ function setupPointEditors(sceneData) {
       editor.points[drag.index]=p;
       if(!editor.pending){
         editor.pending=true;
+        const generation=editor.generation;
         requestAnimationFrame(function(){
           editor.pending=false;
-          refreshEditor(name);
+          if(editor.generation===generation)refreshEditor(name);
         });
       }
     });
