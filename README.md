@@ -108,3 +108,13 @@ The [SIAM News Style Guide](https://www.siam.org/media/gfbjvzck/siam-news-info-a
 A useful structural comparator is [*The Dynamics of Debt*](https://www.siam.org/publications/siam-news/articles/the-dynamics-of-debt/), a SIAM News software feature with a mathematical narrative, figures, links, and references.
 
 Consult \`AGENTS.md\`, \`docs/EDITORIAL.md\` and \`AI_HANDOFF.md\` before changing the project.
+
+## Literature-enhanced 2026 SIAM feature
+
+The revised [canonical article](article/feature.md) draws on **61 extracted research papers** from [ProximityGraphs-ML](https://github.com/heri-espino/ProximityGraphs-ML/tree/main/literature/extracted), integrating demonstrated links to manifold learning, geodesic graph statistics, shape/topology reconstruction, β-skeleton street networks, stochastic geometry, and filtered nearest-neighbor retrieval. See the source-by-source [literature evidence audit](docs/LITERATURE_EVIDENCE.md).
+
+**Manuscript source of truth:** edit only \`article/feature.md\`. Run \`python scripts/render_article.py\` to regenerate the complete LaTeX \`article/main.tex\` and use the editorial GitHub Actions workflow to compile and archive its PDF. All ten references, three captions, equations, and coauthor biographies derive from the same Markdown source.
+
+The mathematical theory extends to Euclidean spaces of arbitrary dimension, but the present package's graph constructors are **primarily planar**; do not describe the library as an implemented high-dimensional ANN, manifold-learning, or topological-inference engine.
+
+Proposed authors and affiliations: Héctor Maravillo (Universidad Autónoma Metropolitana, Mexico), Diego Villarreal de la Cerda (T-Systems), Heriberto Espino-Montelongo (Universidad de las Américas Puebla). Final editorial approval is pending.
