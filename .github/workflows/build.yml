@@ -28,7 +28,10 @@ jobs:
       - name: Validate geometric invariants
         run: python -m unittest discover -s tests -v
       - name: Validate browser JavaScript syntax
-        run: node --check site/app.js
+        run: |
+          node --check site/app.js
+          node --check site/editor.js
+          node tests/test_editor.js
       - name: Review manuscript word count
         run: python scripts/check_article.py
       - name: List saved results
