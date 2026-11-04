@@ -80,3 +80,11 @@ Canonical revised manuscript: \`article/feature.md\`, approx 1,150 words before 
 **Reproducible source:** \`scripts/render_article.py\` generates \`article/main.tex\` from \`article/feature.md\`, including figures, bibliography, authors, and links. The article GitHub Actions workflow compiles and archives \`article/output/proximitygraphs-siam-news-draft.pdf\`. The first renderer failed because it mistakenly used \`amssym\` rather than the correct \`amssymb\` LaTeX package; that error was corrected. The next proof exposed nested Markdown link placeholders (e.g. bold ProximityGraphs link). The renderer now restores nested placeholders in reverse allocation order and raises on unresolved \`ZZZPROXPLACEHOLDER\` tokens. Check final workflow run and PDF contents for success, and visually inspect pages.
 
 Nothing has been sent to SIAM editors or posted to social media. Final byline, biographies, rights, and PDF proofreading require human sign-off.
+
+### Final proof validation after literature enrichment
+
+- Successful Markdown-to-LaTeX/PDF workflow: https://github.com/heri-espino/proximitygraphs-siam-figures/actions/runs/41802340295
+- Confirmed generated \`article/main.tex\` contains exactly three \`\\featurefigure\` commands, zero unresolved placeholder markers, mathematical \`\\[\\mathrm{MST}...\\]\` and \`\\[\\Pr(...)...\\]\` display equations.
+- Downloaded the actual workflow PDF and rendered it with Poppler (November 4, 2026): **4 US Letter pages**, all three figures embedded, display equations visibly correct, no clipped or orphaned content observed. Generated and archived PDF: \`article/output/proximitygraphs-siam-news-draft.pdf\`. Local checked copy: \`/mnt/data/siam_literature_final/proximitygraphs-siam-news-draft.pdf\`.
+- The generator had two separate issues caught by rendered inspection: nested bold-link placeholders and escaped display math. Both were fixed; \`scripts/render_article.py\` fails fast on unresolved placeholders or escaped math delimiters.
+- The article remains a scientific outreach **draft**, not a SIAM-reviewed, accepted, or published article. Final byline/affiliations, actual contributor permissions, external figure-link editorial policy and submission still require author approval.
