@@ -66,7 +66,7 @@ To let readers explore the distinctions without installing Python, we built an [
 
 **A graph begins with a definition, not a drawing.** Before treating any line as a road, relationship, or possible communication link, ask which rule created it—and which scientific assumptions make that rule useful. ProximityGraphs provides a place to ask the question with code, and the interactive diagrams let anyone see the answer change.
 
-**Explore:** [Python package and source](https://github.com/ProximityGraphs/ProximityGraphs) · [Installation and documentation](https://proximitygraphs.github.io/ProximityGraphs/) · [Interactive figures](https://heri-espino.github.io/proximitygraphs-siam-figures/)  
+**Explore:** [Python package and source](https://github.com/ProximityGraphs/ProximityGraphs) · [Installation on PyPI](https://pypi.org/project/proximitygraphs/) · [Interactive figures](https://heri-espino.github.io/proximitygraphs-siam-figures/)  
 **Install:** `pip install proximitygraphs` (MIT license).
 
 ## References
