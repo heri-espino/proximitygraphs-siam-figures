@@ -4,9 +4,9 @@
 // authoritative ProximityGraphs Python pipeline replaces ALL graph results.
 const NS = "http://www.w3.org/2000/svg";
 const WIDTH = 920, HEIGHT = 600;
-const frame = { x: 66, y: 48, w: 788, h: 498 };
+const frame = { x: 205, y: 43, w: 510, h: 510 };
 const teal = "#166b75", orange = "#be6c41", dark = "#243642";
-const alphaValues = [3, 4, 5, 6];
+const alphaValues = [2, 3, 4, 5];
 const betaValues = [1, 1.25, 1.5, 1.75, 2];
 const state = { waterSite: 0, alphaIndex: 1, alphaArc: 0, betaIndex: 2, betaEdge: null };
 let dataset = null;
