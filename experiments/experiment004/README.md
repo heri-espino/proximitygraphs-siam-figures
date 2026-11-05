@@ -1,7 +1,7 @@
 # experiment004 — Section-activated motion instead of scroll-activated reveals
 
 **Date:** November 5, 2026  
-**Status:** Implemented on feature branch; CI/visual QA and release status recorded below after validation.
+**Status:** Implemented, verified on PR #3, merged, and deployed successfully.
 
 ## User objective
 
@@ -38,3 +38,13 @@ Expected behavior: scroll without navigation never applies `is-section-entering`
 ## Limitations and next steps
 
 No usability study was conducted; this change implements a user-expressed preference. Native hash navigation can move the viewport instantly, by design. Controlled diagrams still fade on deliberate parameter/layer changes. Preserve all graph computations, provenance and source files. Verify CI and visual QA before releasing; record run URLs and outcomes. Future iteration, if any, should use experiment005.
+
+## Verified release results
+
+- [PR #3 — Animate selected sections, not scrolling](https://github.com/heri-espino/proximitygraphs-siam-figures/pull/3): **merged** into `main`, merge commit `243ed4ed73bf9e36db9a74c454bbba71514f7c00`.
+- [PR geometry/Node run #42122063839](https://github.com/heri-espino/proximitygraphs-siam-figures/actions/runs/42122063839): **success**.
+- [PR Playwright run #42122064201](https://github.com/heri-espino/proximitygraphs-siam-figures/actions/runs/42122064201): **success**, including the explicit static-scroll, click-navigation, Next-link, cleanup, and reduced-motion tests.
+- [Postmerge production figure/Pages run #42122265783](https://github.com/heri-espino/proximitygraphs-siam-figures/actions/runs/42122265783): **success**, updated site deployed at https://heri-espino.github.io/proximitygraphs-siam-figures/ .
+- [Postmerge visual-QA run #42122265671](https://github.com/heri-espino/proximitygraphs-siam-figures/actions/runs/42122265671): browser installation was still in progress at this documentation update; the successful PR visual-QA run is the completed check for the exact merged source.
+
+**Findings:** The navigation and motion behavior changed without modifying mathematical predicates, historical/synthetic datasets, parameter grids, or exported publication figures. No browser scroll observer or scroll-event animation remains. This is a preference-driven UX improvement; no quantitative user study was conducted.
