@@ -161,6 +161,16 @@ function testUI(){
   assert.ok(html.includes("Historical cholera death marks"));
   assert.ok(css.includes(".point-toolbar"));
   assert.ok(css.includes(".studio"));
+  assert.match(css,/--bg:\s*#faf9f7/);
+  assert.match(css,/--ink:\s*#242421/);
+  assert.match(css,/\.exhibit\s*\{[^}]*border:\s*0;/);
+  assert.match(css,/prefers-reduced-motion:\s*reduce/);
+  assert.match(html,/src="motion\.js"/);
+  assert.match(html,/<h1[^>]+>Who counts as a <em>neighbor\?<\/em><\/h1>/);
+  const motion=fs.readFileSync(path.join(root,"site/motion.js"),"utf8");
+  assert.ok(motion.includes("IntersectionObserver"));
+  assert.ok(motion.includes("prefers-reduced-motion"));
+  assert.ok(motion.includes("is-recomposing"));
 }
 testHistoricalAndSyntheticDefaults();
 testDelaunay();
