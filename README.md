@@ -4,7 +4,7 @@
 
 This project develops a proposed **SIAM News — Software and Programming** feature and its reproducible interactive companion. Its subject is the mathematical choice of "neighbor": Voronoi/Delaunay partitions, alpha-shapes and circular alpha-hulls, beta-skeleton empty-region graphs, and controlled graph comparisons.
 
-**[Explore the deployed GitHub Pages companion](https://heri-espino.github.io/proximitygraphs-siam-figures/)** — editable points, interactive geometry and image export. GitHub Actions deployed the site successfully on November 3, 2026; verify the live page after future releases.
+**[Explore the deployed GitHub Pages companion](https://heri-espino.github.io/proximitygraphs-siam-figures/)** — editable points, interactive geometry and image export. The redesigned site was rebuilt and deployed on November 5, 2026; verify the live page after future releases.
 
 **[Read the completed feature draft](article/feature.md)** · **[LaTeX manuscript](article/main.tex)** · **[Outreach and marketing kit](article/marketing-kit.md)** · **[Editorial pitch](article/pitch.md)** · **[Python library](https://github.com/ProximityGraphs/ProximityGraphs)**
 
