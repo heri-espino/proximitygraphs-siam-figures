@@ -79,9 +79,9 @@ function background(svg, tag) {
     el("line",{x1:frame.x,y1:y,x2:frame.x+frame.w,y2:y,stroke:"#f1f0ed","stroke-width":1},svg);
   }
   el("rect",{x:frame.x,y:frame.y,width:frame.w,height:frame.h,fill:"none",stroke:"#dddcd8","stroke-width":1.5},svg);
-  el("text",{x:frame.x,y:28,fill:"#9b9992","font-size":12,"letter-spacing":1},svg,tag.toUpperCase());
+  el("text",{x:frame.x,y:28,fill:"#76736e","font-size":12,"letter-spacing":1},svg,tag.toUpperCase());
   const historic=tag.startsWith("01") && dataset?.voronoi?.historical;
-  el("text",{x:frame.x,y:HEIGHT-18,fill:"#9b9992","font-size":11},svg,
+  el("text",{x:frame.x,y:HEIGHT-18,fill:"#76736e","font-size":11},svg,
     historic?"Digitized 1854 Soho map · proportionally normalized":
     "Synthetic teaching coordinates · normalized Euclidean plane");
 }
