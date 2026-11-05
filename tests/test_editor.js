@@ -18,6 +18,19 @@ const normalizedEdges=edges=>Array.from(edges,edge=>Array.from(edge).sort((a,b)=
 function assertEdgeSets(actual,expected,desc){
   assert.deepEqual(normalizedEdges(actual),normalizedEdges(expected),desc);
 }
+function testHistoricalAndSyntheticDefaults(){
+  const v=scene.voronoi;
+  assert.equal(v.points.length,13);
+  assert.equal(v.death_marks.length,578);
+  assert.equal(v.labels[v.historical.broad_street_index],"Broad St");
+  assert.equal(scene.alpha.points.length,53);
+  assert.equal(scene.alpha.description,"synthetic smiley face");
+  assert.equal(scene.beta.points.length,25);
+  assert.equal(scene.beta.description,"synthetic relay-corridor sensor network");
+  const transform=v.historical.normalization;
+  assert.ok(transform.scale>0 && transform.method.includes("preserving"));
+  assert.ok(v.death_marks.every(p=>p.every(x=>x>=0&&x<=1)));
+}
 function testDelaunay(){
   const pts=scene.voronoi.points;
   assertEdgeSets(context.trianglesEdges(context.delaunayTriangles(pts)),
@@ -142,9 +155,14 @@ function testUI(){
     assert.match(html,new RegExp('id="'+element+'"'),"Missing control "+element);
   }
   assert.match(html,/data-editor-scene="sensors" data-mode="inspect"/);
+  for(const id of ["water-deaths","water-pump-label"]){
+    assert.match(html,new RegExp('id="'+id+'"'),"Missing historical layer control "+id);
+  }
+  assert.ok(html.includes("Historical cholera death marks"));
   assert.ok(css.includes(".point-toolbar"));
   assert.ok(css.includes(".studio"));
 }
+testHistoricalAndSyntheticDefaults();
 testDelaunay();
 testAlpha();
 testBeta();
