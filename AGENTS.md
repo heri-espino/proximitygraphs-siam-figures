@@ -69,3 +69,10 @@ Preserve both untouched source CSVs at `data/historical/`, the exact common aspe
 - `site/motion.js` contains only progressive enhancement: IntersectionObserver reveal on scroll, quiet active navigation, low-amplitude SVG change transitions and `prefers-reduced-motion` support. Never animate every point while dragging or hide content in no-JS/reduced-motion conditions.
 - Preserve all deep links, editor control IDs, computation inspector formulas, historical point sources and graph algorithms. No new geometry sources or algorithm substitutions were intended.
 - Re-run Node, Python, and Playwright visual checks; include `node --check site/motion.js`. Store screenshot outputs and future design analysis under the next sequential experiment.
+
+
+## experiment004 — section-only transitions (November 2026)
+- User explicitly rejected scroll-triggered reveals. Do not reintroduce IntersectionObserver viewport reveals, scroll event animations, smooth-scrolling CSS, or offscreen opacity-based hidden content.
+- `site/motion.js` animates **only** the destination on internal section-link clicks or hash/history navigation, and retains deliberate geometry-layer control feedback. Free/manual scrolling must not set `is-section-entering` or update the nav underline. `prefers-reduced-motion: reduce` disables transitions.
+- Preserve native anchors `#top`, `#explore`, `#water`, `#habitat`, `#sensors`, `#compare` and `#about`, including keyboard, browser history, no-JS behavior and normal mobile scrolling.
+- Test source constraints in `tests/test_editor.js` and browser conditions in `tests/visual_smoke.py`; see `experiments/experiment004/README.md` and `docs/DESIGN_SYSTEM.md`. Do not alter the graph engine, source point sets or static figures for a navigation-only change.

@@ -168,9 +168,16 @@ function testUI(){
   assert.match(html,/src="motion\.js"/);
   assert.match(html,/<h1[^>]+>Who counts as a <em>neighbor\?<\/em><\/h1>/);
   const motion=fs.readFileSync(path.join(root,"site/motion.js"),"utf8");
-  assert.ok(motion.includes("IntersectionObserver"));
+  assert.ok(!motion.includes("IntersectionObserver"),"Scrolling must not trigger section reveals");
+  assert.ok(!motion.includes('addEventListener("scroll"'),"No scroll-triggered animations");
+  assert.ok(motion.includes('a[href^="#"]'),"Only section links activate section motion");
+  assert.ok(motion.includes("hashchange"),"Browser history can activate a selected section");
+  assert.ok(motion.includes("is-section-entering"),"Selected section animation class");
   assert.ok(motion.includes("prefers-reduced-motion"));
   assert.ok(motion.includes("is-recomposing"));
+  assert.match(css,/html\s*\{\s*scroll-behavior:\s*auto;/);
+  assert.match(css,/@keyframes section-enter/);
+  assert.ok(!css.includes("html.motion-ready .reveal"),"No scroll-dependent hidden content");
 }
 testHistoricalAndSyntheticDefaults();
 testDelaunay();
