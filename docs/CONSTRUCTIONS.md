@@ -1,7 +1,7 @@
 # Construction views: mathematical definitions and reproducibility
 
 **Scope:** Interactive companion to the proposed (unsubmitted) SIAM News feature.  
-**Inputs:** all point sets are synthetic, confined to the normalized unit square.  
+**Inputs:** the water pumps and cholera death marks are digitized historical map records, whereas alpha smiley and beta relay sensor points are synthetic; each occupies the normalized unit square.  
 **Primary data source:** the pinned [ProximityGraphs Python package](https://github.com/ProximityGraphs/ProximityGraphs), installed from the SHA in \`requirements.txt\`.  
 **Edited-data source:** an explicitly separate, testable in-browser JavaScript implementation.
 
@@ -21,7 +21,7 @@ For a finite site set \(P=\{p_1,\ldots,p_n\}\subset\mathbb R^2\), the Euclidean 
 V_i=\bigcap_{j\ne i}\{x:2(q-p_i)\cdot x\leq \|q\|^2-\|p_i\|^2\},\qquad q=p_j.
 \]
 
-The **Selected-site bisectors** layer draws lines bounding the relevant half-planes (clipped to the unit square). The **Delaunay triangles** layer displays a triangulation; the **Triangle circumcircle** layer shows one triangle's circumcircle and its center. Use **Next triangle** to cycle through triangles incident to the selected station. A Delaunay triangle's open circumdisk contains no other site in generic position.
+The **Historical cholera death marks** layer shows 578 fixed observations behind 13 editable historical pump sites. The **Selected pump name** layer labels the chosen pump (initially Broad Street). Both CSV sources and the aspect-preserving normalization are documented in [data/historical](../data/historical/README.md). Editing pump positions produces a hypothetical scenario while the historical death marks stay fixed. The Voronoi diagram is not an analysis Snow computed. The **Selected-site bisectors** layer draws lines bounding the relevant half-planes (clipped to the unit square). The **Delaunay triangles** layer displays a triangulation; the **Triangle circumcircle** layer shows one triangle's circumcircle and its center. Use **Next triangle** to cycle through triangles incident to the selected station. A Delaunay triangle's open circumdisk contains no other site in generic position.
 
 The Python \`pg.Voronoi\` constructor provides **site adjacency**. Actual cell polygons are computed independently using Sutherland–Hodgman convex polygon clipping. The Python \`pg.DelaunayG\` provides Delaunay graph edges. Exported simplices with circumradii are derived from SciPy's Delaunay triangulation for the construction witness.
 
@@ -109,4 +109,4 @@ Regression tests check:
 4. Comparison graphs against the pinned Python constructors; inclusion of RNG in Gabriel in Delaunay.
 5. Section IDs, source loading order, editor controls, and secure external-link attributes.
 
-**Data and publication caution:** all coordinates are synthetic, not empirical hydrology/ecology/network datasets. Construction widgets demonstrate geometry, not validated services or physical connectivity. This website accompanies an unsubmitted SIAM News proposal and is not affiliated with, approved by, or endorsed by SIAM.
+**Data and publication caution:** the pump and death coordinates are historical digitizations, not a modern GIS survey. Changed pumps, the smiley, and sensor outposts are illustrative synthetic scenarios; no operational or medical inference is claimed. Construction widgets demonstrate geometry, not validated services or physical connectivity. This website accompanies an unsubmitted SIAM News proposal and is not affiliated with, approved by, or endorsed by SIAM.

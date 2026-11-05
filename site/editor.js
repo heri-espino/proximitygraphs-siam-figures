@@ -69,10 +69,14 @@ function recomputeNotice(name) {
   const editor=pointEditors[name], element=document.getElementById(name+"-edit-source");
   if(!editor || !element)return;
   element.textContent=editor.dirty ?
-    "Edited points · recalculated locally in the browser (not a new ProximityGraphs library export)." :
+    (name==="water" && typeof dataset!=="undefined" && dataset?.voronoi?.historical ?
+      "Edited pump positions are hypothetical; historical death marks remain fixed. Geometry recomputed in JavaScript." :
+      "Edited points · recalculated locally in JavaScript (not a new ProximityGraphs export).") :
     (typeof dataset!=="undefined" && dataset ?
-      "Original points · geometry exported by the ProximityGraphs Python library." :
-      "Browser preview · ProximityGraphs source data were not loaded.");
+      (name==="water" && dataset?.voronoi?.historical ?
+        "Digitized historical John Snow pump sites · graph geometry exported by ProximityGraphs." :
+        "Original points · geometry exported by the ProximityGraphs Python library.") :
+      "Browser preview · authoritative Python scene data were not loaded.");
 }
 function setEditorMode(name,mode) {
   const editor=pointEditors[name];
@@ -122,7 +126,8 @@ function resetEditor(name) {
   editor.dirty=false;
   editor.active=null;
   editor.generation=(editor.generation||0)+1;
-  if(name==="water")state.waterSite=0;
+  if(name==="water")state.waterSite=(typeof dataset!=="undefined" && dataset?.voronoi?.historical ?
+    dataset.voronoi.historical.broad_street_index : 6);
   if(name==="habitat")state.alphaArc=0;
   if(name==="sensors"){state.betaEdge=null;state.betaPair=null;state.betaInspectFirst=null;}
   recomputeNotice(name);

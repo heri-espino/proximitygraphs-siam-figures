@@ -6,30 +6,56 @@ const NS = "http://www.w3.org/2000/svg";
 const WIDTH = 640, HEIGHT = 600;
 const frame = { x: 65, y: 43, w: 510, h: 510 };
 const teal = "#166b75", orange = "#be6c41", dark = "#243642";
-const alphaValues = [2, 3, 4, 5];
+const alphaValues = [4, 8, 10, 12];
 const betaValues = [1, 1.25, 1.5, 1.75, 2];
 const state = {
-  waterSite:0, waterTriangleIndex:0,
+  waterSite:6, waterTriangleIndex:0,
   alphaIndex:1,alphaArc:0,
   betaIndex:2,betaPair:null,betaInspectFirst:null
 };
 let dataset = null;
 
-const waterPoints = [
-  [.13,.22],[.31,.16],[.53,.22],[.80,.15],[.17,.48],[.42,.45],
-  [.68,.43],[.87,.64],[.29,.78],[.59,.82],[.10,.82],[.76,.89]
+// Fallback sites when the authoritative scene JSON cannot be fetched.
+// The deployed site normally uses Python-generated historical data.
+const snowPumpRaw=[
+ [8.6512012,17.8915997],[10.9847803,18.5178509],
+ [13.37819,17.3945408],[14.8798304,17.8099194],
+ [8.694768,14.9054699],[8.8644161,12.75354],
+ [12.5713596,11.72717],[10.6609697,7.428647],
+ [13.5214596,7.95825],[16.4348907,9.2521296],
+ [18.9143906,9.7378187],[16.0051098,5.0468378],
+ [8.9994402,5.1010232]
 ];
-const betaPoints = [
-  [.09,.13],[.25,.12],[.39,.18],[.58,.12],[.80,.16],
-  [.14,.33],[.32,.37],[.52,.35],[.76,.34],[.90,.42],
-  [.08,.58],[.27,.59],[.47,.56],[.68,.60],[.86,.70],
-  [.17,.81],[.38,.82],[.61,.85],[.80,.89]
+const snowBounds={min:[8.280715,5.0468378],max:[18.9143906,18.5178509]};
+const snowScale=.84/Math.max(...[0,1].map(i=>snowBounds.max[i]-snowBounds.min[i]));
+const snowOffset=[0,1].map(i=>(1-snowScale*(snowBounds.max[i]-snowBounds.min[i]))/2);
+const waterPoints=snowPumpRaw.map(p=>p.map((v,i)=>snowOffset[i]+(v-snowBounds.min[i])*snowScale));
+const betaPoints=[
+ [.12,.18],[.22,.16],[.32,.23],[.14,.36],[.28,.35],[.39,.30],
+ [.12,.55],[.25,.51],[.36,.60],[.18,.78],[.32,.79],
+ [.44,.43],[.49,.49],[.55,.56],
+ [.61,.18],[.75,.15],[.87,.22],[.614,.334],[.74,.35],[.86,.40],
+ [.62,.54],[.76,.56],[.89,.65],[.64,.78],[.79,.81]
 ];
-const habitatPoints = Array.from({length:36}, function(_, i) {
-  const t = 2 * Math.PI * i / 36;
-  const r = .285 + .07 * Math.cos(4*t) + .032 * Math.sin(3*t);
-  return [ .5 + 1.05*r*Math.cos(t), .50 + 1.05*r*Math.sin(t) ];
-});
+const habitatPoints=(function(){
+ const outline=Array.from({length:30},(_,i)=>{
+   const t=2*Math.PI*i/30+.011;
+   const r=.336+.006*Math.cos(5*t)+.003*Math.sin(7*t);
+   return [.5+r*Math.cos(t),.52+r*Math.sin(t)];
+ });
+ const eyes=[];
+ for(const side of ["left","right"])for(let i=0;i<6;i++){
+   const t=2*Math.PI*i/6+.19+(side==="right"?.13:0);
+   eyes.push(side==="left"?
+     [.39+.030*Math.cos(t),.635+.023*Math.sin(t)]:
+     [.61+.029*Math.cos(t),.635+.024*Math.sin(t)]);
+ }
+ const mouth=Array.from({length:11},(_,i)=>{
+   const x=.327+(.673-.327)*i/10;
+   return [x,.345+.081*((x-.5)/.173)**2+.001*Math.sin(73*x)];
+ });
+ return [...outline,...eyes,...mouth];
+})();
 
 function el(tag, attrs, parent, label) {
   const item = document.createElementNS(NS, tag);
@@ -54,17 +80,20 @@ function background(svg, tag) {
   }
   el("rect",{x:frame.x,y:frame.y,width:frame.w,height:frame.h,fill:"none",stroke:"#cedce0","stroke-width":1.5},svg);
   el("text",{x:frame.x,y:28,fill:"#7a8e99","font-size":12,"letter-spacing":1},svg,tag.toUpperCase());
-  el("text",{x:frame.x,y:HEIGHT-18,fill:"#7a8e99","font-size":11},svg,"Synthetic coordinates · normalized Euclidean plane");
+  const historic=tag.startsWith("01") && dataset?.voronoi?.historical;
+  el("text",{x:frame.x,y:HEIGHT-18,fill:"#7a8e99","font-size":11},svg,
+    historic?"Digitized 1854 Soho map · proportionally normalized":
+    "Synthetic teaching coordinates · normalized Euclidean plane");
 }
-function site(svg,p,i,selected,handler) {
+function site(svg,p,i,selected,handler,displayName) {
   const v=xy(p);
   const c=el("circle",{cx:v[0],cy:v[1],r:selected?8:6.2,fill:selected?orange:teal,stroke:"#fff","stroke-width":2.4,class:"selectable editable-site",role:"button",tabindex:0,"data-point-index":i,"aria-label":"Select or drag site "+(i+1)},svg);
-  el("title",{},c,"Site "+(i+1)+" · select to inspect");
+  el("title",{},c,(displayName||"Site "+(i+1))+" · select to inspect");
   // A larger transparent hit area keeps small scientific markers usable on touch screens.
   const hit=el("circle",{cx:v[0],cy:v[1],r:18,fill:"transparent",
     class:"selectable editable-site",role:"button",tabindex:0,
     "data-point-index":i,"aria-label":"Site "+(i+1)+"; drag to move or use arrow keys"},svg);
-  el("title",{},hit,"Site "+(i+1)+" · drag to move, use edit controls to add or delete");
+  el("title",{},hit,(displayName||"Site "+(i+1))+" · drag or use edit controls");
   if(handler){
     for(const target of [c,hit]){
       target.addEventListener("click",function(){handler(i);});
@@ -237,6 +266,15 @@ function drawWater(){
         "fill-opacity":i===state.waterSite?.94:.78,
         stroke:"#fff","stroke-width":1.7},svg);
   }
+  // Historical death marks remain separate from the 13 editable pump sites.
+  if(hasLayer("water-deaths")&&source?.death_marks){
+    const layer=el("g",{"pointer-events":"none","aria-hidden":"true"},svg);
+    for(const p of source.death_marks){
+      const v=xy(p);
+      el("circle",{cx:v[0],cy:v[1],r:2.45,
+        fill:"#973c48","fill-opacity":.36},layer);
+    }
+  }
   if(hasLayer("water-triangles")){
     for(const t of tri){
       const p=t.vertices.map(i=>points[i]);
@@ -278,21 +316,31 @@ function drawWater(){
   points.forEach(function(p,i){
     site(svg,p,i,i===state.waterSite,function(index){
       state.waterSite=index;state.waterTriangleIndex=0;drawWater();
-    });
+    },original?source.labels?.[i]:null);
   });
-  detail("water-stat",points.length+" sites · "+edges.length+" Delaunay edges");
+  if(original&&points[state.waterSite]&&hasLayer("water-pump-label")){
+    const v=xy(points[state.waterSite]);
+    el("text",{x:v[0]+11,y:v[1]-12,fill:"#873e29",
+      "font-size":12,"font-weight":750,"paint-order":"stroke",
+      stroke:"#f8fafb","stroke-width":4,
+      "pointer-events":"none"},svg,source.labels?.[state.waterSite]||"Pump");
+  }
+  detail("water-stat",points.length+" pumps · "+edges.length+" Delaunay edges"+
+    (source?.death_marks?" · "+source.death_marks.length+" death marks":""));
   if(points.length){
     const degree=edges.filter(e=>e.includes(state.waterSite)).length;
     const p=points[state.waterSite];
     const cc=chosen?circumcircle(...chosen.vertices.map(i=>points[i])):null;
-    detail("water-details","Station "+(state.waterSite+1)+" at ("+
+    detail("water-details","Pump "+(state.waterSite+1)+
+      (original && source.labels?.[state.waterSite]?
+       " · "+source.labels[state.waterSite]:" · edited site")+" at ("+
       p[0].toFixed(3)+", "+p[1].toFixed(3)+"). "+
       polygons[state.waterSite].length+" clipped cell vertices; "+
       degree+" Delaunay neighbors."+
       (chosen&&cc?" Witness triangle "+chosen.vertices.map(i=>i+1).join("–")+
       " has circumradius "+cc.r.toFixed(3)+".":""));
     detail("water-note","The station's cell is the intersection of "+(points.length-1)+
-      " nearest-site half-planes. A Delaunay witness triangle has no site strictly inside its circumcircle.");
+      " nearest-site half-planes. Historical death marks are background observations, not graph vertices. A Delaunay witness triangle has no pump strictly inside its circumcircle.");
   } else {
     detail("water-details","No stations remain. Use Add to place a site.");
     detail("water-note","At least two sites are needed to create a graph edge.");
@@ -545,9 +593,9 @@ function drawCompare(){
 function setPreset(scene,preset){
   const presets={
     water:{
-      final:{"water-cells":true,"water-dual":true,"water-bisectors":false,"water-circumcircle":false,"water-triangles":false},
-      construction:{"water-cells":false,"water-dual":true,"water-bisectors":true,"water-circumcircle":true,"water-triangles":true},
-      both:{"water-cells":true,"water-dual":true,"water-bisectors":true,"water-circumcircle":true,"water-triangles":false}
+      final:{"water-cells":true,"water-dual":true,"water-bisectors":false,"water-circumcircle":false,"water-triangles":false,"water-deaths":true,"water-pump-label":true},
+      construction:{"water-cells":false,"water-dual":true,"water-bisectors":true,"water-circumcircle":true,"water-triangles":true,"water-deaths":true,"water-pump-label":true},
+      both:{"water-cells":true,"water-dual":true,"water-bisectors":true,"water-circumcircle":true,"water-triangles":false,"water-deaths":true,"water-pump-label":true}
     },
     habitat:{
       final:{"alpha-hull":true,"alpha-shape":true,"alpha-triangulation":false,"alpha-kept":false,
@@ -602,7 +650,7 @@ function attachExports(){
 
 async function start(){
   for(const [name,ids,render] of [
-    ["water",["water-cells","water-dual","water-bisectors","water-circumcircle","water-triangles"],drawWater],
+    ["water",["water-cells","water-dual","water-bisectors","water-circumcircle","water-triangles","water-deaths","water-pump-label"],drawWater],
     ["habitat",["alpha-hull","alpha-shape","alpha-triangulation","alpha-kept",
       "alpha-circle","alpha-all-circles","alpha-centers"],drawHabitat],
     ["sensors",["beta-edges","beta-invalid","beta-lune","beta-disks","beta-blockers"],drawSensors]

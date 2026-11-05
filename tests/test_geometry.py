@@ -6,13 +6,25 @@ from pathlib import Path
 import numpy as np
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "scripts"))
-from export_scenes import ALPHAS, BETAS, BETA, WATER, build, cells  # noqa: E402
+from export_scenes import ALPHAS, BETAS, BETA, WATER, HABITAT, SNOW_DEATHS, PUMP_LABELS, BROAD_STREET, build, cells  # noqa: E402
 
 
 class GeometryTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         cls.scenes = build()
+
+    def test_historical_and_synthetic_default_provenance(self):
+        self.assertEqual(len(WATER), 13)
+        self.assertEqual(len(SNOW_DEATHS), 578)
+        self.assertEqual(PUMP_LABELS[BROAD_STREET], "Broad St")
+        self.assertEqual(len(HABITAT), 53)
+        self.assertEqual(len(BETA), 25)
+        self.assertEqual(self.scenes["voronoi"]["labels"], PUMP_LABELS)
+        self.assertEqual(len(self.scenes["voronoi"]["death_marks"]), 578)
+        self.assertEqual(self.scenes["voronoi"]["historical"]["broad_street_index"], BROAD_STREET)
+        self.assertTrue(np.all((WATER >= 0) & (WATER <= 1)))
+        self.assertTrue(np.all((SNOW_DEATHS >= 0) & (SNOW_DEATHS <= 1)))
 
     def test_voronoi_cells_are_valid_and_nearest(self):
         polygons = cells(WATER)
@@ -81,7 +93,7 @@ class GeometryTests(unittest.TestCase):
     def test_beta_edges_nested_for_increasing_beta(self):
         graphs = [set(map(tuple, self.scenes["beta"]["options"][str(b)]))
                   for b in BETAS]
-        self.assertEqual(len(BETA), 19)
+        self.assertEqual(len(BETA), 25)
         for earlier, later in zip(graphs, graphs[1:]):
             self.assertTrue(later <= earlier)
 

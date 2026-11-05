@@ -66,11 +66,35 @@ def main():
         assert "Authoritative default geometries" in source,source
         checks.append("Pinned Python ProximityGraphs source loaded")
 
+        assert len(scenes["voronoi"]["points"])==13
+        assert len(scenes["voronoi"]["death_marks"])==578
+        assert scenes["voronoi"]["labels"][scenes["voronoi"]["historical"]["broad_street_index"]]=="Broad St"
+        assert len(scenes["alpha"]["points"])==53
+        assert len(scenes["beta"]["points"])==25
+        assert page.locator("#water-plot g[aria-hidden='true'] circle").count()==578
+        assert "Broad St" in page.locator("#water-details").inner_text()
+        page.locator("#water-deaths").uncheck()
+        assert page.locator("#water-plot g[aria-hidden='true'] circle").count()==0
+        page.locator("#water-deaths").check()
+        assert page.locator("#water-plot g[aria-hidden='true'] circle").count()==578
+        checks.append("All 13 historical pumps and 578 death marks load, with working contextual layer toggle")
         page.screenshot(path=str(output/"01-home.png"))
         page.locator("#water-bisectors").check()
         page.locator("#water-triangles").check()
         assert page.locator("#water-plot line").count()>15
         page.locator("#water").screenshot(path=str(output/"02-voronoi-construction.png"))
+        page.locator('button[data-editor-scene="water"][data-mode="move"]').click()
+        page.locator('button[data-editor-scene="water"][data-mode="add"]').click()
+        # Adding a hypothetical site must not move or create historical deaths.
+        water=page.locator("#water-plot")
+        bounds=water.bounding_box()
+        sx=bounds["width"]/640
+        sy=bounds["height"]/600
+        water.click(position={"x":sx*(65+510*.96),"y":sy*(43+510*.96)})
+        assert "hypothetical" in page.locator("#water-edit-source").inner_text()
+        assert page.locator("#water-plot g[aria-hidden='true'] circle").count()==578
+        page.locator('button[data-editor-reset="water"]').click()
+        assert "Digitized historical" in page.locator("#water-edit-source").inner_text()
         checks.append("Voronoi bisectors, circumcircle and Delaunay triangulation render")
 
         page.locator("#alpha-all-circles").check()

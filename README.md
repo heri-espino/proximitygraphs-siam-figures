@@ -12,12 +12,12 @@ This project develops a proposed **SIAM News — Software and Programming** feat
 
 | Figure | Mathematical objects | Illustrative context | Reader interaction |
 | --- | --- | --- | --- |
-| 1. Voronoi and Delaunay | Clipped nearest-site cells, site bisectors, triangulation, empty circumcircles | Hypothetical drinking-water distribution stations | Drag/add/delete/reset; construction layers and incident-triangle inspector |
-| 2. Alpha-shape and alpha-hull | Library `Alpha_Shape` straight boundary, `Alpha_Hull` circular arcs, retained simplices | Hypothetical habitat observations | Compare both boundaries, show all supporting circles and centers, change α and points |
-| 3. β-skeleton | Open disk intersection, accepted/rejected candidate pairs, explicit blockers | Hypothetical sensors | Select any pair (two-point mode), step through candidates, show rejected examples and blockers |
+| 1. Voronoi and Delaunay | Historical pump/death locations, clipped nearest-site cells, bisectors, circumcircles | Digitized 1854 Soho map: 13 pumps and 578 death marks | Toggle historical observations and selected pump name; edit hypothetical pump sites |
+| 2. Alpha-shape and alpha-hull | Library `Alpha_Shape` straight boundary, `Alpha_Hull` arcs, retained simplices | A synthetic smiley (30 outline points, two eye rings, 11 mouth points) | Compare straight and curved boundaries and change the negative alpha scale |
+| 3. β-skeleton | Empty-lune tests, valid/rejected candidates and blockers | 25 synthetic sensors in two outpost clusters joined by three relay sites | Select candidate pairs, show rejection witnesses, edit positions |
 | 4. Compare | Delaunay, Gabriel, RNG, β-skeleton, alpha-shape on shared coordinates | Same synthetic sensors | Compare any two graphs on **identical** sites, swap and count edges |
 
-**All coordinates are synthetic.** The historical reference to John Snow's 1854 cholera investigation is context, not a reconstruction. Euclidean nearest-site diagrams differ from walking-distance Voronoi catchments. A geometric contour is not ecological inference, and a candidate graph edge is not a validated wireless link.
+**The Voronoi sites and death marks are historical map digitizations; the other defaults are synthetic.** The water layer shows 13 John Snow pump sites and 578 individual cholera death marks from HistData/Rdatasets. The Euclidean Voronoi diagram is a modern overlay, not Snow's own method. The alpha scene uses a synthetic smiley, while the beta scene uses two synthetic sensor clusters with relay sites. Neither is empirical habitat or radio coverage data. See [source attribution and normalization](data/historical/README.md).
 
 The site has a guided **Home → Voronoi → Alpha → β-Skeleton → Compare → About** navigation. Existing article anchors `#water`, `#habitat`, and `#sensors` remain valid. Each experiment uses an adjustable layer/control panel, a large SVG plot, and a computation inspector.
 
@@ -32,7 +32,7 @@ On **each** visualization, choose **Move** (drag points with mouse or touch), **
 - Original examples continue using **actual ProximityGraphs-generated data** from the pinned library commit. **Edited point sets are recomputed in the browser using independent JavaScript geometry**, with explicit source labels. Do not describe edited plots as being recalculated by Python ProximityGraphs.
 - Export SVG or PNG at any point to save the currently displayed graph, including custom point positions.
 - Links to external websites open in a new tab. Internal figure navigation remains on the current page.
-- All application scenarios remain **synthetic** and non-validated.
+- Historical John Snow pump and death coordinates are digitized map observations; edited pumps represent hypothetical scenarios. The smiley and sensor examples remain synthetic and non-validated.
 
 ## Repository structure
 

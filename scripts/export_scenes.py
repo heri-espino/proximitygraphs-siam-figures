@@ -1,10 +1,11 @@
 """Reproducible ProximityGraphs-backed scene export and static editorial figures.
 
 Run from repository root: python scripts/export_scenes.py
-Synthetic point sets only; no water, habitat, or radio field data.
+Historical, digitized John Snow pump/death coordinates; synthetic smile and relay data.
 """
 from __future__ import annotations
 
+import csv
 import json
 from pathlib import Path
 
@@ -23,22 +24,86 @@ DATA = ROOT / "site" / "data"
 ASSETS = ROOT / "site" / "assets"
 LIBRARY_COMMIT = "d1a216d7255cbebea68dcaad6a97382168a3ec55"
 
-WATER = np.array([
-    [.13,.22],[.31,.16],[.53,.22],[.80,.15],[.17,.48],[.42,.45],
-    [.68,.43],[.87,.64],[.29,.78],[.59,.82],[.10,.82],[.76,.89]
-], dtype=float)
+# HistData's 13 map-pump sites and 578 death marks use the same
+# digitized historical map coordinate frame. Preserve its aspect ratio when
+# fitting the unit square; do not describe it as a modern GIS projection.
+HISTORICAL = ROOT / "data" / "historical"
+SNOW_SOURCE = "https://vincentarelbundock.github.io/Rdatasets/doc/HistData/Snow.pumps.html"
+SNOW_DEATHS_SOURCE = "https://vincentarelbundock.github.io/Rdatasets/doc/HistData/Snow.deaths.html"
+
+
+def read_snow():
+    with (HISTORICAL / "Snow.pumps.csv").open(encoding="utf-8", newline="") as fh:
+        pumps = list(csv.DictReader(fh))
+    with (HISTORICAL / "Snow.deaths.csv").open(encoding="utf-8", newline="") as fh:
+        deaths = list(csv.DictReader(fh))
+    if len(pumps) != 13 or len(deaths) != 578:
+        raise ValueError("Historical Snow input changed: expected 13 pumps and 578 death marks")
+    p = np.array([[float(row["x"]), float(row["y"])] for row in pumps])
+    d = np.array([[float(row["x"]), float(row["y"])] for row in deaths])
+    all_points = np.vstack([p, d])
+    mins, maxs = all_points.min(axis=0), all_points.max(axis=0)
+    scale = 0.84 / float((maxs - mins).max())
+    offsets = (1 - (maxs - mins) * scale) / 2
+    normalize = lambda raw: offsets + (raw - mins) * scale
+    wp, dp = normalize(p), normalize(d)
+    names = [row["label"] for row in pumps]
+    broad_index = names.index("Broad St")
+    assert all(0 <= coord <= 1 for pt in np.vstack([wp, dp]) for coord in pt)
+    assert len(set(map(tuple, wp))) == len(wp)
+    return wp, dp, names, broad_index, {
+        "source": "HistData::Snow.pumps and HistData::Snow.deaths (Rdatasets mirror)",
+        "pump_source_url": SNOW_SOURCE,
+        "death_source_url": SNOW_DEATHS_SOURCE,
+        "interpretation": (
+            "Digitized coordinates from a historical map; 578 individual "
+            "death-location marks, some intentionally stacked at shared addresses"
+        ),
+        "historical_context": "1854 London cholera outbreak; John Snow's 1855 map",
+        "normalization": {
+            "method": "uniform affine transform preserving source aspect ratio",
+            "source_min": np.round(mins, 9).tolist(),
+            "source_max": np.round(maxs, 9).tolist(),
+            "scale": float(scale),
+            "offset": np.round(offsets, 9).tolist(),
+        },
+        "broad_street_index": broad_index,
+    }
+
+
+# Three purpose-built defaults: documented historical pumps and two reproducible
+# synthetic teaching sets. Alpha points intentionally form a smiling face;
+# the sensors represent two outpost clusters joined by a relay corridor.
+WATER, SNOW_DEATHS, PUMP_LABELS, BROAD_STREET, SNOW_PROVENANCE = read_snow()
+
+THETA = np.linspace(0, 2 * np.pi, 30, endpoint=False) + 0.011
+FACE_RADIUS = .336 + .006 * np.cos(5 * THETA) + .003 * np.sin(7 * THETA)
+FACE_OUTLINE = np.column_stack((
+    .5 + FACE_RADIUS * np.cos(THETA),
+    .52 + FACE_RADIUS * np.sin(THETA),
+))
+EYE_THETA = np.linspace(0, 2 * np.pi, 6, endpoint=False) + .19
+LEFT_EYE = np.column_stack((.39 + .030 * np.cos(EYE_THETA),
+                            .635 + .023 * np.sin(EYE_THETA)))
+RIGHT_EYE = np.column_stack((.61 + .029 * np.cos(EYE_THETA + .13),
+                             .635 + .024 * np.sin(EYE_THETA + .13)))
+MOUTH_X = np.linspace(.327, .673, 11)
+MOUTH = np.column_stack((
+    MOUTH_X,
+    .345 + .081 * ((MOUTH_X - .5) / .173) ** 2
+    + .001 * np.sin(73 * MOUTH_X),
+))
+HABITAT = np.vstack([FACE_OUTLINE, LEFT_EYE, RIGHT_EYE, MOUTH])
+
 BETA = np.array([
-    [.09,.13],[.25,.12],[.39,.18],[.58,.12],[.80,.16],
-    [.14,.33],[.32,.37],[.52,.35],[.76,.34],[.90,.42],
-    [.08,.58],[.27,.59],[.47,.56],[.68,.60],[.86,.70],
-    [.17,.81],[.38,.82],[.61,.85],[.80,.89]
+    [.12,.18],[.22,.16],[.32,.23],[.14,.36],[.28,.35],[.39,.30],
+    [.12,.55],[.25,.51],[.36,.60],[.18,.78],[.32,.79],
+    [.44,.43],[.49,.49],[.55,.56],
+    [.61,.18],[.75,.15],[.87,.22],[.614,.334],[.74,.35],[.86,.40],
+    [.62,.54],[.76,.56],[.89,.65],[.64,.78],[.79,.81],
 ], dtype=float)
-THETA = np.linspace(0, 2*np.pi, 36, endpoint=False)
-RADIUS = .285 + .07*np.cos(4*THETA) + .032*np.sin(3*THETA)
-HABITAT = np.column_stack([
-    .5 + 1.05*RADIUS*np.cos(THETA), .5 + 1.05*RADIUS*np.sin(THETA)
-])
-ALPHAS = (2,3,4,5)  # Negative actual alpha: -2, -3, -4, -5
+
+ALPHAS = (4,8,10,12)  # R=1/|alpha| reveals holes/eyes across the smiley
 BETAS = (1,1.25,1.5,1.75,2)
 
 
@@ -106,18 +171,23 @@ def build():
             "library":"proximitygraphs",
             "library_version":getattr(pg,"__version__","unknown"),
             "library_source_commit":LIBRARY_COMMIT,
-            "data_type":"synthetic",
+            "data_type":"historical digitized locations for Voronoi; synthetic smiley and sensor sets",
             "units":"normalized Euclidean coordinates",
             "voronoi_polygons":"Euclidean half-plane clipping; pg.Voronoi only stores site adjacency"
         },
         "voronoi":{
             "points":arr(WATER),"cells":cells(WATER),
+            "labels":PUMP_LABELS,
+            "death_marks":arr(SNOW_DEATHS),
+            "historical":SNOW_PROVENANCE,
             "adjacency":edges(pg.Voronoi(water)),
             "delaunay":edges(pg.DelaunayG(water)),
             "triangles":triangulation_data(WATER)
         },
-        "alpha":{"points":arr(HABITAT),"triangles":triangulation_data(HABITAT),"options":{}},
-        "beta":{"points":arr(BETA),"options":{}},
+        "alpha":{"points":arr(HABITAT),"description":"synthetic smiley face",
+                 "triangles":triangulation_data(HABITAT),"options":{}},
+        "beta":{"points":arr(BETA),"description":"synthetic relay-corridor sensor network",
+                "options":{}},
         "compare":{"points":arr(BETA),"options":{}}
     }
     hp=pg.SetPoints(HABITAT.copy())
@@ -176,30 +246,35 @@ def save(fig,stem):
 
 
 def render_water(s):
-    fig,ax=axis("Figure 1 · Water stations: Voronoi and Delaunay")
+    fig,ax=axis("Figure 1 · John Snow's pumps: Voronoi and Delaunay")
     palette=["#e0edf0","#e7e8de","#d8e7e0","#eae2d7","#deedf2",
              "#f2e9df","#e1e9d7","#e6e6ed","#f3e7e4","#deede8","#e7eaf1","#f3eadf"]
     for i,p in enumerate(s["voronoi"]["cells"]):
         if len(p)>=3:
             ax.add_patch(Polygon(p,facecolor="#b3dce0" if i==0 else palette[i%len(palette)],
                                  edgecolor="white",lw=1.6,alpha=.9))
+    ax.scatter(SNOW_DEATHS[:,0], SNOW_DEATHS[:,1], s=5.0,
+               c="#8d565a",alpha=.29,edgecolors="none",zorder=3)
     for i,j in s["voronoi"]["delaunay"]:
         a,b=WATER[i],WATER[j]
         ax.plot([a[0],b[0]],[a[1],b[1]],c="#be6c41",lw=1.7,alpha=.67,zorder=4)
     sites(ax,WATER)
-    ax.scatter([WATER[0,0]],[WATER[0,1]],s=100,c="#be6c41",
-               edgecolor="white",linewidth=1.4,zorder=8)
+    ax.scatter([WATER[BROAD_STREET,0]],[WATER[BROAD_STREET,1]],s=116,
+               c="#be6c41",edgecolor="white",linewidth=1.4,zorder=8)
+    ax.annotate("Broad Street", xy=WATER[BROAD_STREET],xytext=(11,13),
+                textcoords="offset points",fontsize=9,fontweight="bold",
+                color="#924827",zorder=9)
     save(fig,"figure01-water")
 
 
 def render_habitat(s):
-    fig,ax=axis("Figure 2 · Habitat observations: circular alpha-hull")
-    for i,a in enumerate(s["alpha"]["options"]["4"]["arcs"]):
+    fig,ax=axis("Figure 2 · Smiley point cloud: circular alpha-hull")
+    for i,a in enumerate(s["alpha"]["options"]["8"]["arcs"]):
         p=np.asarray(a)
         ax.plot(p[:,0],p[:,1],c="#be6c41" if i==0 else "#166b75",
                 lw=3 if i==0 else 2.2,zorder=5,solid_capstyle="round")
     # Draw the supporting circle of the highlighted library-generated arc.
-    exemplar=np.asarray(s["alpha"]["options"]["4"]["arcs"][0])
+    exemplar=np.asarray(s["alpha"]["options"]["8"]["arcs"][0])
     p,q,r=exemplar[[0,len(exemplar)//2,-1]]
     matrix=2*np.stack([q-p,r-p])
     rhs=np.array([q@q-p@p,r@r-p@p])
@@ -214,7 +289,7 @@ def render_habitat(s):
 
 
 def render_sensors(s):
-    fig,ax=axis("Figure 3 · Sensor candidate links: beta-skeleton")
+    fig,ax=axis("Figure 3 · Relay corridor: beta-skeleton links")
     graph=s["beta"]["options"]["1.5"]
     selected=graph[len(graph)//2] if graph else None
     if selected:
@@ -252,7 +327,7 @@ def main():
     DATA.mkdir(parents=True,exist_ok=True)
     (DATA/"scenes.json").write_text(json.dumps(scene,indent=2)+"\n",encoding="utf-8")
     render_water(scene);render_habitat(scene);render_sensors(scene)
-    print("Generated authoritative library geometry and 3 PNG + 3 SVG figures.")
+    print("Generated historical Snow data + authoritative graph geometry and three PNG/SVG figure pairs.")
 
 
 if __name__=="__main__":

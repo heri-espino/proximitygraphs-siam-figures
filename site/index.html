@@ -48,25 +48,25 @@
     <section id="explore" class="directory" aria-labelledby="explore-title">
       <div class="section-kicker">A guided mathematical laboratory</div>
       <h2 id="explore-title">Choose a construction</h2>
-      <p class="section-intro">Each experiment has editable points, a final graph, optional construction geometry, and a computation inspector. All illustrated observations are <strong>synthetic</strong>.</p>
+      <p class="section-intro">Each experiment has editable points and an interactive construction inspector. The Voronoi example uses <strong>digitized historical John Snow locations</strong>; the smiley and relay network are synthetic.</p>
       <div class="chapter-grid">
         <a class="chapter-card" href="#water">
-          <img loading="lazy" src="assets/figure01-water.png" alt="Synthetic Voronoi cells with Delaunay adjacency">
+          <img loading="lazy" src="assets/figure01-water.png" alt="John Snow historical pump locations, cholera death marks, Voronoi cells and Delaunay adjacency">
           <span class="chapter-meta">01 · SPATIAL PARTITIONS</span>
           <strong>Voronoi &amp; Delaunay</strong>
-          <span>Nearest-site cells, bisectors, and empty circumcircles.</span>
+          <span>John Snow’s 1854 pump locations, cholera deaths, and nearest-site boundaries.</span>
         </a>
         <a class="chapter-card" href="#habitat">
-          <img loading="lazy" src="assets/figure02-habitat.png" alt="Synthetic curved alpha-hull and its circle">
+          <img loading="lazy" src="assets/figure02-habitat.png" alt="Synthetic smiling face made of points with alpha-hull arcs">
           <span class="chapter-meta">02 · SHAPE RECONSTRUCTION</span>
           <strong>Alpha-Hull &amp; Alpha-Shape</strong>
-          <span>Curved arcs, straight boundaries, and retained simplices.</span>
+          <span>A smiling point cloud reveals straight shapes, curved arcs, and holes.</span>
         </a>
         <a class="chapter-card" href="#sensors">
           <img loading="lazy" src="assets/figure03-sensors.png" alt="Synthetic beta-skeleton and empty lune">
           <span class="chapter-meta">03 · EMPTY-REGION GRAPHS</span>
           <strong>β-Skeleton</strong>
-          <span>Why a candidate edge survives—or which point blocks it.</span>
+          <span>A relay corridor links two sensor clusters; inspect edge blockers.</span>
         </a>
       </div>
     </section>
@@ -75,7 +75,7 @@
       <div class="section-kicker">01 / Spatial allocation</div>
       <div class="section-heading">
         <div><h2 id="water-title">Voronoi &amp; Delaunay</h2>
-          <p class="intro">Nearest-site regions partition the plane; neighboring service cells define Delaunay edges. Reveal the bisector inequalities and an empty circumcircle behind the triangulation.</p></div>
+          <p class="intro">Explore <strong>John Snow’s historical Soho water pumps</strong> and the locations of cholera deaths. The pumps define Voronoi service areas; the deaths are contextual observations, never graph vertices. Reveal bisectors, triangles, and empty circumcircles.</p></div>
         <a class="section-next" href="#habitat">Next: Alpha geometry →</a>
       </div>
       <div class="studio">
@@ -85,6 +85,8 @@
           <select id="water-view" class="control-select"><option value="final">Final geometry</option><option value="construction">Construction</option><option value="both" selected>Both</option></select>
           <label class="toggle"><input id="water-cells" type="checkbox" checked> Voronoi cells</label>
           <label class="toggle"><input id="water-dual" type="checkbox" checked> Delaunay edges</label>
+          <label class="toggle"><input id="water-deaths" type="checkbox" checked> Historical cholera death marks</label>
+          <label class="toggle"><input id="water-pump-label" type="checkbox" checked> Selected pump name</label>
           <label class="toggle"><input id="water-bisectors" type="checkbox"> Selected-site bisectors</label>
           <label class="toggle"><input id="water-circumcircle" type="checkbox" checked> Triangle circumcircle</label>
           <label class="toggle"><input id="water-triangles" type="checkbox"> Delaunay triangles</label>
@@ -101,7 +103,7 @@
         </aside>
         <div class="studio-main">
           <div class="chart-frame">
-            <div class="chart-top"><span>Synthetic water-service sites</span><span>EUCLIDEAN · 2D</span></div>
+            <div class="chart-top"><span>John Snow’s Soho pumps · 1854</span><span>13 PUMPS · DIGITIZED</span></div>
             <svg id="water-plot" role="img" aria-label="Interactive Voronoi cells, bisectors, Delaunay triangles and circumcircles" viewBox="0 0 640 600"></svg>
           </div>
           <p id="water-edit-source" class="geometry-source">Loading original point set.</p>
@@ -115,14 +117,14 @@
           <p class="insight-note" id="water-note">Every cell is the intersection of nearest-site half-planes.</p>
         </aside>
       </div>
-      <p class="context">Application: service-area allocation is a starting model, not a routing solution. John Snow's 1854 London cholera investigation motivates the question historically; the plotted coordinates are invented and do not reproduce his map. Road distance, capacity, and demand change real catchments.</p>
+      <p class="context"><strong>Historically sourced coordinates:</strong> 13 water-pump locations and 578 individual cholera death marks from the digitized <a href="https://vincentarelbundock.github.io/Rdatasets/doc/HistData/Snow.pumps.html" target="_blank" rel="noopener noreferrer">HistData John Snow collection</a>. The same uniform scaling preserves the original map proportions. Stacked death marks reproduce historical map conventions; this is not a modern georeferenced GIS survey. The Voronoi diagram is a contemporary mathematical illustration, <strong>not a procedure Snow computed</strong>. Straight-line distance differs from street-network access and does not establish causation.</p>
     </section>
 
     <section id="habitat" class="exhibit" aria-labelledby="habitat-title">
       <div class="section-kicker">02 / Geometric morphology</div>
       <div class="section-heading">
         <div><h2 id="habitat-title">Alpha-Hull &amp; Alpha-Shape</h2>
-          <p class="intro">The <strong>alpha-shape</strong> is a straight-edge boundary of retained Delaunay triangles. The related <strong>alpha-hull</strong> replaces those edges with circular arcs. Their geometry becomes visible when the construction is shown.</p></div>
+          <p class="intro">A <strong>smiling face built from synthetic points</strong> makes it easy to see what a geometric boundary retains or loses. The alpha-shape uses straight segments from Delaunay triangles; the related alpha-hull uses circular arcs.</p></div>
         <a class="section-next" href="#sensors">Next: Empty regions →</a>
       </div>
       <div class="studio">
@@ -130,7 +132,7 @@
           <h3>Layers &amp; scale</h3>
           <label class="control-label" for="alpha-view">Preset</label>
           <select id="alpha-view" class="control-select"><option value="final">Final comparison</option><option value="construction">Construction</option><option value="both" selected>Both</option></select>
-          <label class="control-label" for="alpha-slider">Curvature scale <strong id="alpha-value">α = −3</strong></label>
+          <label class="control-label" for="alpha-slider">Curvature scale <strong id="alpha-value">α = −8</strong></label>
           <input id="alpha-slider" type="range" min="0" max="3" step="1" value="1">
           <label class="toggle"><input id="alpha-hull" type="checkbox" checked> Alpha-hull · circular arcs</label>
           <label class="toggle"><input id="alpha-shape" type="checkbox" checked> Alpha-shape · straight edges</label>
@@ -151,7 +153,7 @@
         </aside>
         <div class="studio-main">
           <div class="chart-frame">
-            <div class="chart-top"><span>Synthetic habitat observations</span><span>NEGATIVE α · 2D</span></div>
+            <div class="chart-top"><span>Smiley-face point cloud</span><span>SYNTHETIC · NEGATIVE α</span></div>
             <svg id="habitat-plot" role="img" aria-label="Interactive circular alpha-hull, straight alpha-shape, Delaunay simplices and supporting circles" viewBox="0 0 640 600"></svg>
           </div>
           <p id="habitat-edit-source" class="geometry-source">Loading original point set.</p>
@@ -165,14 +167,14 @@
           <p class="insight-note" id="habitat-note">Triangles with circumradius at most R form the displayed alpha-shape construction.</p>
         </aside>
       </div>
-      <p class="context">The displayed alpha-shape is the library's boundary of triangles retained by its circumradius rule; it is not the alpha-complex itself. An alpha-hull is a different curved representation. These synthetic observations do not establish a statistical habitat boundary.</p>
+      <p class="context">The default smiley is deliberately synthetic: outline points, two eye loops, and a curved mouth. The alpha-shape is the boundary of retained Delaunay triangles, not an alpha-complex; the alpha-hull uses circular arcs. This makes changes of scale visible, but it is not an inference about a real physical shape.</p>
     </section>
 
     <section id="sensors" class="exhibit" aria-labelledby="sensors-title">
       <div class="section-kicker">03 / Empty-region proximity</div>
       <div class="section-heading">
         <div><h2 id="sensors-title">β-Skeleton</h2>
-          <p class="intro">An edge survives only when its lune contains no other site. Inspect a successful pair or a rejected candidate to see the two defining disks and any <strong>blocking points</strong>.</p></div>
+          <p class="intro">Two clusters of <strong>hypothetical sensor outposts</strong> are connected by a narrow corridor of relays. Each candidate link survives only when its defining lune contains no other point; rejected links reveal their <strong>blocking sensors</strong>.</p></div>
         <a class="section-next" href="#compare">Next: Compare graphs →</a>
       </div>
       <div class="studio">
@@ -202,7 +204,7 @@
         </aside>
         <div class="studio-main">
           <div class="chart-frame">
-            <div class="chart-top"><span>Synthetic wireless sensor positions</span><span>OPEN LUNE · β ≥ 1</span></div>
+            <div class="chart-top"><span>Synthetic sensor outposts and relay corridor</span><span>OPEN LUNE · β ≥ 1</span></div>
             <svg id="sensors-plot" role="img" aria-label="Interactive beta-skeleton with candidate valid and rejected pairs and their lune blockers" viewBox="0 0 640 600"></svg>
           </div>
           <p id="sensors-edit-source" class="geometry-source">Loading original point set.</p>
@@ -262,7 +264,7 @@
         <div class="section-kicker">Source · Reproducibility · Scope</div>
         <h2 id="about-title">Geometry you can inspect</h2>
         <p>Original diagrams and the alpha-shape boundaries are exported from the pinned <a href="https://github.com/ProximityGraphs/ProximityGraphs" target="_blank" rel="noopener noreferrer">ProximityGraphs Python library</a>. Voronoi cells are separately clipped by Euclidean half-planes. Edited configurations are recomputed by documented browser algorithms and are labeled accordingly.</p>
-        <p>The mathematical families extend beyond the plane, but these demonstrations and most current package constructors are two-dimensional. The examples are synthetic, and the accompanying SIAM News manuscript has not been submitted or endorsed.</p>
+        <p>The mathematical families extend beyond the plane, but these demonstrations and most current package constructors are two-dimensional. The Snow pump and death marks are historical map digitizations; the smiley and sensor network are synthetic. The accompanying SIAM News manuscript has not been submitted or endorsed.</p>
       </div>
       <div class="resource-links">
         <h3>Continue exploring</h3>
@@ -273,6 +275,6 @@
       </div>
     </section>
   </main>
-  <footer><div class="wrap"><span>ProximityGraphs · Computational geometry outreach project</span><a href="#top">Back to top ↑</a><span>Synthetic examples · Not a substitute for field validation</span></div></footer>
+  <footer><div class="wrap"><span>ProximityGraphs · Computational geometry outreach project</span><a href="#top">Back to top ↑</a><span>Historical Snow map + synthetic shape/network · Not field validation</span></div></footer>
 </body>
 </html>
