@@ -5,12 +5,15 @@
   "checks": [
     "Pinned Python ProximityGraphs source loaded",
     "All 13 historical pumps and 578 death marks load, with working contextual layer toggle",
+    "Editorial monochrome layout, serif headline, and borderless figures render",
     "Voronoi bisectors, circumcircle and Delaunay triangulation render",
     "Alpha_Hull arcs, Alpha_Shape edges, retained triangles, and all circles render",
     "Rejected beta candidate exposes blocking points and both disks",
     "Pair inspection and pointer dragging update source provenance",
     "Same-site graph comparison reacts to selections and edits",
-    "Desktop and mobile render without browser exceptions"
+    "Control-driven diagram transitions are enabled",
+    "Desktop and mobile render without browser exceptions",
+    "Reduced-motion preference disables reveal and transitions"
   ],
   "results": "passed",
   "screenshots": [
