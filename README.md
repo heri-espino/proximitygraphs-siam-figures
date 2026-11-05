@@ -23,6 +23,12 @@ The site has a guided **Home → Voronoi → Alpha → β-Skeleton → Compare �
 
 Read [**Mathematical construction details and test methodology**](docs/CONSTRUCTIONS.md) for the exact predicates, radii, clipping convention, provenance, and limits.
 
+## Editorial visual identity — experiment003
+
+The companion now uses warm paper, graphite scientific diagrams, serif headings, open laboratory sections and typographic controls rather than bright colored cards, repeated borders or shadows. Subtle entrance and figure-change motion is implemented in `site/motion.js`; historical coordinates, synthetic teaching layouts and all computed graph results remain intact.
+
+Motion is progressive enhancement only: pointer edits are immediate, and `prefers-reduced-motion: reduce` disables all animation. No custom webfont or additional framework is required. See the [design specification](docs/DESIGN_SYSTEM.md) and [experiment003](experiments/experiment003/README.md) for palette, layout, accessibility and reproducibility.
+
 ## Interactive point editing
 
 On **each** visualization, choose **Move** (drag points with mouse or touch), **+ Add** (click an empty location inside the square), **− Delete** (click a point), or **Reset points** (restore the original data). Existing points can also be moved with the arrow keys after keyboard focus; Delete/Enter works in Delete mode.
@@ -68,6 +74,7 @@ python scripts/check_article.py
 node --check site/app.js
 node --check site/editor.js
 node --check site/geometry-details.js
+node --check site/motion.js
 node tests/test_editor.js
 \`\`\`
 

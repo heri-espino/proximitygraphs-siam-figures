@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#132f3c">
+  <meta name="theme-color" content="#faf9f7">
   <meta name="description" content="Interactive proximity graph laboratory: editable Voronoi and Delaunay diagrams, circular alpha-hulls, alpha-shapes, and beta-skeleton construction witnesses.">
   <meta property="og:type" content="website">
   <meta property="og:title" content="One Point Cloud, Many Graphs | ProximityGraphs Lab">
@@ -14,11 +14,12 @@
   <script src="editor.js" defer></script>
   <script src="geometry-details.js" defer></script>
   <script src="app.js" defer></script>
+  <script src="motion.js" defer></script>
 </head>
 <body>
   <header class="masthead">
     <div class="wrap masthead-inner">
-      <a class="brand" href="#top"><span class="mark">PG</span><span>ProximityGraphs <span class="muted">/ Geometry lab</span></span></a>
+      <a class="brand" href="#top"><span class="mark" aria-hidden="true">Pg.</span><span>ProximityGraphs <span class="muted">/ field notes</span></span></a>
       <nav aria-label="Sections">
         <a href="#top">Home</a><a href="#water">Voronoi</a><a href="#habitat">Alpha</a>
         <a href="#sensors">β-skeleton</a><a href="#compare">Compare</a><a href="#about">About</a>
@@ -28,8 +29,8 @@
   <main class="wrap">
     <section class="hero" id="top" aria-labelledby="page-title">
       <div class="hero-copy">
-        <p class="eyebrow">OPEN-SOURCE COMPUTATIONAL GEOMETRY · INTERACTIVE COMPANION</p>
-        <h1 id="page-title">Who counts as a neighbor?</h1>
+        <p class="eyebrow">A FIELD GUIDE TO COMPUTATIONAL GEOMETRY <span aria-hidden="true">/</span> NO. 01</p>
+        <h1 id="page-title">Who counts as a <em>neighbor?</em></h1>
         <p class="lead">The same points can form different graphs and boundaries. Change the points or the geometric rule, then inspect <em>why</em> each edge, cell, or circular arc exists.</p>
         <div class="hero-actions">
           <a class="button primary" href="#explore">Explore the mathematics</a>
@@ -41,13 +42,13 @@
       </div>
       <div class="hero-visual">
         <img src="assets/figure02-habitat.png" width="760" height="640" alt="Circular alpha-hull with a supporting circle and synthetic points">
-        <span>FIGURE 02 · GEOMETRY EXPOSED</span>
+        <span>FIG. 02 &nbsp; A GEOMETRY OF NEIGHBORHOODS</span>
       </div>
     </section>
 
     <section id="explore" class="directory" aria-labelledby="explore-title">
-      <div class="section-kicker">A guided mathematical laboratory</div>
-      <h2 id="explore-title">Choose a construction</h2>
+      <div class="section-kicker">INDEX / THREE CONSTRUCTIONS</div>
+      <h2 id="explore-title">Three ways to see a point cloud.</h2>
       <p class="section-intro">Each experiment has editable points and an interactive construction inspector. The Voronoi example uses <strong>digitized historical John Snow locations</strong>; the smiley and relay network are synthetic.</p>
       <div class="chapter-grid">
         <a class="chapter-card" href="#water">

@@ -62,3 +62,10 @@ This repository is the source of truth for every editorial and computational art
 
 ## Historic-default change (experiment002)
 Preserve both untouched source CSVs at `data/historical/`, the exact common aspect-preserving normalization in `scripts/export_scenes.py`, and the raw numerical figure outputs. Keep test expectations at **13 pumps, 578 death records, 53 smiley points, 25 sensor relays**. The alpha slider must use negative values `-4,-8,-10,-12` so its retained triangulation changes, unlike the former gentle-radius grid. After editing original historical pump sites, call the configuration hypothetical; background death marks remain fixed. Re-run Python and Node tests, the Playwright visual QA, and document actual PR and Pages run URLs. Do not merge without user authorization (explicitly given for this request).
+
+## experiment003 — editorial presentation and accessible motion (November 2026)
+- The user requested a more elegant, restrained scientific editorial layout and explicitly rejected repeated card outlines, colored panels, teal/orange branding, gradients and generic dashboard aesthetics. Preserve the paper/graphite visual identity unless requested otherwise.
+- `docs/DESIGN_SYSTEM.md` defines color, typography, layout and animation decisions; keep that document current. Figure palettes in `site/app.js` and `scripts/export_scenes.py` must remain visually aligned.
+- `site/motion.js` contains only progressive enhancement: IntersectionObserver reveal on scroll, quiet active navigation, low-amplitude SVG change transitions and `prefers-reduced-motion` support. Never animate every point while dragging or hide content in no-JS/reduced-motion conditions.
+- Preserve all deep links, editor control IDs, computation inspector formulas, historical point sources and graph algorithms. No new geometry sources or algorithm substitutions were intended.
+- Re-run Node, Python, and Playwright visual checks; include `node --check site/motion.js`. Store screenshot outputs and future design analysis under the next sequential experiment.

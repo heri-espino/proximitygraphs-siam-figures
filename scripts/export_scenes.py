@@ -220,19 +220,20 @@ def build():
 
 def axis(title):
     fig,ax=plt.subplots(figsize=(7,6),constrained_layout=True)
-    ax.set_facecolor("#f8fafb")
+    ax.set_facecolor("#fdfcfa")
+    fig.patch.set_facecolor("#faf9f7")
     for v in np.linspace(0,1,11):
-        ax.axvline(v,c="#e6edf0",lw=.6,zorder=0)
-        ax.axhline(v,c="#e6edf0",lw=.6,zorder=0)
+        ax.axvline(v,c="#eeece8",lw=.6,zorder=0)
+        ax.axhline(v,c="#eeece8",lw=.6,zorder=0)
     ax.set_xlim(0,1);ax.set_ylim(0,1);ax.set_aspect("equal")
     ax.set_xticks([]);ax.set_yticks([])
-    ax.set_title(title,loc="left",fontsize=12,color="#243642",weight="bold",pad=12)
-    for spine in ax.spines.values():spine.set_color("#cad9df")
+    ax.set_title(title,loc="left",fontsize=12,color="#30302e",weight="bold",pad=12)
+    for spine in ax.spines.values():spine.set_color("#e4e2dc")
     return fig,ax
 
 
 def sites(ax,points):
-    ax.scatter(points[:,0],points[:,1],s=42,facecolor="#166b75",
+    ax.scatter(points[:,0],points[:,1],s=36,facecolor="#34383c",
                edgecolor="white",linewidth=1.3,zorder=6)
 
 
@@ -247,23 +248,23 @@ def save(fig,stem):
 
 def render_water(s):
     fig,ax=axis("Figure 1 · John Snow's pumps: Voronoi and Delaunay")
-    palette=["#e0edf0","#e7e8de","#d8e7e0","#eae2d7","#deedf2",
-             "#f2e9df","#e1e9d7","#e6e6ed","#f3e7e4","#deede8","#e7eaf1","#f3eadf"]
+    palette=["#f0eeeb","#eeeae7","#ecebe6","#ece9e4","#efeeec",
+             "#f1eeeb","#ebe9e5","#ecebed","#f1e9e8","#edece9","#eeedef","#efebe6"]
     for i,p in enumerate(s["voronoi"]["cells"]):
         if len(p)>=3:
-            ax.add_patch(Polygon(p,facecolor="#b3dce0" if i==0 else palette[i%len(palette)],
+            ax.add_patch(Polygon(p,facecolor="#e5e3de" if i==0 else palette[i%len(palette)],
                                  edgecolor="white",lw=1.6,alpha=.9))
     ax.scatter(SNOW_DEATHS[:,0], SNOW_DEATHS[:,1], s=5.0,
-               c="#8d565a",alpha=.29,edgecolors="none",zorder=3)
+               c="#967b79",alpha=.29,edgecolors="none",zorder=3)
     for i,j in s["voronoi"]["delaunay"]:
         a,b=WATER[i],WATER[j]
-        ax.plot([a[0],b[0]],[a[1],b[1]],c="#be6c41",lw=1.7,alpha=.67,zorder=4)
+        ax.plot([a[0],b[0]],[a[1],b[1]],c="#6d6c75",lw=1.7,alpha=.67,zorder=4)
     sites(ax,WATER)
     ax.scatter([WATER[BROAD_STREET,0]],[WATER[BROAD_STREET,1]],s=116,
-               c="#be6c41",edgecolor="white",linewidth=1.4,zorder=8)
+               c="#6d6c75",edgecolor="white",linewidth=1.4,zorder=8)
     ax.annotate("Broad Street", xy=WATER[BROAD_STREET],xytext=(11,13),
                 textcoords="offset points",fontsize=9,fontweight="bold",
-                color="#924827",zorder=9)
+                color="#6a6871",zorder=9)
     save(fig,"figure01-water")
 
 
@@ -271,7 +272,7 @@ def render_habitat(s):
     fig,ax=axis("Figure 2 · Smiley point cloud: circular alpha-hull")
     for i,a in enumerate(s["alpha"]["options"]["8"]["arcs"]):
         p=np.asarray(a)
-        ax.plot(p[:,0],p[:,1],c="#be6c41" if i==0 else "#166b75",
+        ax.plot(p[:,0],p[:,1],c="#6d6c75" if i==0 else "#34383c",
                 lw=3 if i==0 else 2.2,zorder=5,solid_capstyle="round")
     # Draw the supporting circle of the highlighted library-generated arc.
     exemplar=np.asarray(s["alpha"]["options"]["8"]["arcs"][0])
@@ -281,9 +282,9 @@ def render_habitat(s):
     if abs(np.linalg.det(matrix))>1e-12:
         center=np.linalg.solve(matrix,rhs)
         ax.add_patch(Circle(center,np.linalg.norm(p-center),
-                            fill=False,edgecolor="#bd895f",linestyle="--",
+                            fill=False,edgecolor="#96939b",linestyle="--",
                             linewidth=1.4,alpha=.78,zorder=3))
-        ax.scatter([center[0]],[center[1]],s=24,color="#bd895f",zorder=4)
+        ax.scatter([center[0]],[center[1]],s=24,color="#96939b",zorder=4)
     sites(ax,HABITAT)
     save(fig,"figure02-habitat")
 
@@ -301,14 +302,14 @@ def render_sensors(s):
         within=((X-c1[0])**2+(Y-c1[1])**2<=(h*np.linalg.norm(p-q))**2) & (
             (X-c2[0])**2+(Y-c2[1])**2<=(h*np.linalg.norm(p-q))**2)
         ax.contourf(X,Y,within.astype(float),levels=[.5,1.5],
-                    colors=["#dca781"],alpha=.27,zorder=2)
+                    colors=["#c5bec0"],alpha=.27,zorder=2)
         for center in [c1,c2]:
-            ax.add_patch(Circle(center,h*np.linalg.norm(p-q),edgecolor="#bd895f",
+            ax.add_patch(Circle(center,h*np.linalg.norm(p-q),edgecolor="#96939b",
                                 fill=False,linestyle="--",linewidth=1.1,zorder=3))
     for i,j in graph:
         p,q=BETA[i],BETA[j]
         selected_edge=[i,j]==selected
-        ax.plot([p[0],q[0]],[p[1],q[1]],c="#be6c41" if selected_edge else "#166b75",
+        ax.plot([p[0],q[0]],[p[1],q[1]],c="#6d6c75" if selected_edge else "#34383c",
                 lw=3.5 if selected_edge else 1.7,alpha=1 if selected_edge else .65,zorder=4)
     sites(ax,BETA)
     save(fig,"figure03-sensors")

@@ -29,7 +29,7 @@ SITE=ROOT/"site"
 
 def inline_site():
     html=(SITE/"index.html").read_text(encoding="utf-8")
-    for name in ("editor.js","geometry-details.js","app.js"):
+    for name in ("editor.js","geometry-details.js","app.js","motion.js"):
         tag=f'<script src="{name}" defer></script>'
         if tag not in html:
             raise RuntimeError(f"Missing script tag {name}")
@@ -78,6 +78,13 @@ def main():
         page.locator("#water-deaths").check()
         assert page.locator("#water-plot g[aria-hidden='true'] circle").count()==578
         checks.append("All 13 historical pumps and 578 death marks load, with working contextual layer toggle")
+        assert page.locator("h1 em").inner_text()=="neighbor?"
+        assert page.evaluate("getComputedStyle(document.body).backgroundColor")=="rgb(250, 249, 247)"
+        assert page.locator("#water").evaluate(
+            "el => getComputedStyle(el).boxShadow")=="none"
+        assert page.locator(".chapter-card").first.evaluate(
+            "el => getComputedStyle(el).boxShadow")=="none"
+        checks.append("Editorial monochrome layout, serif headline, and borderless figures render")
         page.screenshot(path=str(output/"01-home.png"))
         page.locator("#water-bisectors").check()
         page.locator("#water-triangles").check()
@@ -133,6 +140,15 @@ def main():
         after=page.locator("#compare-details").inner_text()
         assert before!=after,(before,after)
         checks.append("Same-site graph comparison reacts to selections and edits")
+        # Deliberate control changes show a short diagram transition. Dragging
+        # remains unanimated, and the site must honor OS reduced-motion.
+        animated=page.evaluate("""() => {
+          const control=document.getElementById('alpha-kept');
+          control.click();
+          return document.getElementById('habitat-plot').classList.contains('is-recomposing');
+        }""")
+        assert animated,"Changing geometry layers should trigger a restrained transition"
+        checks.append("Control-driven diagram transitions are enabled")
         assert not errors,errors
 
         mobile=browser.new_page(viewport={"width":390,"height":844},
@@ -144,6 +160,14 @@ def main():
         mobile.locator("#habitat").screenshot(path=str(output/"07-mobile-alpha.png"))
         assert not mobile_errors,mobile_errors
         checks.append("Desktop and mobile render without browser exceptions")
+        reduced=browser.new_page(viewport={"width":1000,"height":800},
+                                 reduced_motion="reduce")
+        reduced.set_content(html,wait_until="load",timeout=60000)
+        assert not reduced.evaluate(
+            "document.documentElement.classList.contains('motion-ready')")
+        assert reduced.locator(".chapter-card").first.evaluate(
+            "el => getComputedStyle(el).transitionDuration")=="0s"
+        checks.append("Reduced-motion preference disables reveal and transitions")
         browser.close()
 
     result={

@@ -5,7 +5,7 @@
 const NS = "http://www.w3.org/2000/svg";
 const WIDTH = 640, HEIGHT = 600;
 const frame = { x: 65, y: 43, w: 510, h: 510 };
-const teal = "#166b75", orange = "#be6c41", dark = "#243642";
+const teal = "#34383c", orange = "#6d6c75", dark = "#30302e";
 const alphaValues = [4, 8, 10, 12];
 const betaValues = [1, 1.25, 1.5, 1.75, 2];
 const state = {
@@ -72,16 +72,16 @@ function dist(a,b) { return Math.hypot(a[0]-b[0],a[1]-b[1]); }
 function edgeKey(i,j) {return Math.min(i,j)+":"+Math.max(i,j);}
 function background(svg, tag) {
   svg.replaceChildren();
-  el("rect", {width:WIDTH,height:HEIGHT,fill:"#f8fafb"},svg);
+  el("rect", {width:WIDTH,height:HEIGHT,fill:"#fdfcfa"},svg);
   for (let k=0;k<=10;k++) {
     const x=frame.x+frame.w*k/10, y=frame.y+frame.h*k/10;
-    el("line",{x1:x,y1:frame.y,x2:x,y2:frame.y+frame.h,stroke:"#e7eef0","stroke-width":1},svg);
-    el("line",{x1:frame.x,y1:y,x2:frame.x+frame.w,y2:y,stroke:"#e7eef0","stroke-width":1},svg);
+    el("line",{x1:x,y1:frame.y,x2:x,y2:frame.y+frame.h,stroke:"#f1f0ed","stroke-width":1},svg);
+    el("line",{x1:frame.x,y1:y,x2:frame.x+frame.w,y2:y,stroke:"#f1f0ed","stroke-width":1},svg);
   }
-  el("rect",{x:frame.x,y:frame.y,width:frame.w,height:frame.h,fill:"none",stroke:"#cedce0","stroke-width":1.5},svg);
-  el("text",{x:frame.x,y:28,fill:"#7a8e99","font-size":12,"letter-spacing":1},svg,tag.toUpperCase());
+  el("rect",{x:frame.x,y:frame.y,width:frame.w,height:frame.h,fill:"none",stroke:"#dddcd8","stroke-width":1.5},svg);
+  el("text",{x:frame.x,y:28,fill:"#76736e","font-size":12,"letter-spacing":1},svg,tag.toUpperCase());
   const historic=tag.startsWith("01") && dataset?.voronoi?.historical;
-  el("text",{x:frame.x,y:HEIGHT-18,fill:"#7a8e99","font-size":11},svg,
+  el("text",{x:frame.x,y:HEIGHT-18,fill:"#76736e","font-size":11},svg,
     historic?"Digitized 1854 Soho map · proportionally normalized":
     "Synthetic teaching coordinates · normalized Euclidean plane");
 }
@@ -258,11 +258,11 @@ function drawWater(){
   if(points.length)state.waterSite=Math.max(0,Math.min(state.waterSite,points.length-1));
   background(svg,"01 / nearest-site & empty-circle constructions");
   if(hasLayer("water-cells")){
-    const palette=["#e0edf0","#e7e8de","#d8e7e0","#eae2d7","#deedf2",
-      "#f2e9df","#e1e9d7","#e6e6ed","#f3e7e4","#deede8","#e7eaf1","#f3eadf"];
+    const palette=["#f0eeeb","#eeeae7","#ecebe6","#ece9e4","#efeeec",
+      "#f1eeeb","#ebe9e5","#ecebed","#f1e9e8","#edece9","#eeedef","#efebe6"];
     for(let i=0;i<polygons.length;i++)if(polygons[i].length>=3)
       el("polygon",{points:pointsAttr(polygons[i]),
-        fill:i===state.waterSite?"#b3dce0":palette[i%palette.length],
+        fill:i===state.waterSite?"#e5e3de":palette[i%palette.length],
         "fill-opacity":i===state.waterSite?.94:.78,
         stroke:"#fff","stroke-width":1.7},svg);
   }
@@ -272,15 +272,15 @@ function drawWater(){
     for(const p of source.death_marks){
       const v=xy(p);
       el("circle",{cx:v[0],cy:v[1],r:2.45,
-        fill:"#973c48","fill-opacity":.36},layer);
+        fill:"#967b79","fill-opacity":.36},layer);
     }
   }
   if(hasLayer("water-triangles")){
     for(const t of tri){
       const p=t.vertices.map(i=>points[i]);
       if(p.some(x=>!x))continue;
-      el("polygon",{points:pointsAttr(p),fill:"#bfd7d8","fill-opacity":.12,
-        stroke:"#9aafb8","stroke-width":1.1,"stroke-dasharray":"4 4"},svg);
+      el("polygon",{points:pointsAttr(p),fill:"#d7d5ce","fill-opacity":.12,
+        stroke:"#c1beb9","stroke-width":1.1,"stroke-dasharray":"4 4"},svg);
     }
   }
   if(hasLayer("water-bisectors")&&points.length){
@@ -289,13 +289,13 @@ function drawWater(){
       if(i===state.waterSite)continue;
       const bis=bisectorClippedToUnitSquare(selected,points[i]);
       if(bis){
-        const line=segment(svg,bis[0],bis[1],"#6f9cad",1.4,.68);
+        const line=segment(svg,bis[0],bis[1],"#a6a8af",1.4,.68);
         line.setAttribute("stroke-dasharray","7 5");
       }
     }
   }
   if(hasLayer("water-dual"))
-    for(const [i,j] of edges)segment(svg,points[i],points[j],"#a36e49",2.25,.8);
+    for(const [i,j] of edges)segment(svg,points[i],points[j],"#767475",2.25,.8);
   const selectedTriangles=tri.filter(t=>t.vertices.includes(state.waterSite));
   const chosen=selectedTriangles.length?
     selectedTriangles[state.waterTriangleIndex%selectedTriangles.length]:null;
@@ -304,12 +304,12 @@ function drawWater(){
     const cc=circumcircle(...pts);
     if(cc){
       const clipped=squareClip(svg,"water-circle-square");
-      circleOverlay(svg,cc.center,cc.r,"#bd784e",2,true,"#e6a57a18",clipped);
+      circleOverlay(svg,cc.center,cc.r,"#6e6972",2,true,"#aaa3ad14",clipped);
       const center=xy(cc.center);
-      el("circle",{cx:center[0],cy:center[1],r:4,fill:"#b46d44"},svg);
+      el("circle",{cx:center[0],cy:center[1],r:4,fill:"#6f6b6b"},svg);
       for(const index of chosen.vertices){
         const p=xy(points[index]);
-        el("circle",{cx:p[0],cy:p[1],r:11,fill:"none",stroke:"#bc7950","stroke-width":2.3},svg);
+        el("circle",{cx:p[0],cy:p[1],r:11,fill:"none",stroke:"#868088","stroke-width":2.3},svg);
       }
     }
   }
@@ -320,9 +320,9 @@ function drawWater(){
   });
   if(original&&points[state.waterSite]&&hasLayer("water-pump-label")){
     const v=xy(points[state.waterSite]);
-    el("text",{x:v[0]+11,y:v[1]-12,fill:"#873e29",
+    el("text",{x:v[0]+11,y:v[1]-12,fill:"#5c5750",
       "font-size":12,"font-weight":750,"paint-order":"stroke",
-      stroke:"#f8fafb","stroke-width":4,
+      stroke:"#fdfcfa","stroke-width":4,
       "pointer-events":"none"},svg,source.labels?.[state.waterSite]||"Pump");
   }
   detail("water-stat",points.length+" pumps · "+edges.length+" Delaunay edges"+
@@ -365,7 +365,7 @@ function drawHabitat(){
       const poly=t.vertices.map(i=>points[i]);
       if(poly.some(x=>!x))continue;
       el("polygon",{points:pointsAttr(poly),fill:"none",
-        stroke:"#9daeb7","stroke-width":1.05,"stroke-dasharray":"3 3",
+        stroke:"#cfcdc9","stroke-width":1.05,"stroke-dasharray":"3 3",
         "stroke-opacity":.65},svg);
     }
   }
@@ -374,7 +374,7 @@ function drawHabitat(){
       const poly=indices.map(i=>points[i]);
       if(poly.some(x=>!x))continue;
       el("polygon",{points:pointsAttr(poly),
-        fill:"#8bb9b4","fill-opacity":.18,stroke:"#6aa29b",
+        fill:"#c0bdba","fill-opacity":.18,stroke:"#aaa7a2",
         "stroke-width":.9,"stroke-opacity":.55},svg);
     }
   }
@@ -383,23 +383,23 @@ function drawHabitat(){
   const chosenCircle=circles.find(c=>c.index===state.alphaArc);
   const clipped=squareClip(svg,"alpha-circles-square");
   if(hasLayer("alpha-all-circles")){
-    for(const c of circles)circleOverlay(svg,c.center,c.radius,"#93a8ba",1.25,true,"none",clipped)
+    for(const c of circles)circleOverlay(svg,c.center,c.radius,"#cccac3",1.25,true,"none",clipped)
       .setAttribute("stroke-opacity",.45);
   }
   if(hasLayer("alpha-circle")&&chosenCircle){
     const c=chosenCircle;
-    circleOverlay(svg,c.center,c.radius,"#b56e41",2.4,true,"none",clipped);
+    circleOverlay(svg,c.center,c.radius,"#73717c",2.4,true,"none",clipped);
   }
   if(hasLayer("alpha-centers")){
     for(const c of circles){
       const v=xy(c.center);
       el("circle",{cx:v[0],cy:v[1],r:c.index===state.alphaArc?5:3,
-        fill:c.index===state.alphaArc?"#b66f48":"#779ca7","fill-opacity":.9},clipped);
+        fill:c.index===state.alphaArc?"#77727a":"#91959a","fill-opacity":.9},clipped);
     }
   }
   if(hasLayer("alpha-shape")){
     for(const [i,j] of boundary){
-      const line=segment(svg,points[i],points[j],"#366989",3,.85);
+      const line=segment(svg,points[i],points[j],"#656777",3,.85);
       line.setAttribute("stroke-dasharray","5 4");
     }
   }
@@ -407,7 +407,7 @@ function drawHabitat(){
     arcs.forEach(function(arc,index){
       const selected=index===state.alphaArc;
       const line=el("polyline",{points:pointsAttr(arc),fill:"none",
-        stroke:selected?"#bd6a37":"#c08251",
+        stroke:selected?"#5d5c64":"#7f7b84",
         "stroke-width":selected?4.2:2.8,"stroke-linecap":"round",
         class:"selectable",role:"button",tabindex:0,
         "aria-label":"Inspect circular alpha-hull arc "+(index+1)},svg);
@@ -472,12 +472,12 @@ function drawSensors(){
     el("circle",{cx:a[0],cy:a[1],r:report.radius*frame.w},cp);
     const clipped=el("g",{"clip-path":"url(#beta-lune-mask)"},group);
     el("circle",{cx:b[0],cy:b[1],r:report.radius*frame.w,
-      fill:report.valid?"#78b5b0":"#e0a395","fill-opacity":.38},clipped);
+      fill:report.valid?"#c8c5be":"#c9aeb0","fill-opacity":.38},clipped);
   }
   if(report && hasLayer("beta-disks")){
     const group=squareClip(svg,"beta-disk-square");
     for(const c of report.centers)
-      circleOverlay(svg,c,report.radius,report.valid?"#78a7a8":"#c77a6b",
+      circleOverlay(svg,c,report.radius,report.valid?"#aaa8ac":"#bb9b9a",
         1.6,true,"none",group);
   }
   const shouldShowInvalid=hasLayer("beta-invalid");
@@ -485,25 +485,25 @@ function drawSensors(){
   if(shouldShowInvalid && !tooMany){
     for(const p of allPointPairs(points)){
       if(validKeys.has(edgeKey(...p)))continue;
-      const e=segment(svg,points[p[0]],points[p[1]],"#ad7e83",1,.16);
+      const e=segment(svg,points[p[0]],points[p[1]],"#a8a0a2",1,.16);
       e.setAttribute("stroke-dasharray","3 5");
     }
   }
   if(hasLayer("beta-edges")){
     for(const e of edges){
       const selected=pair&&edgeKey(...pair)===edgeKey(...e);
-      segment(svg,points[e[0]],points[e[1]],selected?"#ad7444":"#166b75",
+      segment(svg,points[e[0]],points[e[1]],selected?"#77717b":"#34383c",
         selected?4:2.1,selected?1:.65);
     }
   }
   // A selected rejected pair is always visible, even though it is not an edge.
   if(report){
     const e=segment(svg,points[pair[0]],points[pair[1]],
-      report.valid?"#b87b49":"#ba4c4c",4,1);
+      report.valid?"#77727a":"#ad6469",4,1);
     if(!report.valid)e.setAttribute("stroke-dasharray","9 5");
     for(const i of pair){
       const v=xy(points[i]);el("circle",{cx:v[0],cy:v[1],r:11,
-        fill:"none",stroke:report.valid?"#b87b49":"#ba4c4c",
+        fill:"none",stroke:report.valid?"#77727a":"#ad6469",
         "stroke-width":2},svg);
     }
   }
@@ -519,20 +519,20 @@ function drawSensors(){
     const selected=!!report&&(i===pair[0]||i===pair[1]);
     if(blocker&&hasLayer("beta-blockers")){
       const v=xy(p);
-      el("circle",{cx:v[0],cy:v[1],r:15,fill:"#d65c56","fill-opacity":.14,
-        stroke:"#c65a50","stroke-width":1.6},svg);
+      el("circle",{cx:v[0],cy:v[1],r:15,fill:"#b56c73","fill-opacity":.14,
+        stroke:"#b36e73","stroke-width":1.6},svg);
     }
     site(svg,p,i,selected);
     if(blocker&&hasLayer("beta-blockers")){
       const v=xy(p);
-      el("circle",{cx:v[0],cy:v[1],r:6.3,fill:"#c54f4b",
+      el("circle",{cx:v[0],cy:v[1],r:6.3,fill:"#a05f65",
         stroke:"#fff","stroke-width":1.8,"pointer-events":"none"},svg);
     }
   });
   if(state.betaInspectFirst!==null && points[state.betaInspectFirst]){
     const v=xy(points[state.betaInspectFirst]);
     el("circle",{cx:v[0],cy:v[1],r:20,fill:"none",
-      stroke:"#9e6ac0","stroke-width":2.6,"stroke-dasharray":"4 3",
+      stroke:"#727286","stroke-width":2.6,"stroke-dasharray":"4 3",
       "pointer-events":"none"},svg);
   }
   const total=points.length*(points.length-1)/2;
@@ -575,11 +575,11 @@ function drawCompare(){
     background(svg,"04 / "+graph.replace("-"," "));
     edges.forEach(function(e){
       segment(svg,points[e[0]],points[e[1]],
-        side==="left"?"#176f7b":"#bb7950",2.2,.8);
+        side==="left"?"#303338":"#89818a",2.2,.8);
     });
     points.forEach(function(p){
       const v=xy(p);
-      el("circle",{cx:v[0],cy:v[1],r:5.4,fill:"#203c49",
+      el("circle",{cx:v[0],cy:v[1],r:5.4,fill:"#303136",
         stroke:"#fff","stroke-width":1.7},svg);
     });
     detail("compare-"+side+"-label",catalog[graph]);

@@ -31,6 +31,7 @@ jobs:
         run: |
           node --check site/app.js
           node --check site/editor.js
+          node --check site/motion.js
           node tests/test_editor.js
       - name: Review manuscript word count
         run: python scripts/check_article.py
