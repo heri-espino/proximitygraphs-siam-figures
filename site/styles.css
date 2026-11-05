@@ -566,7 +566,9 @@ footer a { color: var(--ink-soft); }
   html.motion-ready .is-section-entering .hero-copy,
   html.motion-ready .is-section-entering .hero-visual,
   html.motion-ready .is-section-entering > .section-intro,
-  html.motion-ready .is-section-entering > .about-section {
+  html.motion-ready .is-section-entering .compare-grid,
+  html.motion-ready .is-section-entering .compare-controls,
+  html.motion-ready .about-section.is-section-entering > div {
     animation: section-enter .65s var(--ease) both;
   }
   html.motion-ready .is-section-entering .studio,
