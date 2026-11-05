@@ -85,6 +85,7 @@ def main():
         assert page.locator(".chapter-card").first.evaluate(
             "el => getComputedStyle(el).boxShadow")=="none"
         checks.append("Editorial monochrome layout, serif headline, and borderless figures render")
+        page.screenshot(path=str(output/"01-home.png"))
         # Plain scrolling must not reveal or animate sections. Only clicking
         # a section anchor (or browser history hash navigation) may do that.
         assert page.locator(".is-section-entering").count()==0
@@ -110,7 +111,6 @@ def main():
             "el => el.classList.contains('is-section-entering')"
         ), "The Next link should animate its target section"
         checks.append("Scrolling is static; navigation clicks animate only the chosen section")
-        page.screenshot(path=str(output/"01-home.png"))
         page.locator("#water-bisectors").check()
         page.locator("#water-triangles").check()
         assert page.locator("#water-plot line").count()>15
