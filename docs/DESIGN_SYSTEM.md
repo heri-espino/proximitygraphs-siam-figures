@@ -41,3 +41,16 @@ python tests/visual_smoke.py --output docs/visual-qa
 ```
 
 Visual QA verifies desktop/mobile rendering, monochrome styling, restored mathematical controls, animations on deliberate changes, and reduced-motion behavior. Preserve all snapshots and results in the repository.
+
+## experiment004 — Section navigation, not scroll motion
+
+The reader requested that transitions occur **only when selecting a section**, not during ordinary scrolling. This supersedes the experiment003 IntersectionObserver scroll-reveal mechanism.
+
+- No IntersectionObserver, scroll-event listener, auto-reveal, hidden offscreen section, or smooth-scrolling animation is used.
+- Normal wheel, touch, trackpad, PageDown, and arrow-key scrolling remain immediate and visually static; all sections remain visible without JavaScript.
+- Clicking any same-page section link (masthead navigation, hero “Explore” link, chapter index entry, “Next” link, or “Back to top”) briefly animates **only the selected section's content**. Native anchor links and browser history are preserved.
+- Browser back/forward navigation to another hash also animates the selected section. The masthead underline follows the **chosen section**, not the scroll position.
+- Changing a mathematical layer/slider still gives its diagram a short feedback animation; dragging remains immediate. These control animations are independent of section transitions.
+- `prefers-reduced-motion: reduce` disables every animation. `site/motion.js` handles click/hashchange only; the CSS `.is-section-entering` class is transient.
+
+Regression checks in `tests/test_editor.js` and `tests/visual_smoke.py` verify that scrolling alone never adds an animation class, that internal navigation animates the correct target, that the animation cleans itself up, and that reduced-motion navigation remains static. See `experiments/experiment004/README.md`.
