@@ -62,10 +62,10 @@ def read_snow():
         "historical_context": "1854 London cholera outbreak; John Snow's 1855 map",
         "normalization": {
             "method": "uniform affine transform preserving source aspect ratio",
-            "source_min": arr(mins),
-            "source_max": arr(maxs),
+            "source_min": np.round(mins, 9).tolist(),
+            "source_max": np.round(maxs, 9).tolist(),
             "scale": float(scale),
-            "offset": arr(offsets),
+            "offset": np.round(offsets, 9).tolist(),
         },
         "broad_street_index": broad_index,
     }
