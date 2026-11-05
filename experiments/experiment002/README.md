@@ -1,7 +1,7 @@
 # experiment002 — Historically meaningful and recognizable defaults
 
 **Date:** 2026-11-05  
-**Status:** implementation; CI verification and PR merge pending.
+**Status:** Complete — merged PR #1, successful geometry CI, visual QA and GitHub Pages deployment.
 
 ## Purpose and design
 
@@ -33,6 +33,17 @@ Visual-QA browser checks are in \`tests/visual_smoke.py\`. The GitHub Actions fi
 - Editing historic pumps marks the new configuration hypothetical; historic death marks remain fixed.
 - No deployment, PDF, or PR success should be claimed before the corresponding workflow succeeds.
 
-## Next actions
+## Validation results and reproducibility evidence
 
-Record actual PR workflow results, rerun if needed, merge after verified checks (owner authorization supplied), inspect regenerated static figures and updated Pages deployment, then update the handoff with actual run IDs and findings.
+- [PR #1](https://github.com/heri-espino/proximitygraphs-siam-figures/pull/1) was merged to `main` at commit `60a0170992895e46d3ace97d15439aa3943b9021`, following explicit authorization.
+- [PR mathematical regression workflow](https://github.com/heri-espino/proximitygraphs-siam-figures/actions/runs/42113515738): **success**, including geometry generated from the pinned Python package and comprehensive JavaScript checks.
+- [PR browser visual QA](https://github.com/heri-espino/proximitygraphs-siam-figures/actions/runs/42113515794): **success**; historical marks, all geometry views, editing and mobile layout.
+- [Postmerge production geometry and Pages workflow](https://github.com/heri-espino/proximitygraphs-siam-figures/actions/runs/42114104361): **success**; data and regenerated figures committed and Pages deployed.
+- [Postmerge browser visual QA](https://github.com/heri-espino/proximitygraphs-siam-figures/actions/runs/42114104386): **success**, with seven desktop/mobile screenshots and eight programmatic checks saved in `docs/visual-qa/`.
+- [Regenerated scene JSON](../../site/data/scenes.json) checked on GitHub: 13 labelled historical pumps, 578 historical death records, 53 smiley sites, alpha options with 74/65/48/31 retained Delaunay triangles, and 25 beta sites. Defaults are derived from the documented historical source and deterministic generators.
+
+The **first** postmerge QA run completed browser checks but failed at its screenshot commit because independent figure generation left a dirty Git worktree. The Visual QA workflow was corrected to restore only its temporary generated figure copies before rebasing; the subsequent workflow completed successfully and preserved screenshot artifacts. No mathematical tests were weakened.
+
+## Next directions
+
+Potential future experiment003: quantify end-to-end performance and test degenerate geometries and arbitrary edited point sets, rather than the selected default point clouds alone. Do not claim a modern epidemiological or communication-network model from this historical and synthetic demonstration.
