@@ -148,3 +148,8 @@ python tests/visual_smoke.py --output docs/visual-qa
 \`\`\`
 
 The visual QA job also tests touch-sized/mobile layout, individual sensor-pair inspection, dragging, and graph comparisons. Automated screenshots are reproducible figures and remain committed; they are **not** measurements of performance or validated deployment case studies.
+
+
+### Section navigation and motion (experiment004)
+
+Navigation animations now respond to **choosing a section** (the masthead, chapter index, “Next” links, or browser back/forward hash navigation) rather than to scrolling. Ordinary scrolling is instant and does not hide/reveal content; the selected section briefly enters when its anchor is used. Deliberate figure-layer changes retain their short SVG feedback, while dragging stays immediate. Reduced-motion preference disables all motion. See [experiment004](experiments/experiment004/README.md).
