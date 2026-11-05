@@ -85,6 +85,31 @@ def main():
         assert page.locator(".chapter-card").first.evaluate(
             "el => getComputedStyle(el).boxShadow")=="none"
         checks.append("Editorial monochrome layout, serif headline, and borderless figures render")
+        # Plain scrolling must not reveal or animate sections. Only clicking
+        # a section anchor (or browser history hash navigation) may do that.
+        assert page.locator(".is-section-entering").count()==0
+        assert page.evaluate("getComputedStyle(document.documentElement).scrollBehavior")=="auto"
+        page.evaluate("window.scrollTo(0, document.getElementById('habitat').offsetTop)")
+        page.wait_for_timeout(120)
+        assert page.locator(".is-section-entering").count()==0, (
+            "Ordinary scrolling should never trigger a section animation"
+        )
+        page.locator('.masthead nav a[href="#water"]').click()
+        assert page.locator("#water").evaluate(
+            "el => el.classList.contains('is-section-entering')"
+        )
+        assert page.locator("#water .section-heading").evaluate(
+            "el => getComputedStyle(el).animationName"
+        )=="section-enter"
+        page.wait_for_timeout(900)
+        assert page.locator("#water").evaluate(
+            "el => !el.classList.contains('is-section-entering')"
+        )
+        page.locator("#water .section-next").click()
+        assert page.locator("#habitat").evaluate(
+            "el => el.classList.contains('is-section-entering')"
+        ), "The Next link should animate its target section"
+        checks.append("Scrolling is static; navigation clicks animate only the chosen section")
         page.screenshot(path=str(output/"01-home.png"))
         page.locator("#water-bisectors").check()
         page.locator("#water-triangles").check()
@@ -167,7 +192,11 @@ def main():
             "document.documentElement.classList.contains('motion-ready')")
         assert reduced.locator(".chapter-card").first.evaluate(
             "el => getComputedStyle(el).transitionDuration")=="0s"
-        checks.append("Reduced-motion preference disables reveal and transitions")
+        reduced.locator('.masthead nav a[href="#water"]').click()
+        assert reduced.locator("#water").evaluate(
+            "el => !el.classList.contains('is-section-entering')"
+        ), "Section navigation must not animate with reduced motion enabled"
+        checks.append("Reduced-motion preference disables section and figure transitions")
         browser.close()
 
     result={
