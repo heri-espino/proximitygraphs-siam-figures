@@ -75,3 +75,7 @@ The intended SIAM News category is **Software and Programming**. SIAM explicitly
 - Retain the original synthetic-data and model-limitations labels.
 - Do not post directly to organizational social accounts or contact SIAM editors without authorization.
 - Avoid unsupported claims that any library constructor is the fastest or first of its kind.
+
+
+## Dataset update — November 2026
+The website now displays **digitized John Snow pump positions (13) and cholera death marks (578)** from HistData/Rdatasets as a historical contextual overlay. Its alpha default is a **synthetic smiley point cloud** and its beta default a **synthetic two-cluster relay sensor layout**. The Voronoi/Delaunay edges are modern computations on historical map coordinates, not a technique used by Snow. These data do not support modern GIS distance, medical-causality, or radio-network claims. See [historical provenance](../data/historical/README.md).

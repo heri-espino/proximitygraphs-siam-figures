@@ -18,3 +18,7 @@ The manuscript and graphics follow the [SIAM News style guide](https://www.siam.
 **Review materials:** [Complete article](feature.md) · [Expanded literature audit](../docs/LITERATURE_EVIDENCE.md) · [Python library](https://github.com/ProximityGraphs/ProximityGraphs) · [Interactive figures](https://heri-espino.github.io/proximitygraphs-siam-figures/) · [LaTeX proof](main.tex).
 
 We would welcome editorial guidance on online versus print presentation and links to external interactive figures. **This pitch has not been sent, and all three coauthors must approve the final byline and text before submission.**
+
+
+## Dataset update — November 2026
+The website now displays **digitized John Snow pump positions (13) and cholera death marks (578)** from HistData/Rdatasets as a historical contextual overlay. Its alpha default is a **synthetic smiley point cloud** and its beta default a **synthetic two-cluster relay sensor layout**. The Voronoi/Delaunay edges are modern computations on historical map coordinates, not a technique used by Snow. These data do not support modern GIS distance, medical-causality, or radio-network claims. See [historical provenance](../data/historical/README.md).

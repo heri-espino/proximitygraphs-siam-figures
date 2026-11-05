@@ -7,8 +7,8 @@ This repository is the source of truth for every editorial and computational art
 - Official style guide: https://www.siam.org/media/gfbjvzck/siam-news-info-and-style-guide.pdf
 - Target ~800–1,400 words; 1–3 figures with captions and credit; <=10 APA-style references; author bios 1–2 sentences each.
 - The linked example is https://www.siam.org/publications/siam-news/articles/the-dynamics-of-debt/ . Follow its accessible narrative and linked software, not its precise layout.
-- Synthetic points must ALWAYS be labeled synthetic; do not imply that our demonstrations are empirical water, habitat, or telecommunications data.
-- Snow's 1854 investigation is historical context; our synthetic water-station diagram is NOT his original map. The original analysis predates modern Voronoi constructions.
+- The water pump/death coordinates come from digitized historical John Snow map records; the alpha smiley and beta sensor layout are synthetic. Never imply empirical habitat, networking, or modern GIS validation.
+- Snow's 1854 map supplies the digitized **locations**, not the Voronoi method: this is a modern Euclidean overlay. Death marks are read-only observations, not pump/graph vertices. Preserve raw CSVs and HistData/Rdatasets provenance.
 - This repo is an outreach companion, not a replacement for the distinct JOSS software manuscript.
 - Confirm authorship, affiliations, accuracy, and editorial submission with human contributors before sending to SIAM.
 - Keep references to historical material backed by verifiable sources; distinguish mathematical possibility from validated decision support.
@@ -59,3 +59,6 @@ This repository is the source of truth for every editorial and computational art
 - Optional browser QA: \`python -m pip install playwright==1.57.0\`, \`python -m playwright install chromium\`, \`python tests/visual_smoke.py --output docs/visual-qa\`. The dedicated \`.github/workflows/visual-qa.yml\` archives screenshot PNGs and a JSON QA summary directly in the repository, not only in ephemeral Actions artifacts.
 - Tests: \`node --check site/{app,editor,geometry-details}.js\`, \`node tests/test_editor.js\`, \`python -m unittest discover -s tests -v\`. In CI, default geometry comes from the Python package; any edited geometry is from independent JavaScript. Do not claim the entire interactive editor runs the Python library.
 - Source templates, generated PNG/SVG figures, JSON, visual QA outputs, documentation, and notes must be committed. Do not delete prior scientific figures or article references.
+
+## Historic-default change (experiment002)
+Preserve both untouched source CSVs at `data/historical/`, the exact common aspect-preserving normalization in `scripts/export_scenes.py`, and the raw numerical figure outputs. Keep test expectations at **13 pumps, 578 death records, 53 smiley points, 25 sensor relays**. The alpha slider must use negative values `-4,-8,-10,-12` so its retained triangulation changes, unlike the former gentle-radius grid. After editing original historical pump sites, call the configuration hypothetical; background death marks remain fixed. Re-run Python and Node tests, the Playwright visual QA, and document actual PR and Pages run URLs. Do not merge without user authorization (explicitly given for this request).
