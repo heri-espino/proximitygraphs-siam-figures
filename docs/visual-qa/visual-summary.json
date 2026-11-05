@@ -4,6 +4,7 @@
   "library_commit": "d1a216d7255cbebea68dcaad6a97382168a3ec55",
   "checks": [
     "Pinned Python ProximityGraphs source loaded",
+    "All 13 historical pumps and 578 death marks load, with working contextual layer toggle",
     "Voronoi bisectors, circumcircle and Delaunay triangulation render",
     "Alpha_Hull arcs, Alpha_Shape edges, retained triangles, and all circles render",
     "Rejected beta candidate exposes blocking points and both disks",
