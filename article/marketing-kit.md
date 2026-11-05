@@ -45,7 +45,7 @@ Python source: https://github.com/ProximityGraphs/ProximityGraphs
 
 `pip install proximitygraphs`
 
-*Examples are synthetic demonstrations, not field-study results.*
+*The Voronoi example uses digitized historical map coordinates; the smiley and relay examples are synthetic. This is not modern field validation.*
 
 ### Short-form post
 
@@ -53,7 +53,7 @@ When does a pair of points deserve an edge? That depends on your definition of n
 
 ### Newsletter / department announcement
 
-A small geometric choice can produce a very different network. **ProximityGraphs**, an MIT-licensed Python package, brings multiple proximity constructions under one point-set workflow for teaching, comparison, and research experimentation. Our interactive companion uses three synthetic examples—water allocation, ecological observations, and candidate sensor links—to make the mathematics visible. Explore and modify the diagrams online, then use the package in Python: https://github.com/ProximityGraphs/ProximityGraphs .
+A small geometric choice can produce a very different network. **ProximityGraphs**, an MIT-licensed Python package, brings multiple proximity constructions under one point-set workflow for teaching, comparison, and research experimentation. Our interactive companion combines John Snow's digitized historical pump/death map with a playful alpha-shape smiley and a synthetic relay-sensor graph to make the mathematics visible. Explore and modify the diagrams online, then use the package in Python: https://github.com/ProximityGraphs/ProximityGraphs .
 
 ## Press and editorial pitch (distinct from promotional posts)
 
@@ -72,7 +72,7 @@ The intended SIAM News category is **Software and Programming**. SIAM explicitly
 
 - Never represent the SIAM News article as accepted, peer-reviewed, or published until independently confirmed.
 - Obtain author approval for names, affiliations, captions, and marketing copy before public postings in their names.
-- Retain the original synthetic-data and model-limitations labels.
+- Retain the historical-data attribution on the Voronoi example and synthetic-data/model-limitations labels on the smiley and sensor examples.
 - Do not post directly to organizational social accounts or contact SIAM editors without authorization.
 - Avoid unsupported claims that any library constructor is the fastest or first of its kind.
 
