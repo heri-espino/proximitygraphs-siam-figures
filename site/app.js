@@ -6,7 +6,7 @@ const NS = "http://www.w3.org/2000/svg";
 const WIDTH = 640, HEIGHT = 600;
 const frame = { x: 65, y: 43, w: 510, h: 510 };
 const teal = "#166b75", orange = "#be6c41", dark = "#243642";
-const alphaValues = [2, 3, 4, 5];
+const alphaValues = [4, 8, 10, 12];
 const betaValues = [1, 1.25, 1.5, 1.75, 2];
 const state = {
   waterSite:6, waterTriangleIndex:0,

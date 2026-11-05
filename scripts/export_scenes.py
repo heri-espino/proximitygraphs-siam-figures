@@ -103,7 +103,7 @@ BETA = np.array([
     [.62,.54],[.76,.56],[.89,.65],[.64,.78],[.79,.81],
 ], dtype=float)
 
-ALPHAS = (2,3,4,5)  # Negative actual alpha: -2, -3, -4, -5
+ALPHAS = (4,8,10,12)  # R=1/|alpha| reveals holes/eyes across the smiley
 BETAS = (1,1.25,1.5,1.75,2)
 
 
@@ -269,12 +269,12 @@ def render_water(s):
 
 def render_habitat(s):
     fig,ax=axis("Figure 2 · Smiley point cloud: circular alpha-hull")
-    for i,a in enumerate(s["alpha"]["options"]["4"]["arcs"]):
+    for i,a in enumerate(s["alpha"]["options"]["8"]["arcs"]):
         p=np.asarray(a)
         ax.plot(p[:,0],p[:,1],c="#be6c41" if i==0 else "#166b75",
                 lw=3 if i==0 else 2.2,zorder=5,solid_capstyle="round")
     # Draw the supporting circle of the highlighted library-generated arc.
-    exemplar=np.asarray(s["alpha"]["options"]["4"]["arcs"][0])
+    exemplar=np.asarray(s["alpha"]["options"]["8"]["arcs"][0])
     p,q,r=exemplar[[0,len(exemplar)//2,-1]]
     matrix=2*np.stack([q-p,r-p])
     rhs=np.array([q@q-p@p,r@r-p@p])

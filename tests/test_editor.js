@@ -33,7 +33,7 @@ function testDelaunay(){
     "Moving a station must change the Voronoi service partition.");
 }
 function testAlpha(){
-  for(const a of [2,3,4,5]){
+  for(const a of [4,8,10,12]){
     const computed=context.fallbackAlpha(scene.alpha.points,-a);
     const fromLibrary=scene.alpha.options[String(a)];
     assertEdgeSets(computed.segments,fromLibrary.segments,
@@ -90,7 +90,7 @@ function testGeometryWitnesses(){
 }
 function testShapeAndComparison(){
   const points=scene.alpha.points;
-  for(const alpha of [2,3,4,5]){
+  for(const alpha of [4,8,10,12]){
     const exported=scene.alpha.options[String(alpha)];
     const js=context.alphaSimplices(points,-alpha);
     assertEdgeSets(js.boundary,exported.shape_edges,
