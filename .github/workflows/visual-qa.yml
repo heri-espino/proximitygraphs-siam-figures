@@ -57,6 +57,11 @@ jobs:
           git add docs/visual-qa/
           if ! git diff --cached --quiet; then
             git commit -m "Archive visual construction witnesses and browser QA"
+            # The visual test regenerates authoritative scene/artwork files.
+            # Those are published independently by the figures workflow;
+            # discard ONLY these uncommitted working-tree copies so rebase
+            # cannot fail with a dirty checkout during concurrent CI pushes.
+            git restore --worktree site/data/scenes.json site/assets/
             for attempt in 1 2 3 4 5 6 7 8; do
               git fetch origin main
               git rebase origin/main
