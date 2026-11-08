@@ -23,8 +23,18 @@ function testHistoricalAndSyntheticDefaults(){
   assert.equal(v.points.length,13);
   assert.equal(v.death_marks.length,578);
   assert.equal(v.labels[v.historical.broad_street_index],"Broad St");
-  assert.equal(scene.alpha.points.length,53);
-  assert.equal(scene.alpha.description,"synthetic smiley face");
+  assert.equal(scene.alpha.default_preset,"pg");
+  assert.equal(scene.alpha.points.length,78);
+  assert.equal(scene.alpha.description,"synthetic Pg wordmark with two counters");
+  assert.equal(scene.alpha.presets.smiley.points.length,53);
+  assert.equal(scene.alpha.presets.smiley.description,"original synthetic smiley face");
+  assert.equal(scene.alpha.presets.pg.options["11.8"].topology.holes,2);
+  assert.equal(scene.alpha.presets.pg.options["11.8"].topology.components,1);
+  assert.equal(context.pgPoints.length,78);
+  assert.equal(context.smileyPoints.length,53);
+  scene.alpha.points.forEach((pt,i)=>pt.forEach((v,j)=>
+    assert.ok(Math.abs(v-context.pgPoints[i][j])<1e-8,
+      "Python and JavaScript wordmark generators must agree.")));
   assert.equal(scene.beta.points.length,25);
   assert.equal(scene.beta.description,"synthetic relay-corridor sensor network");
   const transform=v.historical.normalization;
@@ -46,20 +56,27 @@ function testDelaunay(){
     "Moving a station must change the Voronoi service partition.");
 }
 function testAlpha(){
-  for(const a of [4,8,10,12]){
-    const computed=context.fallbackAlpha(scene.alpha.points,-a);
-    const fromLibrary=scene.alpha.options[String(a)];
-    assertEdgeSets(computed.segments,fromLibrary.segments,
-      "Browser alpha-hull boundaries should match library at alpha=-"+a);
-    for(const arc of computed.arcs){
-      if(arc.length<3)continue;
-      const circle=context.arcCircle(arc);
-      assert.ok(circle && Math.abs(circle.r-1/a)<0.0001,
-        "Browser alpha-hull arc must have radius R=1/|alpha|.");
+  for(const presetName of ["pg","smiley"]){
+    const preset=scene.alpha.presets[presetName];
+    for(const a of preset.alpha_values){
+      const computed=context.fallbackAlpha(preset.points,-a);
+      const fromLibrary=preset.options[String(a)];
+      assertEdgeSets(computed.segments,fromLibrary.segments,
+        "Browser alpha-hull boundaries should match "+presetName+" at alpha=-"+a);
+      for(const arc of computed.arcs){
+        if(arc.length<3)continue;
+        const circle=context.arcCircle(arc);
+        assert.ok(circle && Math.abs(circle.r-1/a)<0.0001,
+          "Browser alpha-hull arc must have radius R=1/|alpha|.");
+      }
+      const simplex=context.alphaSimplices(preset.points,-a);
+      const topo=context.alphaComplexTopology(simplex.kept);
+      assert.deepEqual(topo,fromLibrary.topology,
+        "Alpha-complex hole count must agree with Python for "+presetName);
     }
   }
-  const fewer=scene.alpha.points.slice(0,2);
-  assert.equal(context.fallbackAlpha(fewer,-4).arcs.length,0);
+  assert.equal(scene.alpha.presets.pg.options["11.8"].topology.holes,2);
+  assert.equal(context.fallbackAlpha(scene.alpha.presets.smiley.points.slice(0,2),-4).arcs.length,0);
 }
 function testBeta(){
   for(const beta of [1,1.25,1.5,1.75,2]){
@@ -102,18 +119,21 @@ function testGeometryWitnesses(){
   }
 }
 function testShapeAndComparison(){
-  const points=scene.alpha.points;
-  for(const alpha of [4,8,10,12]){
-    const exported=scene.alpha.options[String(alpha)];
-    const js=context.alphaSimplices(points,-alpha);
-    assertEdgeSets(js.boundary,exported.shape_edges,
-      "The alpha-shape boundary should match the actual Alpha_Shape class.");
-    assertEdgeSets(exported.shape_edges,exported.segments,
-      "Library alpha-hull straight segments must equal shape edges.");
-    assert.equal(js.kept.length,exported.kept_triangles.length);
-    for(const kept of js.kept)assert.ok(kept.r<=1/alpha+1e-12);
-    for(const rejected of js.discarded)assert.ok(rejected.r>1/alpha-1e-12);
-    assert.equal(context.allAlphaCircles(exported.arcs).length,exported.arcs.length);
+  for(const presetName of ["pg","smiley"]){
+    const preset=scene.alpha.presets[presetName];
+    const points=preset.points;
+    for(const alpha of preset.alpha_values){
+      const exported=preset.options[String(alpha)];
+      const js=context.alphaSimplices(points,-alpha);
+      assertEdgeSets(js.boundary,exported.shape_edges,
+        "The "+presetName+" alpha-shape boundary should match Alpha_Shape.");
+      assertEdgeSets(exported.shape_edges,exported.segments,
+        "Library alpha-hull straight segments must equal shape edges.");
+      assert.equal(js.kept.length,exported.kept_triangles.length);
+      for(const kept of js.kept)assert.ok(kept.r<=1/alpha+1e-12);
+      for(const rejected of js.discarded)assert.ok(rejected.r>1/alpha-1e-12);
+      assert.equal(context.allAlphaCircles(exported.arcs).length,exported.arcs.length);
+    }
   }
   const sample=scene.compare.points;
   for(const key of ["delaunay","gabriel","rng","beta","alpha-shape"]){
@@ -149,7 +169,7 @@ function testUI(){
     assert.match(link,/target="_blank"/,"External links open in new tabs: "+link);
     assert.match(link,/rel="noopener noreferrer"/,"External links prevent opener access: "+link);
   }
-  for(const element of ["alpha-shape","alpha-all-circles","alpha-kept",
+  for(const element of ["alpha-preset","alpha-scene-label","alpha-shape","alpha-all-circles","alpha-kept",
     "beta-show-blocked","beta-invalid","beta-blockers","beta-disks",
     "water-bisectors","water-circumcircle","compare-left","compare-right"]){
     assert.match(html,new RegExp('id="'+element+'"'),"Missing control "+element);
@@ -158,6 +178,9 @@ function testUI(){
   for(const id of ["water-deaths","water-pump-label"]){
     assert.match(html,new RegExp('id="'+id+'"'),"Missing historical layer control "+id);
   }
+  assert.ok(html.includes('value="pg" selected'));
+  assert.ok(html.includes('value="smiley"'));
+  assert.ok(html.includes("two enclosed counters"));
   assert.ok(html.includes("Historical cholera death marks"));
   assert.ok(css.includes(".point-toolbar"));
   assert.ok(css.includes(".studio"));
