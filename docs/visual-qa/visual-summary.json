@@ -8,7 +8,8 @@
     "Editorial monochrome layout, serif headline, and borderless figures render",
     "Scrolling is static; navigation clicks animate only the chosen section",
     "Voronoi bisectors, circumcircle and Delaunay triangulation render",
-    "Alpha_Hull arcs, Alpha_Shape edges, retained triangles, and all circles render",
+    "Pg alpha-hull and alpha-shape render two enclosed holes with circles",
+    "Switching Pg ↔ smiley preserves separate alpha grids and clean editor baselines",
     "Rejected beta candidate exposes blocking points and both disks",
     "Pair inspection and pointer dragging update source provenance",
     "Same-site graph comparison reacts to selections and edits",
@@ -24,6 +25,7 @@
     "04-beta-blocked.png",
     "05-comparison.png",
     "06-mobile-home.png",
-    "07-mobile-alpha.png"
+    "07-mobile-alpha.png",
+    "08-smiley-preset.png"
   ]
 }
