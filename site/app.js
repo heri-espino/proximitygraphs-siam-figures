@@ -85,6 +85,15 @@ const pgPoints=(function(){
       }
     }
   }
+  // Identical deterministic site-index perturbation to the Python
+  // generator. It removes pinched vertices from the two inner loops.
+  points.forEach(function(point,i){
+    const t=i+1;
+    const nx=Math.sin(t*12.9898+49*78.233)*43758.5453;
+    const ny=Math.sin(t*31.4159+49*27.171)*17723.723;
+    point[0]+=.0025*(2*(nx-Math.floor(nx))-1);
+    point[1]+=.0025*(2*(ny-Math.floor(ny))-1);
+  });
   return points;
 })();
 const habitatPoints = pgPoints;
