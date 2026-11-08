@@ -13,11 +13,11 @@ This project develops a proposed **SIAM News — Software and Programming** feat
 | Figure | Mathematical objects | Illustrative context | Reader interaction |
 | --- | --- | --- | --- |
 | 1. Voronoi and Delaunay | Historical pump/death locations, clipped nearest-site cells, bisectors, circumcircles | Digitized 1854 Soho map: 13 pumps and 578 death marks | Toggle historical observations and selected pump name; edit hypothetical pump sites |
-| 2. Alpha-shape and alpha-hull | Library `Alpha_Shape` straight boundary, `Alpha_Hull` arcs, retained simplices | A synthetic smiley (30 outline points, two eye rings, 11 mouth points) | Compare straight and curved boundaries and change the negative alpha scale |
+| 2. Alpha-shape and alpha-hull | Library `Alpha_Shape` straight boundary, `Alpha_Hull` arcs, retained simplices | Default synthetic Pg wordmark (78 sites; two enclosed counters), with the original 53-site smiley selectable | Compare straight and curved boundaries and change the negative alpha scale |
 | 3. β-skeleton | Empty-lune tests, valid/rejected candidates and blockers | 25 synthetic sensors in two outpost clusters joined by three relay sites | Select candidate pairs, show rejection witnesses, edit positions |
 | 4. Compare | Delaunay, Gabriel, RNG, β-skeleton, alpha-shape on shared coordinates | Same synthetic sensors | Compare any two graphs on **identical** sites, swap and count edges |
 
-**The Voronoi sites and death marks are historical map digitizations; the other defaults are synthetic.** The water layer shows 13 John Snow pump sites and 578 individual cholera death marks from HistData/Rdatasets. The Euclidean Voronoi diagram is a modern overlay, not Snow's own method. The alpha scene uses a synthetic smiley, while the beta scene uses two synthetic sensor clusters with relay sites. Neither is empirical habitat or radio coverage data. See [source attribution and normalization](data/historical/README.md).
+**The Voronoi sites and death marks are historical map digitizations; the other defaults are synthetic.** The water layer shows 13 John Snow pump sites and 578 individual cholera death marks from HistData/Rdatasets. The Euclidean Voronoi diagram is a modern overlay, not Snow's own method. The alpha scene defaults to a synthetic Pg wordmark with two bounded holes and retains the original smiley as an alternative; the beta scene uses two synthetic sensor clusters with relay sites. Neither is empirical habitat or radio coverage data. See [source attribution and normalization](data/historical/README.md).
 
 The site has a guided **Home → Voronoi → Alpha → β-Skeleton → Compare → About** navigation. Existing article anchors `#water`, `#habitat`, and `#sensors` remain valid. Each experiment uses an adjustable layer/control panel, a large SVG plot, and a computation inspector.
 
@@ -34,11 +34,11 @@ Motion is progressive enhancement only: pointer edits are immediate, and `prefer
 On **each** visualization, choose **Move** (drag points with mouse or touch), **+ Add** (click an empty location inside the square), **− Delete** (click a point), or **Reset points** (restore the original data). Existing points can also be moved with the arrow keys after keyboard focus; Delete/Enter works in Delete mode.
 
 - Live geometry updates automatically after a point changes.
-- Editing is restricted to the normalized unit square, with an 80-point safety limit and a minimum distance between distinct sites to prevent duplicate-point degeneracies.
+- Editing is restricted to the normalized unit square, with an 80-point safety limit (120 in the alpha viewer) and a minimum distance between distinct sites to prevent duplicate-point degeneracies.
 - Original examples continue using **actual ProximityGraphs-generated data** from the pinned library commit. **Edited point sets are recomputed in the browser using independent JavaScript geometry**, with explicit source labels. Do not describe edited plots as being recalculated by Python ProximityGraphs.
 - Export SVG or PNG at any point to save the currently displayed graph, including custom point positions.
 - Links to external websites open in a new tab. Internal figure navigation remains on the current page.
-- Historical John Snow pump and death coordinates are digitized map observations; edited pumps represent hypothetical scenarios. The smiley and sensor examples remain synthetic and non-validated.
+- Historical John Snow pump and death coordinates are digitized map observations; edited pumps represent hypothetical scenarios. The Pg wordmark, smiley alternative and sensor examples remain synthetic and non-validated.
 
 ## Repository structure
 
@@ -153,3 +153,6 @@ The visual QA job also tests touch-sized/mobile layout, individual sensor-pair i
 ### Section navigation and motion (experiment004)
 
 Navigation animations now respond to **choosing a section** (the masthead, chapter index, “Next” links, or browser back/forward hash navigation) rather than to scrolling. Ordinary scrolling is instant and does not hide/reveal content; the selected section briefly enters when its anchor is used. Deliberate figure-layer changes retain their short SVG feedback, while dragging stays immediate. Reduced-motion preference disables all motion. See [experiment004](experiments/experiment004/README.md).
+
+## Alpha point-set presets (experiment005)
+The alpha viewer now defaults to **Pg**, a 78-point block wordmark with a closed counter inside each letter at α = −11.8. The original 53-point smiley remains selectable, with its original alpha values. Switching the point set resets only this figure's local edits; John Snow and beta-skeleton examples remain unchanged. Both presets have independent Python-library reference geometry and use the existing editor, construction overlays, and figure exports. See [experiment005](experiments/experiment005/README.md).
