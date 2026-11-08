@@ -110,3 +110,6 @@ Regression tests check:
 5. Section IDs, source loading order, editor controls, and secure external-link attributes.
 
 **Data and publication caution:** the pump and death coordinates are historical digitizations, not a modern GIS survey. Changed pumps, the smiley, and sensor outposts are illustrative synthetic scenarios; no operational or medical inference is claimed. Construction widgets demonstrate geometry, not validated services or physical connectivity. This website accompanies an unsubmitted SIAM News proposal and is not affiliated with, approved by, or endorsed by SIAM.
+
+## 5. Two alpha point-set presets
+The alpha viewer defaults to a deterministic 78-site synthetic block-style **Pg**, with a closed counter in both P and g at α=−11.8 (R=1/11.8). These are actual topological holes in the retained Delaunay-triangle complex: \(H=C-(V-E+F)=2\) at the default radius, with one enclosed inner boundary cycle in each glyph. The alternative **Smiling face** restores the original 53-site synthetic example and its own alpha scales. Both default configurations are computed by pinned Python ProximityGraphs, while editing uses independent JavaScript; preset switching resets only the alpha editor. The Pg editor permits up to 120 sites.
