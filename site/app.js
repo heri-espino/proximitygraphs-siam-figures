@@ -422,6 +422,7 @@ function drawHabitat(){
   const kept=original&&shape.kept_triangles?
     shape.kept_triangles:filtered.kept.map(x=>x.vertices);
   background(svg,"02 / alpha boundary and circular construction");
+  detail("alpha-scene-label",state.alphaPreset==="pg"?"Pg wordmark · two enclosed counters":"Original smiling-face point cloud");
   detail("alpha-value","α = −"+alpha+" · R = "+(1/alpha).toFixed(3));
   if(hasLayer("alpha-triangulation")){
     for(const t of triangles){
