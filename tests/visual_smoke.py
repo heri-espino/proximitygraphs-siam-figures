@@ -69,7 +69,12 @@ def main():
         assert len(scenes["voronoi"]["points"])==13
         assert len(scenes["voronoi"]["death_marks"])==578
         assert scenes["voronoi"]["labels"][scenes["voronoi"]["historical"]["broad_street_index"]]=="Broad St"
-        assert len(scenes["alpha"]["points"])==53
+        assert len(scenes["alpha"]["points"])==78
+        assert scenes["alpha"]["default_preset"]=="pg"
+        assert len(scenes["alpha"]["presets"]["smiley"]["points"])==53
+        assert scenes["alpha"]["presets"]["pg"]["options"]["11.8"]["topology"]["holes"]==2
+        assert page.locator("#alpha-preset").input_value()=="pg"
+        assert "2 enclosed holes" in page.locator("#habitat-stat").inner_text()
         assert len(scenes["beta"]["points"])==25
         assert page.locator("#water-plot g[aria-hidden='true'] circle").count()==578
         assert "Broad St" in page.locator("#water-details").inner_text()
@@ -137,6 +142,17 @@ def main():
         assert arcs>0
         assert page.locator("#habitat-plot circle").count()>2*arcs
         page.locator("#habitat").screenshot(path=str(output/"03-alpha-construction.png"))
+        page.locator("#alpha-preset").select_option("smiley")
+        assert "Smiley" in page.locator("#habitat-stat").inner_text()
+        assert "53 sites" in page.locator("#habitat-stat").inner_text()
+        assert page.locator("#alpha-slider").input_value()=="1"
+        page.locator("#habitat").screenshot(path=str(output/"08-smiley-alternate.png"))
+        page.locator("#alpha-preset").select_option("pg")
+        assert "78 sites" in page.locator("#habitat-stat").inner_text()
+        assert "2 enclosed holes" in page.locator("#habitat-stat").inner_text()
+        assert page.locator("#alpha-slider").input_value()=="2"
+        assert "Original points" in page.locator("#habitat-edit-source").inner_text()
+        checks.append("Pg selected by default with two topological holes; original smiley selectable and restorable")
         checks.append("Alpha_Hull arcs, Alpha_Shape edges, retained triangles, and all circles render")
 
         page.locator("#beta-show-blocked").click()
@@ -183,6 +199,8 @@ def main():
         mobile.set_content(html,wait_until="load",timeout=60000)
         mobile.screenshot(path=str(output/"06-mobile-home.png"))
         mobile.locator("#habitat").screenshot(path=str(output/"07-mobile-alpha.png"))
+        assert mobile.locator("#alpha-preset").input_value()=="pg"
+        assert "2 enclosed holes" in mobile.locator("#habitat-stat").inner_text()
         assert not mobile_errors,mobile_errors
         checks.append("Desktop and mobile render without browser exceptions")
         reduced=browser.new_page(viewport={"width":1000,"height":800},
