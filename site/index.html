@@ -41,7 +41,7 @@
         <p class="source" id="source-status" role="status">Loading authoritative ProximityGraphs data…</p>
       </div>
       <div class="hero-visual">
-        <img src="assets/figure02-habitat.png" width="760" height="640" alt="Circular alpha-hull with a supporting circle and synthetic points">
+        <img src="assets/figure02-habitat.png" width="760" height="640" alt="Pg point-cloud wordmark with two enclosed alpha-shape counters">
         <span>FIG. 02 &nbsp; A GEOMETRY OF NEIGHBORHOODS</span>
       </div>
     </section>
@@ -58,10 +58,10 @@
           <span>John Snow’s 1854 pump locations, cholera deaths, and nearest-site boundaries.</span>
         </a>
         <a class="chapter-card" href="#habitat">
-          <img loading="lazy" src="assets/figure02-habitat.png" alt="Synthetic smiling face made of points with alpha-hull arcs">
+          <img loading="lazy" src="assets/figure02-habitat.png" alt="Pg wordmark represented by an alpha-shape with two holes and curved alpha-hull arcs">
           <span class="chapter-meta">02 · SHAPE RECONSTRUCTION</span>
           <strong>Alpha-Hull &amp; Alpha-Shape</strong>
-          <span>A smiling point cloud reveals straight shapes, curved arcs, and holes.</span>
+          <span>Pg drawn as points, with two enclosed holes; original smiley remains available.</span>
         </a>
         <a class="chapter-card" href="#sensors">
           <img loading="lazy" src="assets/figure03-sensors.png" alt="Synthetic beta-skeleton and empty lune">
@@ -125,20 +125,25 @@
       <div class="section-kicker">02 / Geometric morphology</div>
       <div class="section-heading">
         <div><h2 id="habitat-title">Alpha-Hull &amp; Alpha-Shape</h2>
-          <p class="intro">A <strong>smiling face built from synthetic points</strong> makes it easy to see what a geometric boundary retains or loses. The alpha-shape uses straight segments from Delaunay triangles; the related alpha-hull uses circular arcs.</p></div>
+          <p class="intro">A point cloud spells <strong>Pg</strong>. The straight-edge alpha-shape reveals two closed internal holes—one in each letter—while the related alpha-hull follows circular arcs. Switch to the original smiley at any time.</p></div>
         <a class="section-next" href="#sensors">Next: Empty regions →</a>
       </div>
       <div class="studio">
         <aside class="studio-panel" aria-label="Alpha-shape and alpha-hull controls">
           <h3>Layers &amp; scale</h3>
-          <label class="control-label" for="alpha-view">Preset</label>
+          <label class="control-label" for="alpha-point-set">Point-cloud preset</label>
+          <select id="alpha-point-set" class="control-select">
+            <option value="pg" selected>Pg · two enclosed holes</option>
+            <option value="smiley">Smiling face · original</option>
+          </select>
+          <label class="control-label" for="alpha-view">Construction view</label>
           <select id="alpha-view" class="control-select"><option value="final">Final comparison</option><option value="construction">Construction</option><option value="both" selected>Both</option></select>
-          <label class="control-label" for="alpha-slider">Curvature scale <strong id="alpha-value">α = −8</strong></label>
-          <input id="alpha-slider" type="range" min="0" max="3" step="1" value="1">
+          <label class="control-label" for="alpha-slider">Curvature scale <strong id="alpha-value">α = −14</strong></label>
+          <input id="alpha-slider" type="range" min="0" max="3" step="1" value="2">
           <label class="toggle"><input id="alpha-hull" type="checkbox" checked> Alpha-hull · circular arcs</label>
           <label class="toggle"><input id="alpha-shape" type="checkbox" checked> Alpha-shape · straight edges</label>
           <label class="toggle"><input id="alpha-triangulation" type="checkbox"> Delaunay triangulation</label>
-          <label class="toggle"><input id="alpha-kept" type="checkbox"> Retained simplices</label>
+          <label class="toggle"><input id="alpha-kept" type="checkbox" checked> Retained simplices · reveal holes</label>
           <label class="toggle"><input id="alpha-circle" type="checkbox" checked> Selected arc circle</label>
           <label class="toggle"><input id="alpha-all-circles" type="checkbox"> All supporting circles</label>
           <label class="toggle"><input id="alpha-centers" type="checkbox"> Circle centers</label>
@@ -154,7 +159,7 @@
         </aside>
         <div class="studio-main">
           <div class="chart-frame">
-            <div class="chart-top"><span>Smiley-face point cloud</span><span>SYNTHETIC · NEGATIVE α</span></div>
+            <div class="chart-top"><span id="alpha-preset-title">Pg · two closed counters</span><span>SYNTHETIC · NEGATIVE α</span></div>
             <svg id="habitat-plot" role="img" aria-label="Interactive circular alpha-hull, straight alpha-shape, Delaunay simplices and supporting circles" viewBox="0 0 640 600"></svg>
           </div>
           <p id="habitat-edit-source" class="geometry-source">Loading original point set.</p>
@@ -168,7 +173,7 @@
           <p class="insight-note" id="habitat-note">Triangles with circumradius at most R form the displayed alpha-shape construction.</p>
         </aside>
       </div>
-      <p class="context">The default smiley is deliberately synthetic: outline points, two eye loops, and a curved mouth. The alpha-shape is the boundary of retained Delaunay triangles, not an alpha-complex; the alpha-hull uses circular arcs. This makes changes of scale visible, but it is not an inference about a real physical shape.</p>
+      <p class="context">Both point sets are deterministic synthetic illustrations. The default <strong>Pg</strong> consists of a block P and a lowercase g, each with one unsampled counter; at α = −14 the retained Delaunay complex has exactly two topological holes. Move the scale to see them fill or separate, or select <strong>Smiling face</strong> to restore the original 53-point demonstration. The alpha-shape is the boundary of a retained simplicial complex, not the alpha-complex itself; the circular alpha-hull is a different geometric representation.</p>
     </section>
 
     <section id="sensors" class="exhibit" aria-labelledby="sensors-title">
