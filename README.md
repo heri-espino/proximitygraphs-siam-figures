@@ -34,7 +34,7 @@ Motion is progressive enhancement only: pointer edits are immediate, and `prefer
 On **each** visualization, choose **Move** (drag points with mouse or touch), **+ Add** (click an empty location inside the square), **− Delete** (click a point), or **Reset points** (restore the original data). Existing points can also be moved with the arrow keys after keyboard focus; Delete/Enter works in Delete mode.
 
 - Live geometry updates automatically after a point changes.
-- Editing is restricted to the normalized unit square, with an 80-point safety limit and a minimum distance between distinct sites to prevent duplicate-point degeneracies.
+- Editing is restricted to the normalized unit square, with an 80-point limit for water/sensor scenes, a 140-point limit for the Pg/smiley scene, and minimum spacing between distinct sites to prevent duplicate-point degeneracies.
 - Original examples continue using **actual ProximityGraphs-generated data** from the pinned library commit. **Edited point sets are recomputed in the browser using independent JavaScript geometry**, with explicit source labels. Do not describe edited plots as being recalculated by Python ProximityGraphs.
 - Export SVG or PNG at any point to save the currently displayed graph, including custom point positions.
 - Links to external websites open in a new tab. Internal figure navigation remains on the current page.

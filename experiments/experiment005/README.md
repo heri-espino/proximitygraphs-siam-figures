@@ -1,7 +1,7 @@
 # experiment005 — A two-hole Pg point-cloud wordmark
 
 **Started:** November 8, 2026  
-**Status:** Code committed on feature branch; PR CI and publication pending.
+**Status:** Complete — PR #4 merged; authoritative figures, site, editorial PDF and browser screenshots archived.
 
 ## Goal and constraints
 
@@ -64,9 +64,16 @@ python -m playwright install chromium
 python tests/visual_smoke.py --output docs/visual-qa
 \`\`\`
 
-## Verification and next action
+## Verified results and release
 
-Await CI results; inspect actual generated Pg figure and screenshots to verify both counters are legible. If numerical degeneracies appear, adjust the deterministic point set and document the reason, not the tests. After successful PR checks, **merge as explicitly requested by the user**, then confirm regenerated PNG/SVG, scene JSON, PDF and Pages deployment; update this report and \`AI_HANDOFF.md\` with actual run IDs and any remaining limits.
+- [PR #4](https://github.com/heri-espino/proximitygraphs-siam-figures/pull/4): **merged** to `main` at commit `383c4e1cbbe00dc74408467f9c46aaeff3ef5444`.
+- [PR pinned-library build and Python/Node tests](https://github.com/heri-espino/proximitygraphs-siam-figures/actions/runs/42521712007): **success**; Python tests include exact `components=1, holes=2` at Pg α=−14, and browser geometry agrees with pinned Python for both presets.
+- [PR Playwright visual QA](https://github.com/heri-espino/proximitygraphs-siam-figures/actions/runs/42521711897): **success**.
+- [Postmerge authoritative geometry, figure export and GitHub Pages deployment](https://github.com/heri-espino/proximitygraphs-siam-figures/actions/runs/42521859885): **success**, with PNG/SVG/scene JSON committed. Live site: https://heri-espino.github.io/proximitygraphs-siam-figures/ .
+- [Postmerge Playwright visual QA and archived screenshots](https://github.com/heri-espino/proximitygraphs-siam-figures/actions/runs/42521859888): **success**, including Pg's two counters and Pg ↔ smiley switching; [visual-summary.json](../../docs/visual-qa/visual-summary.json) records 13 passed checks and eight PNG screenshots, including `03-alpha-construction.png` and `08-smiley-preset.png`.
+- [Postmerge editorial LaTeX/PDF build](https://github.com/heri-espino/proximitygraphs-siam-figures/actions/runs/42521859936): **success**; figures and PDF proof archived within the repository.
+
+**Final pinned-library alpha topology:** the default `Pg` at `α=-14` has **111 sites, 134 retained triangles, one connected component, two enclosed holes**. The original smiley remains **53 sites**, with unchanged presets `[-4,-8,-10,-12]`. The four Pg alpha values produce holes `0,1,2,2` in that order; this is a specific construction, not a general theorem. Source records and screenshots are committed, and no scientific manuscript has been submitted.
 
 ### Limits
 
