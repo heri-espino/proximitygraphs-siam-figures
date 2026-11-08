@@ -30,8 +30,8 @@ function testHistoricalAndSyntheticDefaults(){
   assert.equal(scene.alpha.presets.smiley.points.length,53);
   assert.equal(scene.alpha.presets.smiley.description,"synthetic smiling face");
   assert.deepEqual(Object.keys(scene.alpha.presets).sort(),["pg","smiley"]);
-  assert.deepEqual(Array.from(context.alphaValues),[8,11,14,18]);
-  assert.deepEqual(Array.from(context.smileyAlphaValues),[4,8,10,12]);
+  assert.deepEqual(Array.from(vm.runInContext("alphaValues",context)),[8,11,14,18]);
+  assert.deepEqual(Array.from(vm.runInContext("smileyAlphaValues",context)),[4,8,10,12]);
   assert.equal(scene.alpha.options["14"].topology.holes,2);
   assert.equal(scene.alpha.options["14"].topology.components,1);
   assert.equal(scene.beta.points.length,25);
