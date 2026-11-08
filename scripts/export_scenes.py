@@ -125,6 +125,15 @@ def pg_wordmark():
                 k += 1
     if k != 91 or len(selected) != 78:
         raise ValueError(f"Pg geometric generator drifted: {k} lattice sites, {len(selected)} retained")
+    # An extra deterministic, independent sub-grid perturbation separates
+    # boundary branches so both counters have genuine degree-two cycles,
+    # rather than pinched self-touching vertices.
+    for i, point in enumerate(selected):
+        t = i + 1
+        xnoise = np.sin(t * 12.9898 + 49 * 78.233) * 43758.5453
+        ynoise = np.sin(t * 31.4159 + 49 * 27.171) * 17723.723
+        point[0] += .0025 * (2 * (xnoise - np.floor(xnoise)) - 1)
+        point[1] += .0025 * (2 * (ynoise - np.floor(ynoise)) - 1)
     return np.asarray(selected, dtype=float)
 
 
