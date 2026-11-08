@@ -1,7 +1,7 @@
 """Reproducible ProximityGraphs-backed scene export and static editorial figures.
 
 Run from repository root: python scripts/export_scenes.py
-Historical, digitized John Snow pump/death coordinates; synthetic smile and relay data.
+Historical John Snow coordinates; synthetic Pg wordmark, original smiley and relay sensor data.
 """
 from __future__ import annotations
 
@@ -71,8 +71,8 @@ def read_snow():
     }
 
 
-# Three purpose-built defaults: documented historical pumps and two reproducible
-# synthetic teaching sets. Alpha points intentionally form a smiling face;
+# Original historical pumps and two reproducible synthetic teaching scenes.
+# The alpha section supports the Pg wordmark (default) and original smiley;
 # the sensors represent two outpost clusters joined by a relay corridor.
 WATER, SNOW_DEATHS, PUMP_LABELS, BROAD_STREET, SNOW_PROVENANCE = read_snow()
 
@@ -93,7 +93,53 @@ MOUTH = np.column_stack((
     .345 + .081 * ((MOUTH_X - .5) / .173) ** 2
     + .001 * np.sin(73 * MOUTH_X),
 ))
-HABITAT = np.vstack([FACE_OUTLINE, LEFT_EYE, RIGHT_EYE, MOUTH])
+SMILEY = np.vstack([FACE_OUTLINE, LEFT_EYE, RIGHT_EYE, MOUTH])
+
+
+def pg_wordmark():
+    """Deterministic 78-point P/g, with two recoverable alpha-shape counters.
+
+    A perturbed near-regular lattice samples two block-letter silhouettes.
+    Carefully documented thinning avoids 13 redundant sites; at alpha=-11.8
+    the Delaunay-alpha complex has exactly two bounded complementary holes,
+    one around the upper counter in P and one in g.
+    """
+    removed = {3, 7, 9, 19, 20, 23, 25, 30, 36, 46, 64, 74, 88}
+    selected = []
+    k = 0
+    for ix, x in enumerate(np.arange(.13, .92, .055)):
+        for iy, y in enumerate(np.arange(.18, .88, .055)):
+            p = ((.13 <= x <= .225 and .18 <= y <= .83)
+                 or (.205 <= x <= .485 and .55 <= y <= .83
+                     and not (.282 <= x <= .404 and .634 <= y <= .749)))
+            g = ((.57 <= x <= .91 and .43 <= y <= .73
+                  and not (.669 <= x <= .813 and .52 <= y <= .64))
+                 or (.812 <= x <= .91 and .23 <= y <= .52)
+                 or (.707 <= x <= .91 and .19 <= y <= .27))
+            if p or g:
+                if k not in removed:
+                    selected.append([
+                        x + .0022 * np.sin((ix + 1) * 18.7 + (iy + 1) * 4.3),
+                        y + .0024 * np.cos((ix + 1) * 11.2 - (iy + 1) * 13.1),
+                    ])
+                k += 1
+    if k != 91 or len(selected) != 78:
+        raise ValueError(f"Pg geometric generator drifted: {k} lattice sites, {len(selected)} retained")
+    return np.asarray(selected, dtype=float)
+
+
+PG = pg_wordmark()
+HABITAT = PG  # Compatibility: default alpha points
+SMILEY_ALPHAS = (4, 8, 10, 12)
+ALPHAS = (8, 10, 11.8, 14)  # Pg default = 11.8; one counter in each letter
+ALPHA_DEFAULT_INDEX = 2
+ALPHA_PRESETS = {
+    "pg": {"label": "Pg wordmark", "description": "synthetic Pg wordmark with two counters",
+           "points": PG, "alpha_values": ALPHAS, "default_alpha_index": ALPHA_DEFAULT_INDEX},
+    "smiley": {"label": "Smiling face", "description": "original synthetic smiley face",
+               "points": SMILEY, "alpha_values": SMILEY_ALPHAS, "default_alpha_index": 1},
+}
+
 
 BETA = np.array([
     [.12,.18],[.22,.16],[.32,.23],[.14,.36],[.28,.35],[.39,.30],
@@ -103,7 +149,6 @@ BETA = np.array([
     [.62,.54],[.76,.56],[.89,.65],[.64,.78],[.79,.81],
 ], dtype=float)
 
-ALPHAS = (4,8,10,12)  # R=1/|alpha| reveals holes/eyes across the smiley
 BETAS = (1,1.25,1.5,1.75,2)
 
 
@@ -162,16 +207,74 @@ def triangulation_data(points):
     return sorted(out, key=lambda t: tuple(t["vertices"]))
 
 
+def alpha_topology(triangles, cutoff):
+    """(components, bounded holes) of the retained planar triangle complex.
+
+    For a nonempty 2-complex, Euler characteristic V - E + F equals
+    components - holes. Counts refer to the union of retained triangles,
+    not merely disconnected vertices in the input point cloud.
+    """
+    kept = [tri["vertices"] for tri in triangles if tri["r"] <= cutoff + 1e-12]
+    vertices = {v for t in kept for v in t}
+    if not vertices:
+        return 0, 0
+    edges = {tuple(sorted((u, v))) for t in kept
+             for u, v in ((t[0], t[1]), (t[1], t[2]), (t[2], t[0]))}
+    parent = {v: v for v in vertices}
+
+    def root(v):
+        while parent[v] != v:
+            v = parent[v]
+        return v
+
+    for u, v in edges:
+        parent[root(u)] = root(v)
+    components = len({root(v) for v in vertices})
+    return components, components - (len(vertices) - len(edges) + len(kept))
+
+
+def build_alpha_preset(config):
+    points = config["points"]
+    triangles = triangulation_data(points)
+    result = {
+        "label": config["label"], "description": config["description"],
+        "points": arr(points), "triangles": triangles,
+        "alpha_values": list(config["alpha_values"]),
+        "default_alpha_index": config["default_alpha_index"],
+        "options": {},
+    }
+    hp = pg.SetPoints(points.copy())
+    for a in config["alpha_values"]:
+        radius = 1 / a
+        hull = pg.Alpha_Hull(hp, alpha=-float(a), n_points_per_arc=72)
+        shape = pg.Alpha_Shape(hp, alpha=-float(a))
+        kept = [t["vertices"] for t in triangles if t["r"] <= radius + 1e-12]
+        comps, holes = alpha_topology(triangles, radius)
+        result["options"][str(a)] = {
+            "parameter_alpha": -a, "radius": radius,
+            "arcs": [arr(arc) for arc in hull.arcs],
+            "segments": edges(hull),
+            "shape_edges": edges(shape),
+            "kept_triangles": kept,
+            "topology": {"components": comps, "holes": holes},
+        }
+    return result
+
+
 def build():
     """Uses actual ProximityGraphs constructors, not browser approximations."""
     water=pg.SetPoints(WATER.copy())
+    presets={name: build_alpha_preset(config) for name,config in ALPHA_PRESETS.items()}
+    default=presets["pg"]
+    if default["options"]["11.8"]["topology"] != {"components": 1, "holes": 2}:
+        raise ValueError("Default Pg alpha shape must contain two enclosed counters")
     output={
         "format_version":1,
         "metadata":{
             "library":"proximitygraphs",
             "library_version":getattr(pg,"__version__","unknown"),
             "library_source_commit":LIBRARY_COMMIT,
-            "data_type":"historical digitized locations for Voronoi; synthetic smiley and sensor sets",
+            "data_type":"historical digitized locations for Voronoi; synthetic Pg / smiley and sensor sets",
             "units":"normalized Euclidean coordinates",
             "voronoi_polygons":"Euclidean half-plane clipping; pg.Voronoi only stores site adjacency"
         },
@@ -184,26 +287,18 @@ def build():
             "delaunay":edges(pg.DelaunayG(water)),
             "triangles":triangulation_data(WATER)
         },
-        "alpha":{"points":arr(HABITAT),"description":"synthetic smiley face",
-                 "triangles":triangulation_data(HABITAT),"options":{}},
+        "alpha":{
+            "default_preset":"pg",
+            "presets":presets,
+            # The legacy top-level fields mirror the default for consumers
+            # that predate the two-preset interface.
+            **{key:default[key] for key in
+               ("points","description","triangles","options","alpha_values","default_alpha_index")},
+        },
         "beta":{"points":arr(BETA),"description":"synthetic relay-corridor sensor network",
                 "options":{}},
         "compare":{"points":arr(BETA),"options":{}}
     }
-    hp=pg.SetPoints(HABITAT.copy())
-    for a in ALPHAS:
-        hull=pg.Alpha_Hull(hp, alpha=-float(a), n_points_per_arc=72)
-        shape=pg.Alpha_Shape(hp,alpha=-float(a))
-        radius=1/a
-        kept=[t["vertices"] for t in output["alpha"]["triangles"]
-              if t["r"] <= radius+1e-12]
-        output["alpha"]["options"][str(a)]={
-            "parameter_alpha":-a,"radius":1/a,
-            "arcs":[arr(arc) for arc in hull.arcs],
-            "segments":edges(hull),
-            "shape_edges":edges(shape),
-            "kept_triangles":kept
-        }
     bp=pg.SetPoints(BETA.copy())
     for b in BETAS:
         graph=pg.Beta_Skeleton(bp,beta=float(b),type_region="lune",closed=False)
@@ -269,23 +364,30 @@ def render_water(s):
 
 
 def render_habitat(s):
-    fig,ax=axis("Figure 2 · Smiley point cloud: circular alpha-hull")
-    for i,a in enumerate(s["alpha"]["options"]["8"]["arcs"]):
-        p=np.asarray(a)
-        ax.plot(p[:,0],p[:,1],c="#6d6c75" if i==0 else "#34383c",
-                lw=3 if i==0 else 2.2,zorder=5,solid_capstyle="round")
-    # Draw the supporting circle of the highlighted library-generated arc.
-    exemplar=np.asarray(s["alpha"]["options"]["8"]["arcs"][0])
-    p,q,r=exemplar[[0,len(exemplar)//2,-1]]
-    matrix=2*np.stack([q-p,r-p])
-    rhs=np.array([q@q-p@p,r@r-p@p])
-    if abs(np.linalg.det(matrix))>1e-12:
-        center=np.linalg.solve(matrix,rhs)
-        ax.add_patch(Circle(center,np.linalg.norm(p-center),
-                            fill=False,edgecolor="#96939b",linestyle="--",
-                            linewidth=1.4,alpha=.78,zorder=3))
-        ax.scatter([center[0]],[center[1]],s=24,color="#96939b",zorder=4)
-    sites(ax,HABITAT)
+    fig, ax = axis("Figure 2 · Pg: two counters in an alpha shape")
+    default = s["alpha"]["presets"]["pg"]
+    layer = default["options"]["11.8"]
+    points = np.asarray(default["points"])
+    # Straight alpha-shape boundary makes both bounded negative spaces clear.
+    for i, j in layer["shape_edges"]:
+        p, q = points[i], points[j]
+        ax.plot([p[0], q[0]], [p[1], q[1]], c="#777b86",
+                lw=1.5, alpha=.62, zorder=3, linestyle="--")
+    for i, arc in enumerate(layer["arcs"]):
+        p = np.asarray(arc)
+        ax.plot(p[:,0],p[:,1],c="#5d5c64" if i==0 else "#34383c",
+                lw=3 if i==0 else 2.0,zorder=5,solid_capstyle="round")
+    if layer["arcs"]:
+        exemplar = np.asarray(layer["arcs"][0])
+        p, q, r = exemplar[[0, len(exemplar)//2, -1]]
+        matrix = 2*np.stack([q-p, r-p])
+        rhs = np.array([q@q-p@p, r@r-p@p])
+        if abs(np.linalg.det(matrix))>1e-12:
+            center = np.linalg.solve(matrix, rhs)
+            ax.add_patch(Circle(center, np.linalg.norm(p-center),
+                        fill=False, edgecolor="#96939b", linestyle="--",
+                        linewidth=1.1, alpha=.6, zorder=3))
+    sites(ax, points)
     save(fig,"figure02-habitat")
 
 
@@ -325,10 +427,11 @@ def main():
     assert all(scene["alpha"]["options"][str(a)]["arcs"] for a in ALPHAS), (
         "A requested alpha value has no closed circular arcs; inspect the parameters."
     )
+    assert scene["alpha"]["presets"]["pg"]["options"]["11.8"]["topology"]["holes"] == 2
     DATA.mkdir(parents=True,exist_ok=True)
     (DATA/"scenes.json").write_text(json.dumps(scene,indent=2)+"\n",encoding="utf-8")
     render_water(scene);render_habitat(scene);render_sensors(scene)
-    print("Generated historical Snow data + authoritative graph geometry and three PNG/SVG figure pairs.")
+    print("Generated authoritative Snow, Pg and optional smiley geometry, with three PNG/SVG figure pairs.")
 
 
 if __name__=="__main__":
