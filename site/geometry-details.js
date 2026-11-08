@@ -63,6 +63,47 @@ function alphaSimplices(points,alpha,triangles) {
   return {radius,kept,discarded,boundary,total:all.length};
 }
 
+/**
+ * First Betti number of the retained triangular complex. A hole is not just
+ * an empty-looking white region: b1 = E - V - F + b0, where b0 counts
+ * connected components. Isolated points are excluded consistently with the
+ * Python exporter (only retained simplices contribute).
+ */
+function complexTopology(triangles){
+  const vertices=new Set(),edges=new Map();
+  for(const tri of triangles){
+    if(tri.length!==3)continue;
+    const [i,j,k]=tri;
+    for(const v of [i,j,k])vertices.add(v);
+    for(const [u,v] of [[i,j],[j,k],[k,i]])
+      edges.set(edgeKey(u,v),[u,v]);
+  }
+  const adjacency=new Map();
+  for(const v of vertices)adjacency.set(v,new Set());
+  for(const [u,v] of edges.values()){
+    adjacency.get(u).add(v);
+    adjacency.get(v).add(u);
+  }
+  const remaining=new Set(vertices);
+  let components=0;
+  while(remaining.size){
+    components++;
+    const first=remaining.values().next().value;
+    remaining.delete(first);
+    const queue=[first];
+    while(queue.length){
+      const u=queue.pop();
+      for(const v of adjacency.get(u)){
+        if(remaining.has(v)){remaining.delete(v);queue.push(v);}
+      }
+    }
+  }
+  return {
+    components,
+    holes:edges.size-vertices.size-triangles.length+components
+  };
+}
+
 function allAlphaCircles(arcs) {
   return arcs.map((arc,i)=>{
     const circle=arcCircle(arc);
@@ -133,6 +174,6 @@ function compareGraphEdges(points, graph, beta=1.5) {
 
 if(typeof module!=="undefined" && module.exports){
   module.exports={allPointPairs,betaPairDetails,alphaSimplices,
-    allAlphaCircles,bisectorClippedToUnitSquare,
+    complexTopology,allAlphaCircles,bisectorClippedToUnitSquare,
     findBlockedBetaPair,compareGraphEdges};
 }
