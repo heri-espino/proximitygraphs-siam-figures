@@ -9,10 +9,11 @@
  * represented as a new library-generated output.
  */
 const EDIT_MAX = 80;
+const EDIT_MAX_ALPHA = 120; // Allow additional points after the 78-site Pg default.
 const EDIT_SEPARATION = 0.008;
 const EDIT_SCENES = Object.freeze({
   water: {plot:"water-plot",draw:"drawWater",name:"water stations"},
-  habitat: {plot:"habitat-plot",draw:"drawHabitat",name:"habitat observations"},
+  habitat: {plot:"habitat-plot",draw:"drawHabitat",name:"alpha point clouds"},
   sensors: {plot:"sensors-plot",draw:"drawSensors",name:"sensors"}
 });
 const pointEditors = {};
@@ -189,8 +190,10 @@ function setupPointEditors(sceneData) {
       }
       if(editor.mode==="add"){
         if(index>=0)return;
-        if(editor.points.length>=EDIT_MAX){
-          document.getElementById(name+"-edit-help").textContent="80-point interactive limit reached. Delete points or reset.";
+        const maxPoints=name==="habitat"?EDIT_MAX_ALPHA:EDIT_MAX;
+        if(editor.points.length>=maxPoints){
+          document.getElementById(name+"-edit-help").textContent=maxPoints+
+            "-point interactive limit reached. Delete points or reset.";
           return;
         }
         if(!validPoint(editor.points,coord))return;
