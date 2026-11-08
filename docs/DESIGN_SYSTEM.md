@@ -22,7 +22,7 @@ Source: `site/motion.js`, CSS media queries.
 
 ## Source fidelity
 
-The site must preserve 13 digitized historical John Snow pumps, 578 read-only death marks, 53 synthetic smiley points, and 25 synthetic relay sensors. The graph predicates, actual `pg.Alpha_Shape` and `pg.Alpha_Hull` outputs, empty-lune blockers, comparison graphs, data provenance and exported PNG/SVG/JSON results are untouched mathematically. Palette changes in `site/app.js` must match `scripts/export_scenes.py`.
+The site must preserve 13 digitized historical John Snow pumps, 578 read-only death marks, a 111-point synthetic Pg default with two genuine enclosed holes, the original 53-point synthetic smiley alternative, and 25 synthetic relay sensors. The graph predicates, actual `pg.Alpha_Shape` and `pg.Alpha_Hull` outputs, empty-lune blockers, comparison graphs, data provenance and exported PNG/SVG/JSON results are untouched mathematically. Palette changes in `site/app.js` must match `scripts/export_scenes.py`.
 
 ## Reproducibility
 
