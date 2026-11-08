@@ -679,7 +679,7 @@ function setPreset(scene,preset){
         "alpha-circle":false,"alpha-all-circles":false,"alpha-centers":false},
       construction:{"alpha-hull":false,"alpha-shape":true,"alpha-triangulation":true,"alpha-kept":true,
         "alpha-circle":true,"alpha-all-circles":true,"alpha-centers":true},
-      both:{"alpha-hull":true,"alpha-shape":true,"alpha-triangulation":false,"alpha-kept":false,
+      both:{"alpha-hull":true,"alpha-shape":true,"alpha-triangulation":false,"alpha-kept":true,
         "alpha-circle":true,"alpha-all-circles":false,"alpha-centers":false}
     },
     sensors:{
