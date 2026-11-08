@@ -76,3 +76,8 @@ Preserve both untouched source CSVs at `data/historical/`, the exact common aspe
 - `site/motion.js` animates **only** the destination on internal section-link clicks or hash/history navigation, and retains deliberate geometry-layer control feedback. Free/manual scrolling must not set `is-section-entering` or update the nav underline. `prefers-reduced-motion: reduce` disables transitions.
 - Preserve native anchors `#top`, `#explore`, `#water`, `#habitat`, `#sensors`, `#compare` and `#about`, including keyboard, browser history, no-JS behavior and normal mobile scrolling.
 - Test source constraints in `tests/test_editor.js` and browser conditions in `tests/visual_smoke.py`; see `experiments/experiment004/README.md` and `docs/DESIGN_SYSTEM.md`. Do not alter the graph engine, source point sets or static figures for a navigation-only change.
+
+## experiment005 — Pg two-counter alpha default (2026-11-08)
+- Pg, not the original smiley, is the alpha default. Its 78 deterministic points must yield exactly two bounded alpha-complex holes (one in P and one in g) at α=−11.8, with a closed boundary cycle around each. Source lives in `scripts/export_scenes.py`.
+- The original 53-point smiley remains a selectable `#alpha-preset` option with its own 4 alpha scales and authoritative Python-generated arcs/edges. `site/app.js` and `site/editor.js` must swap only the alpha editable point set when switching presets. Alpha editor capacity is 120; water and sensor remain at 80.
+- Update Figure02 static PNG/SVG, canonical article caption and visual QA. Keep warm-paper minimal design, section-click-only animations, historical Snow data, β-skeleton calculations, and SVG/PNG exports. See `experiments/experiment005/README.md`.
