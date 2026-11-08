@@ -79,3 +79,5 @@ The intended SIAM News category is **Software and Programming**. SIAM explicitly
 
 ## Dataset update — November 2026
 The website now displays **digitized John Snow pump positions (13) and cholera death marks (578)** from HistData/Rdatasets as a historical contextual overlay. Its alpha default is a **synthetic smiley point cloud** and its beta default a **synthetic two-cluster relay sensor layout**. The Voronoi/Delaunay edges are modern computations on historical map coordinates, not a technique used by Snow. These data do not support modern GIS distance, medical-causality, or radio-network claims. See [historical provenance](../data/historical/README.md).
+
+**Alpha figure update (November 2026):** The interactive companion now defaults to a “Pg” point-cloud wordmark with two genuine alpha-shape holes (one in P and one in g), while the original smiley is still selectable. The default and alternate presets are synthetic demonstrations, not empirical observations.

@@ -6,11 +6,12 @@ const NS = "http://www.w3.org/2000/svg";
 const WIDTH = 640, HEIGHT = 600;
 const frame = { x: 65, y: 43, w: 510, h: 510 };
 const teal = "#34383c", orange = "#6d6c75", dark = "#30302e";
-const alphaValues = [4, 8, 10, 12];
+const alphaValues = [8, 11, 14, 18];
+const smileyAlphaValues = [4, 8, 10, 12];
 const betaValues = [1, 1.25, 1.5, 1.75, 2];
 const state = {
   waterSite:6, waterTriangleIndex:0,
-  alphaIndex:1,alphaArc:0,
+  alphaPreset:"pg",alphaIndex:2,alphaArc:0,
   betaIndex:2,betaPair:null,betaInspectFirst:null
 };
 let dataset = null;
@@ -37,7 +38,7 @@ const betaPoints=[
  [.61,.18],[.75,.15],[.87,.22],[.614,.334],[.74,.35],[.86,.40],
  [.62,.54],[.76,.56],[.89,.65],[.64,.78],[.79,.81]
 ];
-const habitatPoints=(function(){
+const smileyPoints=(function(){
  const outline=Array.from({length:30},(_,i)=>{
    const t=2*Math.PI*i/30+.011;
    const r=.336+.006*Math.cos(5*t)+.003*Math.sin(7*t);
@@ -56,6 +57,71 @@ const habitatPoints=(function(){
  });
  return [...outline,...eyes,...mouth];
 })();
+
+// Fallback for the exact Python Pg generator (no font or SVG source required).
+// 111 sample sites form a block P and single-storey g with open counters.
+function insidePgPolygon(x,y,vertices){
+  let inside=false;
+  for(let k=0;k<vertices.length;k++){
+    const a=vertices[k],b=vertices[(k+1)%vertices.length];
+    if((a[1]>y)!==(b[1]>y) &&
+       x<(b[0]-a[0])*(y-a[1])/(b[1]-a[1])+a[0])inside=!inside;
+  }
+  return inside;
+}
+function pgWordmarkPoints(){
+  const pBowl=[[.13,.55],[.42,.55],[.49,.60],[.52,.67],
+               [.52,.78],[.48,.85],[.13,.85]];
+  const gTail=[[.655,.12],[.805,.12],[.895,.17],[.895,.255],
+               [.819,.255],[.811,.204],[.655,.204]];
+  const onLetter=(x,y)=>{
+    const stem=x>=.10&&x<=.22&&y>=.17&&y<=.85;
+    const pUpper=insidePgPolygon(x,y,pBowl);
+    const pCounter=((x-.345)/.090)**2+((y-.705)/.082)**2<1;
+    const capitalP=(stem||pUpper)&&!pCounter;
+    const gOuter=((x-.725)/.160)**2+((y-.555)/.158)**2<1;
+    const gCounter=((x-.727)/.081)**2+((y-.560)/.077)**2<1;
+    const descender=(x>=.820&&x<=.895&&y>=.16&&y<=.58)||
+      insidePgPolygon(x,y,gTail);
+    return capitalP||(gOuter&&!gCounter)||descender;
+  };
+  const pts=[],step=.047;
+  for(let j=0;j<17;j++){
+    const y=.13+j*step;if(y>=.90)break;
+    for(let i=0;i<19;i++){
+      const x=.09+i*step;if(x>=.94)break;
+      const p=[x+step*.085*Math.sin(i*1.18+j*2.13),
+               y+step*.080*Math.cos(i*2.31-j*.87)];
+      if(onLetter(p[0],p[1]))pts.push(p);
+    }
+  }
+  return pts;
+}
+const habitatPoints=pgWordmarkPoints();
+
+function currentAlphaSource(){
+  const alpha=dataset?.alpha;
+  if(!alpha)return null;
+  return alpha.presets?.[state.alphaPreset] ||
+    (state.alphaPreset==="pg"?alpha:null);
+}
+function activeAlphaValues(){
+  return currentAlphaSource()?.alpha_values ||
+    (state.alphaPreset==="smiley"?smileyAlphaValues:alphaValues);
+}
+function switchAlphaPreset(key){
+  if(key!=="pg"&&key!=="smiley")return;
+  state.alphaPreset=key;
+  const source=currentAlphaSource();
+  state.alphaIndex=source?.default_alpha_index ??
+    (key==="pg"?2:1);
+  state.alphaArc=0;
+  document.getElementById("alpha-slider").value=state.alphaIndex;
+  const points=source?.points || (key==="pg"?habitatPoints:smileyPoints);
+  if(pointEditors.habitat)replaceEditorPointSet("habitat",points);
+  else drawHabitat();
+}
+
 
 function el(tag, attrs, parent, label) {
   const item = document.createElementNS(NS, tag);
@@ -347,9 +413,11 @@ function drawWater(){
   }
 }
 function drawHabitat(){
-  const svg=document.getElementById("habitat-plot"),source=dataset&&dataset.alpha;
-  const points=editablePoints("habitat",source?source.points:habitatPoints);
-  const alpha=alphaValues[state.alphaIndex],a=-alpha;
+  const svg=document.getElementById("habitat-plot"),source=currentAlphaSource();
+  const points=editablePoints("habitat",source?source.points:
+    (state.alphaPreset==="pg"?habitatPoints:smileyPoints));
+  const values=activeAlphaValues();
+  const alpha=values[state.alphaIndex],a=-alpha;
   const original=source&&!edited("habitat");
   const shape=original?source.options[String(alpha)]:fallbackAlpha(points,a);
   const arcs=shape?.arcs || [];
@@ -360,6 +428,8 @@ function drawHabitat(){
     shape.kept_triangles:filtered.kept.map(x=>x.vertices);
   background(svg,"02 / alpha boundary and circular construction");
   detail("alpha-value","α = −"+alpha+" · R = "+(1/alpha).toFixed(3));
+  detail("alpha-preset-title",state.alphaPreset==="pg"?"Pg · two closed counters":
+    "Smiling-face point cloud");
   if(hasLayer("alpha-triangulation")){
     for(const t of triangles){
       const poly=t.vertices.map(i=>points[i]);
@@ -420,11 +490,18 @@ function drawHabitat(){
     });
   }
   points.forEach(function(p,i){site(svg,p,i,false);});
+  const topology=original&&shape.topology?shape.topology:
+    complexTopology(filtered.kept.map(t=>t.vertices));
   detail("habitat-stat",points.length+" sites · "+boundary.length+
-    " shape edges · "+arcs.length+" arcs");
+    " shape edges · "+topology.holes+" hole"+(topology.holes===1?"":"s")+
+    " · "+arcs.length+" arcs");
   const c=chosenCircle;
-  detail("habitat-details","α = −"+alpha+" gives radius R = "+(1/alpha).toFixed(3)+
-    ". "+kept.length+" of "+triangles.length+" Delaunay triangles satisfy the radius cutoff. "+
+  detail("habitat-details",(state.alphaPreset==="pg"?"Pg":"Smiley")+
+    ": α = −"+alpha+" gives radius R = "+(1/alpha).toFixed(3)+
+    ". The retained complex has "+topology.holes+" enclosed hole"+
+    (topology.holes===1?"":"s")+" in "+topology.components+
+    " component"+(topology.components===1?"":"s")+". "+
+    kept.length+" of "+triangles.length+" Delaunay triangles satisfy the radius cutoff. "+
     boundary.length+" straight boundary edges, "+arcs.length+" sampled circular arcs."+
     (c?" Arc "+(state.alphaArc+1)+" center: ("+
       c.center[0].toFixed(3)+", "+c.center[1].toFixed(3)+").":""));
@@ -602,7 +679,7 @@ function setPreset(scene,preset){
         "alpha-circle":false,"alpha-all-circles":false,"alpha-centers":false},
       construction:{"alpha-hull":false,"alpha-shape":true,"alpha-triangulation":true,"alpha-kept":true,
         "alpha-circle":true,"alpha-all-circles":true,"alpha-centers":true},
-      both:{"alpha-hull":true,"alpha-shape":true,"alpha-triangulation":false,"alpha-kept":false,
+      both:{"alpha-hull":true,"alpha-shape":true,"alpha-triangulation":false,"alpha-kept":true,
         "alpha-circle":true,"alpha-all-circles":false,"alpha-centers":false}
     },
     sensors:{
@@ -662,6 +739,9 @@ async function start(){
   document.getElementById("water-next-triangle").addEventListener("click",function(){
     state.waterTriangleIndex+=1;drawWater();
   });
+  document.getElementById("alpha-point-set").addEventListener("change",function(e){
+    switchAlphaPreset(e.target.value);
+  });
   document.getElementById("alpha-slider").addEventListener("input",function(e){
     state.alphaIndex=Number(e.target.value);state.alphaArc=0;drawHabitat();
   });
@@ -709,10 +789,13 @@ async function start(){
     detail("source-status","Python-generated data unavailable; the independent browser preview is active.");
   }
   setupPointEditors(dataset);
+  document.getElementById("alpha-point-set").value=state.alphaPreset;
+  document.getElementById("alpha-slider").value=state.alphaIndex;
   drawWater();drawHabitat();drawSensors();drawCompare();
 }
 if(typeof document!=="undefined")document.addEventListener("DOMContentLoaded",start);
 if(typeof module!=="undefined" && module.exports){
   module.exports={circumcircle,delaunayTriangles,trianglesEdges,betaEdges,cells,
-    fallbackAlpha,arcCircle,alphaValues,betaValues,waterPoints,betaPoints,habitatPoints};
+    fallbackAlpha,arcCircle,alphaValues,smileyAlphaValues,betaValues,
+    waterPoints,betaPoints,habitatPoints,smileyPoints,pgWordmarkPoints};
 }

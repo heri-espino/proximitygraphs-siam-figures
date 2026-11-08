@@ -69,7 +69,12 @@ def main():
         assert len(scenes["voronoi"]["points"])==13
         assert len(scenes["voronoi"]["death_marks"])==578
         assert scenes["voronoi"]["labels"][scenes["voronoi"]["historical"]["broad_street_index"]]=="Broad St"
-        assert len(scenes["alpha"]["points"])==53
+        assert len(scenes["alpha"]["points"])==111
+        assert scenes["alpha"]["default_preset"]=="pg"
+        assert len(scenes["alpha"]["presets"]["smiley"]["points"])==53
+        assert scenes["alpha"]["options"]["14"]["topology"]=={"components":1,"holes":2}
+        assert page.locator("#alpha-point-set").input_value()=="pg"
+        assert "2 holes" in page.locator("#habitat-stat").inner_text()
         assert len(scenes["beta"]["points"])==25
         assert page.locator("#water-plot g[aria-hidden='true'] circle").count()==578
         assert "Broad St" in page.locator("#water-details").inner_text()
@@ -137,7 +142,17 @@ def main():
         assert arcs>0
         assert page.locator("#habitat-plot circle").count()>2*arcs
         page.locator("#habitat").screenshot(path=str(output/"03-alpha-construction.png"))
-        checks.append("Alpha_Hull arcs, Alpha_Shape edges, retained triangles, and all circles render")
+        checks.append("Pg alpha-hull and alpha-shape render two enclosed holes with circles")
+        page.locator("#alpha-point-set").select_option("smiley")
+        assert page.locator("#alpha-point-set").input_value()=="smiley"
+        assert "53 sites" in page.locator("#habitat-stat").inner_text()
+        assert "α = −8" in page.locator("#alpha-value").inner_text()
+        assert "Original points" in page.locator("#habitat-edit-source").inner_text()
+        page.locator("#habitat").screenshot(path=str(output/"08-smiley-preset.png"))
+        page.locator("#alpha-point-set").select_option("pg")
+        assert "111 sites" in page.locator("#habitat-stat").inner_text()
+        assert "2 holes" in page.locator("#habitat-stat").inner_text()
+        checks.append("Switching Pg ↔ smiley preserves separate alpha grids and clean editor baselines")
 
         page.locator("#beta-show-blocked").click()
         detail=page.locator("#sensors-details").inner_text()

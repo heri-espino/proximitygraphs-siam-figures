@@ -9,10 +9,11 @@
  * represented as a new library-generated output.
  */
 const EDIT_MAX = 80;
+const EDIT_CAPS = Object.freeze({water:80,habitat:140,sensors:80});
 const EDIT_SEPARATION = 0.008;
 const EDIT_SCENES = Object.freeze({
   water: {plot:"water-plot",draw:"drawWater",name:"water stations"},
-  habitat: {plot:"habitat-plot",draw:"drawHabitat",name:"habitat observations"},
+  habitat: {plot:"habitat-plot",draw:"drawHabitat",name:"alpha point cloud"},
   sensors: {plot:"sensors-plot",draw:"drawSensors",name:"sensors"}
 });
 const pointEditors = {};
@@ -134,6 +135,21 @@ function resetEditor(name) {
   editor.render();
   if(name==="sensors" && typeof drawCompare==="function")drawCompare();
 }
+function replaceEditorPointSet(name,sourcePoints) {
+  // Replacing a teaching preset establishes a new clean baseline.
+  // The old preset remains in the authoritative source data, not in this editor.
+  const editor=pointEditors[name];
+  if(!editor || !Array.isArray(sourcePoints))return;
+  editor.original=sourcePoints.map(p=>p.slice());
+  editor.points=editor.original.map(p=>p.slice());
+  editor.active=null;
+  editor.pending=false;
+  editor.dirty=false;
+  editor.generation=(editor.generation||0)+1;
+  if(name==="habitat")state.alphaArc=0;
+  recomputeNotice(name);
+  editor.render();
+}
 function setupPointEditors(sceneData) {
   const defaults={
     water:sceneData?.voronoi?.points || waterPoints,
@@ -189,8 +205,8 @@ function setupPointEditors(sceneData) {
       }
       if(editor.mode==="add"){
         if(index>=0)return;
-        if(editor.points.length>=EDIT_MAX){
-          document.getElementById(name+"-edit-help").textContent="80-point interactive limit reached. Delete points or reset.";
+        if(editor.points.length>=EDIT_CAPS[name]){
+          document.getElementById(name+"-edit-help").textContent=EDIT_CAPS[name]+"-point interactive limit reached. Delete points or reset."
           return;
         }
         if(!validPoint(editor.points,coord))return;

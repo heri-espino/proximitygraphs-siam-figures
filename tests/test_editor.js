@@ -23,8 +23,17 @@ function testHistoricalAndSyntheticDefaults(){
   assert.equal(v.points.length,13);
   assert.equal(v.death_marks.length,578);
   assert.equal(v.labels[v.historical.broad_street_index],"Broad St");
-  assert.equal(scene.alpha.points.length,53);
-  assert.equal(scene.alpha.description,"synthetic smiley face");
+  assert.equal(scene.alpha.points.length,111);
+  assert.equal(scene.alpha.default_preset,"pg");
+  assert.equal(scene.alpha.description,"synthetic Pg wordmark with one enclosed hole per letter");
+  assert.equal(scene.alpha.presets.pg.points.length,111);
+  assert.equal(scene.alpha.presets.smiley.points.length,53);
+  assert.equal(scene.alpha.presets.smiley.description,"synthetic smiling face");
+  assert.deepEqual(Object.keys(scene.alpha.presets).sort(),["pg","smiley"]);
+  assert.deepEqual(Array.from(vm.runInContext("alphaValues",context)),[8,11,14,18]);
+  assert.deepEqual(Array.from(vm.runInContext("smileyAlphaValues",context)),[4,8,10,12]);
+  assert.equal(scene.alpha.options["14"].topology.holes,2);
+  assert.equal(scene.alpha.options["14"].topology.components,1);
   assert.equal(scene.beta.points.length,25);
   assert.equal(scene.beta.description,"synthetic relay-corridor sensor network");
   const transform=v.historical.normalization;
@@ -46,20 +55,27 @@ function testDelaunay(){
     "Moving a station must change the Voronoi service partition.");
 }
 function testAlpha(){
-  for(const a of [4,8,10,12]){
-    const computed=context.fallbackAlpha(scene.alpha.points,-a);
-    const fromLibrary=scene.alpha.options[String(a)];
-    assertEdgeSets(computed.segments,fromLibrary.segments,
-      "Browser alpha-hull boundaries should match library at alpha=-"+a);
-    for(const arc of computed.arcs){
-      if(arc.length<3)continue;
-      const circle=context.arcCircle(arc);
-      assert.ok(circle && Math.abs(circle.r-1/a)<0.0001,
-        "Browser alpha-hull arc must have radius R=1/|alpha|.");
+  for(const [key,src] of Object.entries(scene.alpha.presets)){
+    const values=src.alpha_values;
+    for(const a of values){
+      const computed=context.fallbackAlpha(src.points,-a);
+      const reference=src.options[String(a)];
+      assertEdgeSets(computed.segments,reference.segments,
+        key+": JS alpha-hull boundaries should match library at alpha=-"+a);
+      for(const arc of computed.arcs){
+        if(arc.length<3)continue;
+        const circle=context.arcCircle(arc);
+        assert.ok(circle && Math.abs(circle.r-1/a)<0.0001);
+      }
     }
   }
-  const fewer=scene.alpha.points.slice(0,2);
-  assert.equal(context.fallbackAlpha(fewer,-4).arcs.length,0);
+  const fallback=context.pgWordmarkPoints();
+  assert.equal(fallback.length,111);
+  for(let i=0;i<fallback.length;i++)
+    for(let j=0;j<2;j++)
+      assert.ok(Math.abs(fallback[i][j]-scene.alpha.points[i][j])<1e-8,
+        "Browser Pg generator must match the Python reference coordinates");
+  assert.equal(context.fallbackAlpha(scene.alpha.points.slice(0,2),-14).arcs.length,0);
 }
 function testBeta(){
   for(const beta of [1,1.25,1.5,1.75,2]){
@@ -102,19 +118,25 @@ function testGeometryWitnesses(){
   }
 }
 function testShapeAndComparison(){
-  const points=scene.alpha.points;
-  for(const alpha of [4,8,10,12]){
-    const exported=scene.alpha.options[String(alpha)];
-    const js=context.alphaSimplices(points,-alpha);
-    assertEdgeSets(js.boundary,exported.shape_edges,
-      "The alpha-shape boundary should match the actual Alpha_Shape class.");
-    assertEdgeSets(exported.shape_edges,exported.segments,
-      "Library alpha-hull straight segments must equal shape edges.");
-    assert.equal(js.kept.length,exported.kept_triangles.length);
-    for(const kept of js.kept)assert.ok(kept.r<=1/alpha+1e-12);
-    for(const rejected of js.discarded)assert.ok(rejected.r>1/alpha-1e-12);
-    assert.equal(context.allAlphaCircles(exported.arcs).length,exported.arcs.length);
+  for(const [key,src] of Object.entries(scene.alpha.presets)){
+    for(const alpha of src.alpha_values){
+      const exported=src.options[String(alpha)];
+      const js=context.alphaSimplices(src.points,-alpha);
+      assertEdgeSets(js.boundary,exported.shape_edges,
+        key+": alpha-shape boundary should match actual Alpha_Shape.");
+      assertEdgeSets(exported.shape_edges,exported.segments,
+        key+": library alpha-hull straight segments should equal shape edges.");
+      assert.equal(js.kept.length,exported.kept_triangles.length);
+      assert.deepEqual({...context.complexTopology(js.kept.map(t=>t.vertices))},
+        exported.topology,key+" alpha topology");
+      for(const kept of js.kept)assert.ok(kept.r<=1/alpha+1e-12);
+      for(const rejected of js.discarded)assert.ok(rejected.r>1/alpha-1e-12);
+      assert.equal(context.allAlphaCircles(exported.arcs).length,exported.arcs.length);
+    }
   }
+  assert.equal(scene.alpha.presets.pg.options["8"].topology.holes,0);
+  assert.equal(scene.alpha.presets.pg.options["11"].topology.holes,1);
+  assert.equal(scene.alpha.presets.pg.options["14"].topology.holes,2);
   const sample=scene.compare.points;
   for(const key of ["delaunay","gabriel","rng","beta","alpha-shape"]){
     assertEdgeSets(context.compareGraphEdges(sample,key),
@@ -159,6 +181,10 @@ function testUI(){
     assert.match(html,new RegExp('id="'+id+'"'),"Missing historical layer control "+id);
   }
   assert.ok(html.includes("Historical cholera death marks"));
+  assert.match(html,/id="alpha-point-set"/);
+  assert.match(html,/<option value="pg" selected>/);
+  assert.match(html,/<option value="smiley">/);
+  assert.match(html,/id="alpha-kept" type="checkbox" checked/);
   assert.ok(css.includes(".point-toolbar"));
   assert.ok(css.includes(".studio"));
   assert.match(css,/--bg:\s*#faf9f7/);

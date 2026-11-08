@@ -1,7 +1,7 @@
 # Construction views: mathematical definitions and reproducibility
 
 **Scope:** Interactive companion to the proposed (unsubmitted) SIAM News feature.  
-**Inputs:** the water pumps and cholera death marks are digitized historical map records, whereas alpha smiley and beta relay sensor points are synthetic; each occupies the normalized unit square.  
+**Inputs:** the water pumps and cholera death marks are digitized historical map records; the alpha Pg/smiley presets and beta relay sensor points are synthetic, each in the normalized unit square.  
 **Primary data source:** the pinned [ProximityGraphs Python package](https://github.com/ProximityGraphs/ProximityGraphs), installed from the SHA in \`requirements.txt\`.  
 **Edited-data source:** an explicitly separate, testable in-browser JavaScript implementation.
 
@@ -44,6 +44,14 @@ Layers:
 - **Selected arc circle / All supporting circles / Circle centers**: geometric witnesses for the arc radius and orientation.
 
 The all-circles display shows **one supporting circle per sampled arc**, not every theoretically possible circle through every point pair. These are *selected construction circles* for the hull; the count is therefore the number of hull arcs, not \(\binom{n}{2}\). The circles are clipped to the plotted domain to remain legible.
+
+**Selectable point clouds and topological holes.** The default alpha scene is **Pg** (111 deterministic sites), where a block P and single-storey g each enclose one unsampled counter. The point set is not a font bitmap. The original smiley (53 sites) remains available as an alternative. Their alpha parameters are deliberately different: Pg at \(\alpha\in\{-8,-11,-14,-18\}\), default \(-14\); smiley at \(\alpha\in\{-4,-8,-10,-12\}\), default \(-8\). At \(\alpha=-14\), the retained triangulation has **one connected component and two topological holes**, verified by
+
+\[
+b_1 = E - V - F + b_0 = 2,
+\]
+
+where \(V,E,F\) count vertices, edges, and retained triangles, and \(b_0\) counts connected components of the retained simplicial complex. These are actual 1-dimensional homology counts, not white regions inferred from a screenshot. At Pg alpha \(-8\) there are no holes; \(-11\) gives one; \(-18\) keeps both counters but separates the glyphs into two components. The default plot shades retained simplices so the letter counters are visually legible. Selecting a different preset resets the editable point baseline and alpha slider; source Python computations are preserved independently for both presets under \`scene.alpha.presets\`.
 
 **Limitations:** only the selected negative-alpha, planar branch is visualized, matching the library's documented \`Alpha_Shape\` and \`Alpha_Hull\` behavior; we do not claim an alpha-complex or persistent homology engine.
 

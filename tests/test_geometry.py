@@ -6,7 +6,9 @@ from pathlib import Path
 import numpy as np
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "scripts"))
-from export_scenes import ALPHAS, BETAS, BETA, WATER, HABITAT, SNOW_DEATHS, PUMP_LABELS, BROAD_STREET, build, cells  # noqa: E402
+from export_scenes import (ALPHAS, SMILEY_ALPHAS, BETAS, BETA, WATER, HABITAT,
+                           PG_POINTS, SMILEY_POINTS, SNOW_DEATHS, PUMP_LABELS,
+                           BROAD_STREET, build, cells, alpha_topology)  # noqa: E402
 
 
 class GeometryTests(unittest.TestCase):
@@ -18,13 +20,34 @@ class GeometryTests(unittest.TestCase):
         self.assertEqual(len(WATER), 13)
         self.assertEqual(len(SNOW_DEATHS), 578)
         self.assertEqual(PUMP_LABELS[BROAD_STREET], "Broad St")
-        self.assertEqual(len(HABITAT), 53)
+        self.assertEqual(len(HABITAT), 111)
+        self.assertTrue(np.array_equal(HABITAT, PG_POINTS))
+        self.assertEqual(len(SMILEY_POINTS), 53)
         self.assertEqual(len(BETA), 25)
         self.assertEqual(self.scenes["voronoi"]["labels"], PUMP_LABELS)
         self.assertEqual(len(self.scenes["voronoi"]["death_marks"]), 578)
         self.assertEqual(self.scenes["voronoi"]["historical"]["broad_street_index"], BROAD_STREET)
         self.assertTrue(np.all((WATER >= 0) & (WATER <= 1)))
         self.assertTrue(np.all((SNOW_DEATHS >= 0) & (SNOW_DEATHS <= 1)))
+
+    def test_alpha_presets_and_exactly_two_pg_holes(self):
+        alpha = self.scenes["alpha"]
+        self.assertEqual(alpha["default_preset"], "pg")
+        self.assertEqual(set(alpha["presets"]), {"pg", "smiley"})
+        self.assertEqual(alpha["points"], alpha["presets"]["pg"]["points"])
+        self.assertEqual(alpha["options"], alpha["presets"]["pg"]["options"])
+        self.assertEqual(alpha["presets"]["pg"]["alpha_values"], list(ALPHAS))
+        self.assertEqual(alpha["presets"]["smiley"]["alpha_values"], list(SMILEY_ALPHAS))
+        self.assertEqual(len(alpha["presets"]["pg"]["points"]), 111)
+        self.assertEqual(len(alpha["presets"]["smiley"]["points"]), 53)
+        self.assertEqual(alpha["presets"]["pg"]["default_alpha_index"], 2)
+        default = alpha["presets"]["pg"]["options"]["14"]
+        self.assertEqual(default["topology"], {"components": 1, "holes": 2})
+        self.assertEqual(alpha_topology(default["kept_triangles"]), default["topology"])
+        # A real filtration: counters emerge as the circumradius cutoff tightens.
+        self.assertEqual(alpha["options"]["8"]["topology"]["holes"], 0)
+        self.assertEqual(alpha["options"]["11"]["topology"]["holes"], 1)
+        self.assertEqual(alpha["options"]["18"]["topology"]["holes"], 2)
 
     def test_voronoi_cells_are_valid_and_nearest(self):
         polygons = cells(WATER)
@@ -43,38 +66,39 @@ class GeometryTests(unittest.TestCase):
         self.assertEqual(v, d)
 
     def test_alpha_arc_circle_radii(self):
-        for a in ALPHAS:
-            arcs = self.scenes["alpha"]["options"][str(a)]["arcs"]
-            self.assertGreater(len(arcs), 0)
-            for samples in arcs:
-                if len(samples) < 3:
-                    continue
-                p, q, r = np.asarray(samples)[[0, len(samples)//2, -1]]
-                mat = 2 * np.stack([q-p, r-p])
-                rhs = np.array([q@q-p@p, r@r-p@p])
-                if abs(np.linalg.det(mat)) < 1e-12:
-                    continue
-                center = np.linalg.solve(mat, rhs)
-                self.assertAlmostEqual(float(np.linalg.norm(p-center)), 1/a, places=4)
+        for preset in self.scenes["alpha"]["presets"].values():
+            for a in preset["alpha_values"]:
+                arcs = preset["options"][str(a)]["arcs"]
+                self.assertGreater(len(arcs), 0)
+                for samples in arcs:
+                    if len(samples) < 3:
+                        continue
+                    p, q, r = np.asarray(samples)[[0, len(samples)//2, -1]]
+                    mat = 2 * np.stack([q-p, r-p])
+                    rhs = np.array([q@q-p@p, r@r-p@p])
+                    if abs(np.linalg.det(mat)) < 1e-12:
+                        continue
+                    center = np.linalg.solve(mat, rhs)
+                    self.assertAlmostEqual(float(np.linalg.norm(p-center)), 1/a, places=4)
 
     def test_alpha_shapes_and_retained_simplices(self):
-        dataset = self.scenes["alpha"]
-        triangles = dataset["triangles"]
-        self.assertTrue(triangles)
-        for alpha in ALPHAS:
-            option = dataset["options"][str(alpha)]
-            self.assertEqual(option["segments"], option["shape_edges"])
-            boundary = set(map(tuple, option["shape_edges"]))
-            self.assertTrue(boundary)
-            for tri in option["kept_triangles"]:
-                self.assertEqual(len(tri), 3)
-                self.assertTrue(all(0 <= index < len(dataset["points"]) for index in tri))
-            computed = [
-                tri["vertices"] for tri in triangles
-                if tri["r"] <= 1 / alpha + 1e-12
-            ]
-            self.assertEqual(sorted(computed),
-                             sorted(option["kept_triangles"]))
+        for dataset in self.scenes["alpha"]["presets"].values():
+            triangles = dataset["triangles"]
+            self.assertTrue(triangles)
+            for alpha in dataset["alpha_values"]:
+                option = dataset["options"][str(alpha)]
+                self.assertEqual(option["segments"], option["shape_edges"])
+                boundary = set(map(tuple, option["shape_edges"]))
+                self.assertTrue(boundary)
+                for tri in option["kept_triangles"]:
+                    self.assertEqual(len(tri), 3)
+                    self.assertTrue(all(0 <= index < len(dataset["points"])
+                                        for index in tri))
+                computed = [t["vertices"] for t in triangles
+                            if t["r"] <= 1 / alpha + 1e-12]
+                self.assertEqual(sorted(computed),
+                                 sorted(option["kept_triangles"]))
+                self.assertEqual(alpha_topology(computed), option["topology"])
 
     def test_compare_reference_graphs(self):
         compare = self.scenes["compare"]
