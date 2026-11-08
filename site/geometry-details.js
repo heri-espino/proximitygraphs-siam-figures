@@ -63,6 +63,28 @@ function alphaSimplices(points,alpha,triangles) {
   return {radius,kept,discarded,boundary,total:all.length};
 }
 
+function alphaComplexTopology(keptTriangles) {
+  const vertices=new Set(),edgeSet=new Set(),parent=new Map();
+  function root(v){
+    while(parent.get(v)!==v)v=parent.get(v);
+    return v;
+  }
+  for(const tri of keptTriangles){
+    const vs=tri.vertices || tri;
+    for(const v of vs){vertices.add(v);parent.set(v,v);}
+  }
+  for(const tri of keptTriangles){
+    const [a,b,c]=tri.vertices || tri;
+    for(const [u,v] of [[a,b],[b,c],[c,a]]){
+      edgeSet.add(edgeKey(u,v));parent.set(root(u),root(v));
+    }
+  }
+  if(vertices.size===0)return {components:0,holes:0};
+  const components=new Set(Array.from(vertices,root)).size;
+  const holes=components-(vertices.size-edgeSet.size+keptTriangles.length);
+  return {components,holes};
+}
+
 function allAlphaCircles(arcs) {
   return arcs.map((arc,i)=>{
     const circle=arcCircle(arc);
@@ -132,7 +154,7 @@ function compareGraphEdges(points, graph, beta=1.5) {
 }
 
 if(typeof module!=="undefined" && module.exports){
-  module.exports={allPointPairs,betaPairDetails,alphaSimplices,
+  module.exports={allPointPairs,betaPairDetails,alphaSimplices,alphaComplexTopology,
     allAlphaCircles,bisectorClippedToUnitSquare,
     findBlockedBetaPair,compareGraphEdges};
 }
