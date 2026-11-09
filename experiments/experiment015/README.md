@@ -55,3 +55,13 @@ The independent Linux LaTeX build completed successfully with **4 US Letter page
 ## Caveats and next steps
 
 The current software citation may legitimately credit developers different from the **two SIAM News authors**; software contribution and feature coauthorship are separate questions. The publication remains **unsubmitted**, and historical digitization/typographic image reproduction rights and Héctor's editorial approval remain open. Before submission, confirm the exact printed byline, final captions and interactive links. Inspect final GitHub Actions PDF, record workflow run IDs here and in AI_HANDOFF.md, and preserve the PDF in the repository. No editorial email is sent by CI.
+
+
+## Release and final PDF verification — November 9, 2026
+
+- [PR #12](https://github.com/heri-espino/proximitygraphs-siam-figures/pull/12) merged successfully after [PR figure/math checks #42721500402](https://github.com/heri-espino/proximitygraphs-siam-figures/actions/runs/42721500402) passed.
+- The first post-merge [LaTeX proof #42721694188](https://github.com/heri-espino/proximitygraphs-siam-figures/actions/runs/42721694188) and [figure workflow #42721694194](https://github.com/heri-espino/proximitygraphs-siam-figures/actions/runs/42721694194) passed.
+- APA bibliography correction: expanded the full nine-author Tero et al. (2010) reference. The **final** [LaTeX proof workflow #42722189303](https://github.com/heri-espino/proximitygraphs-siam-figures/actions/runs/42722189303) and [figure/math workflow #42722189301](https://github.com/heri-espino/proximitygraphs-siam-figures/actions/runs/42722189301) both succeeded.
+- Final committed PDF: [article/output/proximitygraphs-siam-news-draft.pdf](../../article/output/proximitygraphs-siam-news-draft.pdf), Git blob SHA \`4f0e0a198ac63e87da191878c433a8058e915981\` (714,287 bytes). It was downloaded from the actual Actions artifact, not inferred from source.
+- **Verified rendered PDF:** four US Letter pages, three original embedded RGB images, **two** article authors/biographies, PDF metadata \`Heriberto Espino-Montelongo; Hector Maravillo\`, no mention of Diego, and all four pages visually inspected. Page four includes ten alphabetized bibliography entries with the full Tero author list, plus both biographies, without overflow.
+- **Interactive links verified inside PDF:** \`#water\`, \`#habitat\`, \`#sensors\`, \`#compare\`, package repository, and PyPI. The manuscript author proof remains **unsubmitted** and requires coauthor agreement and reuse-rights review before sending to SIAM.
