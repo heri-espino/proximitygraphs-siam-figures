@@ -1,3 +1,14 @@
+# CURRENT EDITORIAL OVERRIDE — experiment015, November 9, 2026
+# The SIAM News feature has exactly TWO authors:
+#   1. Heriberto Espino-Montelongo — first/lead, UDLAP
+#   2. Héctor Maravillo — second, UAM
+# Diego Villarreal de la Cerda is NOT a coauthor of this article.
+# article/main.tex is the current CANONICAL editable manuscript.
+# The historical Markdown-first instructions below are superseded.
+# scripts/render_article.py must never overwrite canonical TeX; it writes a
+# separate legacy-md-proof.tex. The PDF workflow compiles main.tex directly.
+# Generating a review PDF does NOT constitute editorial submission or approval.
+
 # Agent instructions — ProximityGraphs SIAM News
 
 This repository is the source of truth for every editorial and computational artifact. Read README.md, this file, AI_HANDOFF.md, docs/EDITORIAL.md, article/main.tex and the visualization source before editing. Preserve scripts, notes, data, images, and generated results.
@@ -153,3 +164,12 @@ Canonical manuscript source: article/feature.md. The article proof must compile 
 - **No automatic Markdown-to-PDF on push.** The manuscript PDF workflow requires a manual dispatch with `approved_by_all_authors=true`, only after genuine approval. It regenerates TeX, runs `python scripts/check_article.py --check-generated`, compiles PDF and archives outputs.
 - SIAM News requests **PDF or Word** via email; LaTeX is helpful with math but optional, Markdown is internal source. See `docs/MANUSCRIPT_WORKFLOW.md`, `experiments/experiment014/README.md`.
 - Preserve all past drafts, code, images, experiments and the older proof. Do not claim editorial acceptance or send an email without authorization.
+
+## experiment015 — Current LaTeX-first two-author policy (supersedes experiment014)
+
+- Preserve exactly two article authors: Heriberto Espino-Montelongo first; Héctor Maravillo second. No Diego in title, bio, PDF metadata or draft SIAM cover letter.
+- Canonical manuscript: `article/main.tex`. Preserve older `article/feature.md` as archived history only. The legacy renderer may create a separate `legacy-md-proof.tex`, never change current TeX.
+- The author explicitly requested a compiled PDF now, so PDF compilation no longer waits for publication approval. GitHub Actions builds from TeX on main and archives `article/output/proximitygraphs-siam-news-draft.pdf`; it never emails SIAM.
+- Feature is a chronological, SIAM News-friendly history of geometric neighborhoods and their applications, culminating in the library's implemented graphs and Physarum/Fungal models. Ten landmark/current references; three original figures; approx. 800–1400 words.
+- Check `python scripts/check_article.py`, direct pdflatex, actual PDF figures, metadata, hyperlinks and author credits. Record all CI details in experiment015 and AI_HANDOFF.
+- External SIAM submission remains subject to Héctor's agreement, confirmed graphics/data permissions and explicit authorization.

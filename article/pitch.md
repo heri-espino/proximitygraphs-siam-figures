@@ -2,8 +2,8 @@
 
 **Section:** Software and Programming  
 **Title:** Who Counts as a Neighbor?  
-**Subtitle:** From Empty Regions to AI, Topology, and Stochastic Geometry  
-**Proposed authors, collective approval pending:** Heriberto Espino-Montelongo (Universidad de las Américas Puebla; first author); Héctor Maravillo (Universidad Autónoma Metropolitana, Mexico; second author); Diego Villarreal de la Cerda (T-Systems; third author)
+**Subtitle:** From Geographic Maps to a Python Laboratory of Proximity Graphs  
+**Proposed authors, final approval pending:** Heriberto Espino-Montelongo (Universidad de las Américas Puebla; first author); Héctor Maravillo (Universidad Autónoma Metropolitana, Mexico; second author).
 
 A cloud of points has no edges until we define a neighborhood. That choice affects service-area partitions, transport-network detours, manifold geometry, topological holes, and which observations can exchange information in machine learning. The open-source Python library **ProximityGraphs** makes these alternatives comparable on the same coordinates.
 
@@ -14,6 +14,10 @@ The hosted [interactive companion](https://heri-espino.github.io/proximitygraphs
 Beyond the figures, the article presents ProximityGraphs as a **broad experimental library**, not just three visualizations: classical Voronoi/Delaunay and sparse graph constructions sit alongside tunable β-skeleton, γ-neighborhood, stepping-stone and elliptical models. The separate **bio-inspired module** implements a Physarum-like flow-reinforcement process and a fungal-inspired network growth/pruning heuristic; neither claims universal network optimality or validated biological fidelity. These implemented alternatives can be compared on fixed coordinates through the package's seeded experiments. The narrative also connects published work in manifold learning, spatial-network route efficiency, topological inference, and high-dimensional neighbor search. A concise Poisson empty-region calculation illustrates the probabilistic consequences of the region choice. The mathematics extends to \(\mathbb R^d\), while many implemented library constructors and the interactive demonstrations are planar; the package does not claim to implement persistent homology, a vector database, or operational wireless routing.
 
 The manuscript follows the [SIAM News submission guidance](https://www.siam.org/publications/siam-news/about-siam-news/submission-guidelines/): an accessible account, **three credited figures**, and no more than ten scholarly references. Its publication format and embedding of interactive content require editorial confirmation.
+
+**Current manuscript is [canonical LaTeX](main.tex), NOT the older Markdown development copy.**
+
+**Canonical manuscript:** [Compiled LaTeX source](main.tex). The older Markdown copy is archival.
 
 **Review materials:** [Verified constructor audit](../docs/IMPLEMENTED_FAMILIES.md) · [Canonical article](feature.md) · [LaTeX proof](main.tex) · [Historical data provenance](../data/historical/README.md) · [Mathematical construction documentation](../docs/CONSTRUCTIONS.md) · [Library](https://github.com/ProximityGraphs/ProximityGraphs).
 

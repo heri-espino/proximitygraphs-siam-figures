@@ -1,9 +1,9 @@
 # Who Counts as a Neighbor?
 *From empty regions to AI, topology, and stochastic geometry*
 
-**SIAM News — Software and Programming | Revised author draft, not submitted**
+**ARCHIVED MARKDOWN DEVELOPMENT COPY — NOT THE CURRENT MANUSCRIPT. The current, two-author, historical feature is [article/main.tex](main.tex); the PDF is generated from LaTeX.**
 
-**Heriberto Espino-Montelongo** — Universidad de las Américas Puebla (UDLAP); **Héctor Maravillo** — Universidad Autónoma Metropolitana (UAM), Mexico; **Diego Villarreal de la Cerda** — T-Systems. *The lead author has confirmed the first and second positions; final collective byline approval remains pending.*
+**Heriberto Espino-Montelongo** — Universidad de las Américas Puebla (UDLAP); **Héctor Maravillo** — Universidad Autónoma Metropolitana (UAM), Mexico. *Historical copy only; follow the LaTeX manuscript for current wording.*
 
 <!-- ARTICLE_BODY_START -->
 
@@ -90,7 +90,5 @@ Penrose, M. D., & Yukich, J. E. (2013). Limit theory for point processes in mani
 Heriberto Espino-Montelongo develops mathematical research in geometric probability, stochastic geometry, and spatial networks at Universidad de las Américas Puebla.
 
 Héctor Maravillo works on computational geometry and proximity graphs at Universidad Autónoma Metropolitana (UAM), Mexico.
-
-Diego Villarreal de la Cerda works at T-Systems and contributes to the computational development of ProximityGraphs.
 
 *Editorial note: Provisional byline subject to approval; the article has not been submitted to SIAM News. The Voronoi figure uses digitized historical map coordinates; the Pg/smiley and sensor figures are synthetic. The general mathematical applications described are not assertions of implemented, validated workflows in the package.*
