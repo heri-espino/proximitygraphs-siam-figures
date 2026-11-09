@@ -43,9 +43,59 @@ function betaPairDetails(points,beta,i,j) {
   };
 }
 
+function convexHullIndices(points) {
+  if(points.length<2)return points.map((_,i)=>i);
+  const order=points.map((_,i)=>i).sort((i,j)=>
+    points[i][0]-points[j][0]||points[i][1]-points[j][1]);
+  const cross=(i,j,k)=>(points[j][0]-points[i][0])*
+    (points[k][1]-points[i][1])-
+    (points[j][1]-points[i][1])*(points[k][0]-points[i][0]);
+  const lower=[],upper=[];
+  for(const i of order){
+    while(lower.length>=2 &&
+      cross(lower[lower.length-2],lower[lower.length-1],i)<=1e-12)
+      lower.pop();
+    lower.push(i);
+  }
+  for(const i of order.slice().reverse()){
+    while(upper.length>=2 &&
+      cross(upper[upper.length-2],upper[upper.length-1],i)<=1e-12)
+      upper.pop();
+    upper.push(i);
+  }
+  return lower.slice(0,-1).concat(upper.slice(0,-1));
+}
+
+/**
+ * Independent positive-alpha witness: farthest-site Delaunay triangles.
+ * Only convex-hull vertices can be farthest Voronoi sites. A triple
+ * belongs to the farthest-site Delaunay complex when its circumcircle
+ * encloses every hull vertex; the empty-*outside* predicate differs
+ * from the ordinary empty-inside Delaunay used for negative alpha.
+ * O(h^4), where h is the number of hull vertices, typically small.
+ */
+function furthestDelaunayTriangles(points) {
+  const hull=convexHullIndices(points),result=[];
+  for(let a=0;a<hull.length;a++)
+    for(let b=a+1;b<hull.length;b++)
+      for(let c=b+1;c<hull.length;c++){
+        const ids=[hull[a],hull[b],hull[c]];
+        const circle=circumcircle(...ids.map(i=>points[i]));
+        if(!circle)continue;
+        const r2=circle.r*circle.r,eps=1e-9*Math.max(1,r2);
+        if(hull.every(i=>{
+          const dx=points[i][0]-circle.center[0];
+          const dy=points[i][1]-circle.center[1];
+          return dx*dx+dy*dy<=r2+eps;
+        }))result.push({vertices:ids,r:circle.r});
+      }
+  return result;
+}
+
 function alphaSimplices(points,alpha,triangles) {
-  const all=triangles || delaunayTriangles(points);
-  const radius=1/Math.abs(alpha);
+  const all=triangles || (alpha>0?furthestDelaunayTriangles(points):
+    delaunayTriangles(points));
+  const radius=alpha===0?Infinity:1/Math.abs(alpha);
   const kept=all.filter(t=>Number.isFinite(t.r) && t.r<=radius+1e-12);
   const discarded=all.filter(t=>!Number.isFinite(t.r) || t.r>radius+1e-12);
   const counts=new Map(),pairs=new Map();
@@ -60,6 +110,8 @@ function alphaSimplices(points,alpha,triangles) {
   const boundary=Array.from(counts.keys())
     .filter(k=>counts.get(k)===1).map(k=>pairs.get(k))
     .sort((a,b)=>a[0]-b[0]||a[1]-b[1]);
+  // ProximityGraphs treats alpha=0 with two sites as a single hull edge.
+  if(alpha===0&&points.length===2)boundary.push([0,1]);
   return {radius,kept,discarded,boundary,total:all.length};
 }
 
@@ -173,7 +225,8 @@ function compareGraphEdges(points, graph, beta=1.5) {
 }
 
 if(typeof module!=="undefined" && module.exports){
-  module.exports={allPointPairs,betaPairDetails,alphaSimplices,
+  module.exports={allPointPairs,betaPairDetails,convexHullIndices,
+    furthestDelaunayTriangles,alphaSimplices,
     complexTopology,allAlphaCircles,bisectorClippedToUnitSquare,
     findBlockedBetaPair,compareGraphEdges};
 }
