@@ -156,12 +156,12 @@ function syncPgDensityControls(){
   detail("smiley-interior-count",String(state.smileyInteriorCount));
   document.getElementById("process-slider").value=String(state.processParameter);
   const poisson=state.alphaPreset==="poisson";
-  detail("process-parameter-title",poisson?"Intensity λ (mean number of points)":
-    "Fixed number of points n");
+  detail("process-parameter-title",poisson?"Expected number of points (λ)":
+    "Number of points (n)");
   detail("process-parameter-count",String(state.processParameter));
   detail("process-definition",poisson?
-    "Homogeneous Poisson process: N ~ Poisson(λ), locations iid uniform in [0,1]². The realized N may differ from λ.":
-    "Binomial point process: exactly N = n iid uniform points in [0,1]².");
+    "The number of points varies randomly, with mean λ.":
+    "Exactly n points are placed independently across the square.");
 }
 
 function replaceHabitatRealization(){
@@ -185,7 +185,7 @@ function replaceHabitatRealization(){
   state.alphaArc=0;
   syncPgDensityControls();
   if(state.alphaPreset==="poisson"||state.alphaPreset==="binomial")
-    detail("process-realized","Realized N = "+points.length);
+    detail("process-realized","Points in this sample: "+points.length);
   drawHabitat();
 }
 
