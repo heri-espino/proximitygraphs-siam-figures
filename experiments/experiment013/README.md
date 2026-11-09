@@ -57,4 +57,13 @@ Inspect all desktop/mobile screenshots and ensure the actual mathematical contro
 
 This is an editorial quality intervention, not a new numerical experiment or a mathematical performance claim. Passing UI and browser tests demonstrates that the site's **observable interaction behavior** remains intact, not that every possible sentence is optimal. Retain precise mathematical terminology where needed; avoid adding alternative physical interpretations, empirical guarantees, or claims of SIAM publication. Future updates should keep manuscript drafting, screenshot history, CI and internal method caveats in the repository, not in public figure descriptions.
 
-**Release status:** pending PR CI and GitHub Pages deployment verification at creation time. User has explicitly provided standing permission to merge completed, passing PRs.
+**Release status: merged and deployed.** [PR #10](https://github.com/heri-espino/proximitygraphs-siam-figures/pull/10) was merged at `0b3b2e92e08842e776ba5f6100de1b29b9400e1e` after all required checks passed.
+
+### Validated release evidence — November 9, 2026
+
+- [Feature-branch Python/Node mathematical and UI checks #42630218416](https://github.com/heri-espino/proximitygraphs-siam-figures/actions/runs/42630218416): **success**.
+- [Feature-branch desktop/mobile browser visual QA #42630218675](https://github.com/heri-espino/proximitygraphs-siam-figures/actions/runs/42630218675): **success**.
+- [Post-merge reproducible geometry + Pages deployment #42630569488](https://github.com/heri-espino/proximitygraphs-siam-figures/actions/runs/42630569488): **success** for both figures and Pages jobs.
+- [Post-merge browser visual QA #42630569207](https://github.com/heri-espino/proximitygraphs-siam-figures/actions/runs/42630569207): **success**. Its workflow also committed the refreshed 12 desktop/mobile examples into `docs/visual-qa/` (subsequent commit on `main`).
+- Live site: https://heri-espino.github.io/proximitygraphs-siam-figures/ ; the hosted deployment is confirmed by GitHub's deployment job, not an independent inspection of the external UI.
+- The SIAM News article remains an unsubmitted manuscript; only the public interactive website copy was edited.
