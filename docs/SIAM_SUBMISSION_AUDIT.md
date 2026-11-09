@@ -66,3 +66,10 @@ The article GitHub Actions workflow regenerates the PDF and commits both manuscr
 - Extracted PDF URI targets include the three deep links (#water, #habitat, #sensors), #compare, ProximityGraphs source, PyPI and HistData. All four PDF pages were rendered and visually reviewed: no obvious clipping or an isolated author-bio page.
 - **Outside CI:** this session's public web retrieval could not access the hosted GitHub Pages site directly, although its existing Pages build and visual QA have passed in earlier workflows. Before actual SIAM submission, manually open each hosted deep link to confirm availability.
 - **Not yet cleared:** coauthor consent, third-party historical dataset reuse and supplied serif-image rights, editor-specific length/online placement policy. No external editorial email was sent.
+
+
+## November 9, 2026 — Author order and Markdown-first release policy
+
+The lead author clarified the first and second byline positions: **Heriberto Espino-Montelongo (first)**; **Héctor Maravillo (second)**. **Diego Villarreal de la Cerda** remains the third proposed contributor. All must confirm the final submitted list.
+
+The official SIAM News style guide requests **PDF or Word**, and says LaTeX is helpful for equations; Markdown is an internal authoring format and is the canonical source `article/feature.md`. Our previous PDF/TeX files are **historical proofs with superseded author attribution**. After genuine coauthor approval, manually run `article-pdf.yml` with `approved_by_all_authors=true` to regenerate and archive approved LaTeX and PDF. No build on draft Markdown pushes. The older statement in this audit that the current stored PDF is 'ready' refers to its historical mechanics, **not** current author approval. Details in [MANUSCRIPT_WORKFLOW.md](MANUSCRIPT_WORKFLOW.md).
