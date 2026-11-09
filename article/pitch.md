@@ -3,7 +3,7 @@
 **Section:** Software and Programming  
 **Title:** Who Counts as a Neighbor?  
 **Subtitle:** From Geographic Maps to a Python Laboratory of Proximity Graphs  
-**Proposed authors, final approval pending:** Heriberto Espino-Montelongo (Universidad de las Américas Puebla; first author); Héctor Maravillo (Universidad Autónoma Metropolitana, Mexico; second author). **Diego Villarreal de la Cerda is not a coauthor of this SIAM News feature.**
+**Proposed authors, final approval pending:** Heriberto Espino-Montelongo (Universidad de las Américas Puebla; first author); Héctor Maravillo (Universidad Autónoma Metropolitana, Mexico; second author).
 
 A cloud of points has no edges until we define a neighborhood. That choice affects service-area partitions, transport-network detours, manifold geometry, topological holes, and which observations can exchange information in machine learning. The open-source Python library **ProximityGraphs** makes these alternatives comparable on the same coordinates.
 
@@ -16,6 +16,8 @@ Beyond the figures, the article presents ProximityGraphs as a **broad experiment
 The manuscript follows the [SIAM News submission guidance](https://www.siam.org/publications/siam-news/about-siam-news/submission-guidelines/): an accessible account, **three credited figures**, and no more than ten scholarly references. Its publication format and embedding of interactive content require editorial confirmation.
 
 **Current manuscript is [canonical LaTeX](main.tex), NOT the older Markdown development copy.**
+
+**Canonical manuscript:** [Compiled LaTeX source](main.tex). The older Markdown copy is archival.
 
 **Review materials:** [Verified constructor audit](../docs/IMPLEMENTED_FAMILIES.md) · [Canonical article](feature.md) · [LaTeX proof](main.tex) · [Historical data provenance](../data/historical/README.md) · [Mathematical construction documentation](../docs/CONSTRUCTIONS.md) · [Library](https://github.com/ProximityGraphs/ProximityGraphs).
 
