@@ -23,4 +23,7 @@ We would welcome editorial guidance on online versus print presentation and link
 ## Dataset update — November 2026
 The website now displays **digitized John Snow pump positions (13) and cholera death marks (578)** from HistData/Rdatasets as a historical contextual overlay. Its alpha default is a **synthetic smiley point cloud** and its beta default a **synthetic two-cluster relay sensor layout**. The Voronoi/Delaunay edges are modern computations on historical map coordinates, not a technique used by Snow. These data do not support modern GIS distance, medical-causality, or radio-network claims. See [historical provenance](../data/historical/README.md).
 
-**Interactive default update (November 2026):** The alpha illustration now defaults to a 111-site “Pg” wordmark with one enclosed hole per glyph at alpha −14, while preserving the original smiley as a selectable preset. Both are synthetic geometric teaching examples.
+**Interactive default update (November 2026):** The alpha illustration now defaults to an image-traced 380-site serif “Pg” wordmark with one enclosed counter per glyph at alpha ≈ −28.57, while preserving the original smiley as a selectable preset. Both are synthetic geometric teaching examples.
+
+
+**Current Figure02 refinement (November 8, 2026):** The Pg letterforms now follow an actual user-supplied image instead of arbitrary block polygons. Dark contour samples preserve the serif P and flourished g; lightly randomized interior stippling conveys stroke weight. At the default radius the actual alpha complex has two components and two enclosed counters. The original smiley remains selectable.

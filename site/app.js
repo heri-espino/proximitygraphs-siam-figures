@@ -6,7 +6,7 @@ const NS = "http://www.w3.org/2000/svg";
 const WIDTH = 640, HEIGHT = 600;
 const frame = { x: 65, y: 43, w: 510, h: 510 };
 const teal = "#34383c", orange = "#6d6c75", dark = "#30302e";
-const alphaValues = [8, 11, 14, 18];
+const alphaValues = [22, 26, 28.57142857142857, 32]; // image-traced serif Pg, R=0.035
 const smileyAlphaValues = [4, 8, 10, 12];
 const betaValues = [1, 1.25, 1.5, 1.75, 2];
 const state = {
@@ -70,32 +70,9 @@ function insidePgPolygon(x,y,vertices){
   return inside;
 }
 function pgWordmarkPoints(){
-  const pBowl=[[.13,.55],[.42,.55],[.49,.60],[.52,.67],
-               [.52,.78],[.48,.85],[.13,.85]];
-  const gTail=[[.655,.12],[.805,.12],[.895,.17],[.895,.255],
-               [.819,.255],[.811,.204],[.655,.204]];
-  const onLetter=(x,y)=>{
-    const stem=x>=.10&&x<=.22&&y>=.17&&y<=.85;
-    const pUpper=insidePgPolygon(x,y,pBowl);
-    const pCounter=((x-.345)/.090)**2+((y-.705)/.082)**2<1;
-    const capitalP=(stem||pUpper)&&!pCounter;
-    const gOuter=((x-.725)/.160)**2+((y-.555)/.158)**2<1;
-    const gCounter=((x-.727)/.081)**2+((y-.560)/.077)**2<1;
-    const descender=(x>=.820&&x<=.895&&y>=.16&&y<=.58)||
-      insidePgPolygon(x,y,gTail);
-    return capitalP||(gOuter&&!gCounter)||descender;
-  };
-  const pts=[],step=.047;
-  for(let j=0;j<17;j++){
-    const y=.13+j*step;if(y>=.90)break;
-    for(let i=0;i<19;i++){
-      const x=.09+i*step;if(x>=.94)break;
-      const p=[x+step*.085*Math.sin(i*1.18+j*2.13),
-               y+step*.080*Math.cos(i*2.31-j*.87)];
-      if(onLetter(p[0],p[1]))pts.push(p);
-    }
-  }
-  return pts;
+  // The exact user-image point sample, decoded from the shared u16 source.
+  // Keep the smiley generator and original preset completely unchanged.
+  return rasterPgPoints.map(p=>p.slice());
 }
 const habitatPoints=pgWordmarkPoints();
 
@@ -151,12 +128,20 @@ function background(svg, tag) {
     historic?"Digitized 1854 Soho map · proportionally normalized":
     "Synthetic teaching coordinates · normalized Euclidean plane");
 }
-function site(svg,p,i,selected,handler,displayName) {
+function site(svg,p,i,selected,handler,displayName,pointRole) {
   const v=xy(p);
-  const c=el("circle",{cx:v[0],cy:v[1],r:selected?8:6.2,fill:selected?orange:teal,stroke:"#fff","stroke-width":2.4,class:"selectable editable-site",role:"button",tabindex:0,"data-point-index":i,"aria-label":"Select or drag site "+(i+1)},svg);
+  const imageSite=pointRole==="outline"||pointRole==="stroke";
+  const contour=pointRole==="outline";
+  const radius=imageSite?(contour?3.2:2.4):(selected?8:6.2);
+  const fill=imageSite?(contour?"#30302e":"#696763"):(selected?orange:teal);
+  const opacity=imageSite?(contour?.98:(.52+.26*((i*37)%13)/12)):1;
+  const c=el("circle",{cx:v[0],cy:v[1],r:radius,fill,opacity,
+    stroke:imageSite?"none":"#fff","stroke-width":imageSite?0:2.4,
+    class:"selectable editable-site",role:"button",tabindex:0,
+    "data-point-index":i,"aria-label":"Select or drag site "+(i+1)},svg);
   el("title",{},c,(displayName||"Site "+(i+1))+" · select to inspect");
   // A larger transparent hit area keeps small scientific markers usable on touch screens.
-  const hit=el("circle",{cx:v[0],cy:v[1],r:18,fill:"transparent",
+  const hit=el("circle",{cx:v[0],cy:v[1],r:imageSite?9:18,fill:"transparent",
     class:"selectable editable-site",role:"button",tabindex:0,
     "data-point-index":i,"aria-label":"Site "+(i+1)+"; drag to move or use arrow keys"},svg);
   el("title",{},hit,(displayName||"Site "+(i+1))+" · drag or use edit controls");
@@ -244,8 +229,8 @@ function curveBetween(p,q,r,orientation){
   while(delta>Math.PI)delta-=2*Math.PI;while(delta< -Math.PI)delta+=2*Math.PI;
   return Array.from({length:32},function(_,k){const t=a+delta*k/31;return [c[0]+r*Math.cos(t),c[1]+r*Math.sin(t)];});
 }
-function fallbackAlpha(points,alpha){
-  const tris=delaunayTriangles(points).filter(function(t){return t.r<=1/Math.abs(alpha)+1e-9;});
+function fallbackAlpha(points,alpha,triangles){
+  const tris=(triangles||delaunayTriangles(points)).filter(function(t){return t.r<=1/Math.abs(alpha)+1e-9;});
   const counts=new Map(), pairs=new Map();
   tris.forEach(function(t){
     [[0,1],[1,2],[2,0]].forEach(function(ab){
@@ -419,9 +404,9 @@ function drawHabitat(){
   const values=activeAlphaValues();
   const alpha=values[state.alphaIndex],a=-alpha;
   const original=source&&!edited("habitat");
-  const shape=original?source.options[String(alpha)]:fallbackAlpha(points,a);
-  const arcs=shape?.arcs || [];
   const triangles=original&&source.triangles?source.triangles:delaunayTriangles(points);
+  const shape=original?source.options[String(alpha)]:fallbackAlpha(points,a,triangles);
+  const arcs=shape?.arcs || [];
   const filtered=alphaSimplices(points,a,triangles);
   const boundary=original&&shape.shape_edges?shape.shape_edges:filtered.boundary;
   const kept=original&&shape.kept_triangles?
@@ -444,7 +429,7 @@ function drawHabitat(){
       const poly=indices.map(i=>points[i]);
       if(poly.some(x=>!x))continue;
       el("polygon",{points:pointsAttr(poly),
-        fill:"#c0bdba","fill-opacity":.18,stroke:"#aaa7a2",
+        fill:"#a6a39f","fill-opacity":.24,stroke:"#aaa7a2",
         "stroke-width":.9,"stroke-opacity":.55},svg);
     }
   }
@@ -489,7 +474,11 @@ function drawHabitat(){
       el("title",{},line,"Arc "+(index+1)+" · click for its circle");
     });
   }
-  points.forEach(function(p,i){site(svg,p,i,false);});
+  const roles=original && state.alphaPreset==="pg" && source?.point_roles?.length===points.length
+    ?source.point_roles:null;
+  points.forEach(function(p,i){
+    site(svg,p,i,false,undefined,undefined,roles?roles[i]:undefined);
+  });
   const topology=original&&shape.topology?shape.topology:
     complexTopology(filtered.kept.map(t=>t.vertices));
   detail("habitat-stat",points.length+" sites · "+boundary.length+
