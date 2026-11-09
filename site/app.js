@@ -92,7 +92,7 @@ function pgWordmarkPoints(interiorCount=PG_DEFAULT_INTERIOR, seed=PG_RANDOM_SEED
     rng=(Math.imul(1664525,rng)+1013904223)>>>0;
     return rng/4294967296;
   }
-  const extra=[],wanted=target-82;
+  const extra=[],wanted=target-originalInterior;
   // Samples are uniformly pseudorandom in the proposal rectangle,
   // accepted only within glyph ink (not the two empty counters).
   for(let k=0;k<150000&&extra.length<wanted;k++){
