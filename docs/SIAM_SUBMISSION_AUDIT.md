@@ -57,3 +57,12 @@ Run these commands from the repository root:
 The article GitHub Actions workflow regenerates the PDF and commits both manuscript source and author proof. Check the *actual latest run* before claiming publication readiness.
 
 **Not verified or implied:** approval by SIAM, peer-review acceptance, print placement, full licensing clearance, or publication date.
+## Verified build and proof — November 8, 2026
+
+- [Successful SIAM News PDF workflow #42556998781](https://github.com/heri-espino/proximitygraphs-siam-figures/actions/runs/42556998781): the new mechanical editorial-check step passed, and LaTeX compilation, image verification, artifact upload and repository commit all completed successfully.
+- Its check_article.py log reports **1,250 words including captions**, **3/3 figures**, **10/10 bibliography entries**; it also passes first-author alphabetical sorting, figure credits/links and one-sentence bios.
+- [Successful figure/mathematical workflow #42557091611](https://github.com/heri-espino/proximitygraphs-siam-figures/actions/runs/42557091611) separately passed.
+- Downloaded actual CI proof to a local runtime and verified **four US Letter pages**, **three embedded image objects** (one displayed per figure page), equations and symbols, credits in all three captions, and author biographies on page four.
+- Extracted PDF URI targets include the three deep links (#water, #habitat, #sensors), #compare, ProximityGraphs source, PyPI and HistData. All four PDF pages were rendered and visually reviewed: no obvious clipping or an isolated author-bio page.
+- **Outside CI:** this session's public web retrieval could not access the hosted GitHub Pages site directly, although its existing Pages build and visual QA have passed in earlier workflows. Before actual SIAM submission, manually open each hosted deep link to confirm availability.
+- **Not yet cleared:** coauthor consent, third-party historical dataset reuse and supplied serif-image rights, editor-specific length/online placement policy. No external editorial email was sent.
