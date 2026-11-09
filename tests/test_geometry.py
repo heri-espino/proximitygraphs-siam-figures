@@ -55,7 +55,7 @@ class GeometryTests(unittest.TestCase):
         self.assertEqual(len(alpha["presets"]["pg"]["points"]), 600)
         self.assertEqual(len(alpha["presets"]["smiley"]["points"]), 53)
         self.assertEqual(alpha["presets"]["pg"]["default_alpha_index"], 5)
-        default = alpha["presets"]["pg"]["options"][str(ALPHAS[2])]
+        default = alpha["presets"]["pg"]["options"][str(ALPHAS[5])]
         self.assertEqual(default["topology"], {"components": 2, "holes": 2})
         self.assertEqual(alpha_topology(default["kept_triangles"]), default["topology"])
         # A real filtration: counters emerge as the circumradius cutoff tightens.
