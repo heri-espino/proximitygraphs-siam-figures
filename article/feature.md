@@ -3,7 +3,7 @@
 
 **SIAM News — Software and Programming | Revised author draft, not submitted**
 
-**Héctor Maravillo** — Universidad Autónoma Metropolitana (UAM), Mexico; **Diego Villarreal de la Cerda** — T-Systems; **Heriberto Espino-Montelongo** — Universidad de las Américas Puebla (UDLAP). *Byline and affiliations remain subject to the coauthors’ approval.*
+**Heriberto Espino-Montelongo** — Universidad de las Américas Puebla (UDLAP); **Héctor Maravillo** — Universidad Autónoma Metropolitana (UAM), Mexico; **Diego Villarreal de la Cerda** — T-Systems. *The lead author has confirmed the first and second positions; final collective byline approval remains pending.*
 
 <!-- ARTICLE_BODY_START -->
 
@@ -87,10 +87,10 @@ Penrose, M. D., & Yukich, J. E. (2013). Limit theory for point processes in mani
 
 ## About the authors
 
+Heriberto Espino-Montelongo develops mathematical research in geometric probability, stochastic geometry, and spatial networks at Universidad de las Américas Puebla.
+
 Héctor Maravillo works on computational geometry and proximity graphs at Universidad Autónoma Metropolitana (UAM), Mexico.
 
 Diego Villarreal de la Cerda works at T-Systems and contributes to the computational development of ProximityGraphs.
-
-Heriberto Espino-Montelongo develops mathematical research in geometric probability, stochastic geometry, and spatial networks at Universidad de las Américas Puebla.
 
 *Editorial note: Provisional byline subject to approval; the article has not been submitted to SIAM News. The Voronoi figure uses digitized historical map coordinates; the Pg/smiley and sensor figures are synthetic. The general mathematical applications described are not assertions of implemented, validated workflows in the package.*

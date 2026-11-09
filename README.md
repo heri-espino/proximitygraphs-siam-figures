@@ -6,7 +6,17 @@ This project develops a proposed **SIAM News — Software and Programming** feat
 
 **[Explore the deployed GitHub Pages companion](https://heri-espino.github.io/proximitygraphs-siam-figures/)** — editable points, interactive geometry and image export. The redesigned site was rebuilt and deployed on November 5, 2026; verify the live page after future releases.
 
-**[Read the completed feature draft](article/feature.md)** · **[Audited graph and bio-inspired model inventory](docs/IMPLEMENTED_FAMILIES.md)** · **[LaTeX manuscript](article/main.tex)** · **[Outreach and marketing kit](article/marketing-kit.md)** · **[Editorial pitch](article/pitch.md)** · **[Python library](https://github.com/ProximityGraphs/ProximityGraphs)**
+**[Read the completed feature draft](article/feature.md)** · **[Audited graph and bio-inspired model inventory](docs/IMPLEMENTED_FAMILIES.md)** · **[Previous TeX proof (not current byline)](article/main.tex)** · **[Outreach and marketing kit](article/marketing-kit.md)** · **[Editorial pitch](article/pitch.md)** · **[Python library](https://github.com/ProximityGraphs/ProximityGraphs)**
+
+## Manuscript editing and approval (Markdown first)
+
+The **only editable manuscript source** is [`article/feature.md`](article/feature.md). During drafting, revise Markdown, review it in GitHub and run `python scripts/check_article.py`. SIAM News requests **PDF or Word for submission**; LaTeX is optional when equations are present. Markdown itself is not the listed submission attachment.
+
+**Author order:** Heriberto Espino-Montelongo (first), Héctor Maravillo (second), Diego Villarreal de la Cerda (third). The lead author specified the first two positions; full coauthor approval remains pending.
+
+**Do not submit the previous compiled PDF:** The preserved `article/main.tex` and PDF currently reflect an **older author order**. The PDF workflow no longer runs automatically on Markdown pushes. **After every coauthor approves the manuscript**, run the manual [approved Markdown-to-TeX/PDF workflow](.github/workflows/article-pdf.yml) with `approved_by_all_authors=true`, inspect its output, and provide the PDF (or Word if requested) to SIAM. No editorial email is automated.
+
+See [the detailed manuscript workflow](docs/MANUSCRIPT_WORKFLOW.md) and [experiment014](experiments/experiment014/README.md).
 
 ## Sectioned mathematical construction laboratory
 

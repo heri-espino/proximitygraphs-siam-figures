@@ -1,16 +1,14 @@
-name: Build editorial PDF from LaTeX
+name: Prepare SIAM News submission proof (manual)
 
 on:
-  push:
-    branches: [main]
-    paths:
-      - 'article/main.tex'
-      - 'article/feature.md'
-      - 'scripts/render_article.py'
-      - 'scripts/check_article.py'
-      - 'site/assets/**'
-      - '.github/workflows/article-pdf.yml'
+  # Deliberate author-approved export; Markdown pushes do not produce TeX/PDF.
   workflow_dispatch:
+    inputs:
+      approved_by_all_authors:
+        description: 'Confirm all authors approved this exact manuscript version'
+        required: true
+        type: boolean
+        default: false
 
 permissions:
   contents: write
@@ -23,6 +21,14 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
+      - name: Require final coauthor approval before conversion
+        env:
+          APPROVED: ${{ inputs.approved_by_all_authors }}
+        run: |
+          if [ "$APPROVED" != "true" ]; then
+            echo 'Author approval is required before Markdown-to-PDF export.'
+            exit 1
+          fi
       - name: Checkout committed article and figure assets
         uses: actions/checkout@v4
         with:
@@ -41,7 +47,7 @@ jobs:
       - name: Render LaTeX deterministically from the canonical Markdown article
         run: python scripts/render_article.py
       - name: Verify official SIAM News mechanical requirements
-        run: python scripts/check_article.py
+        run: python scripts/check_article.py --check-generated
       - name: Compile polished editorial PDF
         working-directory: article
         run: |
@@ -61,7 +67,7 @@ jobs:
           name: proximitygraphs-siam-news-proof
           path: article/output/proximitygraphs-siam-news-draft.pdf
       - name: Commit PDF proof into repository
-        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        if: github.ref == 'refs/heads/main' && inputs.approved_by_all_authors == true
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"

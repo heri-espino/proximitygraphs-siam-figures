@@ -28,7 +28,7 @@ PREAMBLE = r"""% AUTO-GENERATED from article/feature.md by scripts/render_articl
 \definecolor{ProxInk}{HTML}{253C49}
 \definecolor{ProxGray}{HTML}{60717B}
 \hypersetup{colorlinks=true,urlcolor=ProxTeal,linkcolor=ProxTeal,
- pdfauthor={Hector Maravillo; Diego Villarreal de la Cerda; Heriberto Espino-Montelongo},
+ pdfauthor={Heriberto Espino-Montelongo; Hector Maravillo; Diego Villarreal de la Cerda},
  pdftitle={Who Counts as a Neighbor?}}
 \captionsetup{font=footnotesize,labelfont={bf,color=ProxInk},
  justification=raggedright,singlelinecheck=false}
@@ -50,9 +50,9 @@ PREAMBLE = r"""% AUTO-GENERATED from article/feature.md by scripts/render_articl
  \quad \textbullet\quad SIAM NEWS AUTHOR DRAFT}\\[7pt]
 {\LARGE\bfseries\color{ProxInk} Who Counts as a Neighbor?}\\[4pt]
 {\large\color{ProxGray} From empty regions to AI, topology, and stochastic geometry}\\[8pt]
+{\small\textbf{Heriberto Espino-Montelongo} (Universidad de las Am\'ericas Puebla)}\\[2pt]
 {\small\textbf{H\'ector Maravillo} (UAM, Mexico) \quad
-\textbf{Diego Villarreal de la Cerda} (T-Systems)}\\[2pt]
-{\small\textbf{Heriberto Espino-Montelongo} (Universidad de las Am\'ericas Puebla)}\\[3pt]
+\textbf{Diego Villarreal de la Cerda} (T-Systems)}\\[3pt]
 {\scriptsize\color{ProxGray} Affiliations and byline subject to coauthor approval; not submitted.}
 \end{center}
 \vspace{3pt}\hrule\vspace{8pt}

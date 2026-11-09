@@ -13,7 +13,7 @@ An [interactive companion](https://heri-espino.github.io/proximitygraphs-siam-fi
 
 We can provide the manuscript as a PDF, with three figures as separate files and the LaTeX source for mathematical expressions. Could you advise whether the topic is suitable for print or online coverage and whether external links to the interactive diagrams may be included in the online version?
 
-The proposed authors are Héctor Maravillo (Universidad Autónoma Metropolitana, Mexico), Diego Villarreal de la Cerda (T-Systems), and Heriberto Espino-Montelongo (Universidad de las Américas Puebla).
+The proposed author order is Heriberto Espino-Montelongo (Universidad de las Américas Puebla), Héctor Maravillo (Universidad Autónoma Metropolitana, Mexico), and Diego Villarreal de la Cerda (T-Systems).
 
 Thank you for considering the contribution.
 
