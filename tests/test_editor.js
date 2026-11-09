@@ -10,7 +10,7 @@ const path=require("node:path");
 const vm=require("node:vm");
 const root=path.resolve(__dirname,"..");
 const context=vm.createContext({console,atob});
-for(const file of ["site/editor.js","site/geometry-details.js","site/data/pg_reference_points.js","site/app.js"]){
+for(const file of ["site/editor.js","site/geometry-details.js","site/data/pg_reference_points.js","site/point-processes.js","site/app.js"]){
   vm.runInContext(fs.readFileSync(path.join(root,file),"utf8"),context,{filename:file});
 }
 const scene=JSON.parse(fs.readFileSync(path.join(root,"site/data/scenes.json"),"utf8"));
@@ -100,6 +100,64 @@ function testAlpha(){
   assert.deepEqual(context.pgWordmarkPoints(82),fallback.slice(0,380),
     "Reducing density to 82 returns exactly the original image-derived cloud");
   assert.equal(context.fallbackAlpha(scene.alpha.points.slice(0,2),-28.57142857142857).arcs.length,0);
+}
+function testSignedAlphaAndPointProcesses(){
+  const points=[[.08,.12],[.88,.18],[.92,.86],[.20,.90],[.49,.37],[.6,.55]];
+  const hull=Array.from(context.convexHullIndices(points));
+  assert.equal(hull.length,4);
+  const far=Array.from(context.furthestDelaunayTriangles(points));
+  assert.equal(far.length,hull.length-2,"Farthest-site triangulation uses hull sites");
+  assert.ok(far.every(t=>t.vertices.every(i=>hull.includes(i))));
+  const hullEdges=hull.map((i,k)=>[i,hull[(k+1)%hull.length]]);
+  assertEdgeSets(context.alphaSimplices(points,0).boundary,hullEdges,
+    "Alpha zero gives the exact convex hull");
+  assertEdgeSets(context.alphaSimplices(points,.5).boundary,hullEdges,
+    "Furthest-site alpha boundary at sufficiently large radius");
+  assert.equal(context.fallbackAlpha(points,0).arcs.length,0);
+  assertEdgeSets(context.fallbackAlpha(points,0).segments,hullEdges);
+  for(const a of [-100,-28.57,0,12,100]){
+    const filtered=context.alphaSimplices(points,a);
+    const fallback=context.fallbackAlpha(points,a);
+    assertEdgeSets(fallback.segments,filtered.boundary,"Signed alpha "+a);
+    for(const arc of fallback.arcs){
+      if(arc.length<3)continue;
+      const circle=context.arcCircle(arc);
+      assert.ok(circle&&Math.abs(circle.r-1/Math.abs(a))<1e-4);
+    }
+  }
+  assert.equal(context.stochasticPointSet("binomial",0).length,0);
+  assert.equal(context.stochasticPointSet("poisson",0).length,0);
+  for(const n of [0,1,12,120,600]){
+    const bpp=context.stochasticPointSet("binomial",n,91234);
+    assert.equal(bpp.length,n,"Binomial N equals n exactly");
+    assert.ok(bpp.every(p=>p.every(v=>v>=0&&v<1)));
+    assert.deepEqual(bpp,context.stochasticPointSet("binomial",n,91234));
+  }
+  const rate=24;
+  const sizes=Array.from({length:300},(_,k)=>
+    context.stochasticPointSet("poisson",rate,k+1000).length);
+  const mean=sizes.reduce((x,y)=>x+y,0)/sizes.length;
+  const variance=sizes.reduce((x,y)=>x+(y-mean)**2,0)/sizes.length;
+  assert.ok(Math.abs(mean-rate)<4,"Poisson point-count expectation");
+  assert.ok(variance>12&&variance<40,"Poisson point-count variance");
+  assert.ok(new Set(sizes).size>10,"Poisson point count is random");
+  assert.deepEqual(context.stochasticPointSet("poisson",24,24),
+    context.stochasticPointSet("poisson",24,24));
+  assert.throws(()=>context.stochasticPointSet("poisson",-1),/integer from 0 to 600/);
+  const face=scene.alpha.presets.smiley.points;
+  for(const n of [0,1,12,120,600]){
+    const sample=context.smileyWithInteriorPoints(face,n,2718);
+    assert.equal(sample.length,53+n);
+    for(let k=0;k<53;k++)
+      for(let axis=0;axis<2;axis++)assert.equal(sample[k][axis],face[k][axis]);
+    for(const p of sample.slice(53)){
+      assert.ok(context.pointInsidePolygon(...p,face.slice(0,30)));
+      assert.ok(!context.pointInsidePolygon(...p,face.slice(30,36)));
+      assert.ok(!context.pointInsidePolygon(...p,face.slice(36,42)));
+    }
+  }
+  assert.notDeepEqual(context.smileyWithInteriorPoints(face,120,42).slice(53),
+    context.smileyWithInteriorPoints(face,120,43).slice(53));
 }
 function testBeta(){
   for(const beta of [1,1.25,1.5,1.75,2]){
@@ -212,7 +270,14 @@ function testUI(){
   assert.match(html,/id="pg-density-controls"/);
   assert.match(fs.readFileSync(path.join(root,"site/app.js"),"utf8"), /pgInteriorCount/);
   assert.match(css,/\.pg-density-controls\[hidden\]/);
-  assert.match(html, /id="alpha-slider"[^>]*max="8"[^>]*value="5"/);
+  assert.match(html,/id="alpha-slider"[^>]*min="-100"[^>]*max="100"[^>]*step="any"/);
+  assert.ok(html.includes('value="-28.57142857142857"'));
+  for(const name of ["pg","smiley","poisson","binomial"])
+    assert.ok(html.includes('value="'+name+'"'));
+  for(const id of ["smiley-interior-slider","smiley-reshuffle","process-controls",
+    "process-slider","process-reshuffle","process-realized","process-definition"])
+    assert.ok(html.includes('id="'+id+'"'),"Missing "+id);
+  assert.ok(html.includes('src="point-processes.js"'));
   assert.match(fs.readFileSync(path.join(root,"site/editor.js"),"utf8"), /habitat:1100/);
   const encoded=fs.readFileSync(path.join(root,"data/typography/pg_reference.u16.b64"),"ascii").trim();
   const mirrored=fs.readFileSync(path.join(root,"site/data/pg_reference_points.js"),"utf8");
@@ -246,6 +311,7 @@ function testUI(){
 testHistoricalAndSyntheticDefaults();
 testDelaunay();
 testAlpha();
+testSignedAlphaAndPointProcesses();
 testBeta();
 testGeometryWitnesses();
 testShapeAndComparison();
