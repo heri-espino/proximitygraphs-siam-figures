@@ -34,3 +34,14 @@ The revised Markdown contains three figure captions and ten bibliography entries
 ## Next steps and limitations
 
 Inspect the generated PDF at publication resolution, verify captions and author credits, confirm cross-page links, and record the successful CI run. The work does not establish deployment safety, infer real infection transmission, grant image rights, or imply publication or editorial acceptance. Coauthors must approve the byline and content before any external SIAM submission.
+
+
+## Reproducibility outcome
+
+The PDF generator and the pinned-library figure workflow completed successfully:
+
+- [Editorial PDF run #42549653261](https://github.com/heri-espino/proximitygraphs-siam-figures/actions/runs/42549653261): successful. Verified four US Letter pages, three embedded scientific images, correct historical/synthetic provenance, working links and author biographies on page 4.
+- [Figure/regression workflow #42549653265](https://github.com/heri-espino/proximitygraphs-siam-figures/actions/runs/42549653265): successful.
+- The *first* proof had five pages, with biographies alone on page 5. The renderer was adjusted to use compact APA references and 18 mm margins; the final four-page proof was visually inspected after rendering.
+- The final PDF no longer includes the inaccurate blanket caption “All sites are synthetic.” The John Snow dataset is explicitly identified as digitized historical data.
+- As always, external publication, coauthor approval, and reuse rights are outstanding.
