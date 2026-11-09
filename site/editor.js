@@ -69,15 +69,18 @@ function edited(name) {
 function recomputeNotice(name) {
   const editor=pointEditors[name], element=document.getElementById(name+"-edit-source");
   if(!editor || !element)return;
-  element.textContent=editor.dirty ?
-    (name==="water" && typeof dataset!=="undefined" && dataset?.voronoi?.historical ?
-      "Edited pump positions are hypothetical; historical death marks remain fixed. Geometry recomputed in JavaScript." :
-      "Edited points · recalculated locally in JavaScript (not a new ProximityGraphs export).") :
-    (typeof dataset!=="undefined" && dataset ?
-      (name==="water" && dataset?.voronoi?.historical ?
-        "Digitized historical John Snow pump sites · graph geometry exported by ProximityGraphs." :
-        "Original points · geometry exported by the ProximityGraphs Python library.") :
-      "Browser preview · authoritative Python scene data were not loaded.");
+  const historic=name==="water" && typeof dataset!=="undefined" &&
+    dataset?.voronoi?.historical;
+  if(editor.dirty){
+    element.textContent=historic?
+      "Pump locations adjusted · historical death marks remain in place.":
+      "Points adjusted · the geometry responds to your changes.";
+  }else{
+    element.textContent=historic?
+      "Historical Soho pump locations · straight-line proximity.":
+      name==="sensors"?"Illustrative sensor network · geometric connections.":
+      "Illustrative point set · explore how its boundaries change.";
+  }
 }
 function setEditorMode(name,mode) {
   const editor=pointEditors[name];
@@ -91,10 +94,10 @@ function setEditorMode(name,mode) {
   }
   const help=document.getElementById(name+"-edit-help");
   help.textContent=({
-    move:"Drag any point to move it. Click an edge or arc to inspect it.",
-    add:"Click a blank spot inside the square to add a point.",
-    delete:"Click a point to remove it. Reset restores the original layout.",
-    inspect:"Click two distinct sensors to test their candidate edge and identify any blockers."
+    move:"Drag a point to see how the geometry changes. Select an edge or arc to inspect it.",
+    add:"Select an empty location inside the square to add a point.",
+    delete:"Select a point to remove it. Reset restores the starting arrangement.",
+    inspect:"Select two different sensors to see whether they form an edge."
   })[mode];
 }
 function sceneCoords(svg,event) {

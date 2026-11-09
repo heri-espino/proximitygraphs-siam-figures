@@ -156,12 +156,12 @@ function syncPgDensityControls(){
   detail("smiley-interior-count",String(state.smileyInteriorCount));
   document.getElementById("process-slider").value=String(state.processParameter);
   const poisson=state.alphaPreset==="poisson";
-  detail("process-parameter-title",poisson?"Intensity λ (mean number of points)":
-    "Fixed number of points n");
+  detail("process-parameter-title",poisson?"Expected number of points (λ)":
+    "Number of points (n)");
   detail("process-parameter-count",String(state.processParameter));
   detail("process-definition",poisson?
-    "Homogeneous Poisson process: N ~ Poisson(λ), locations iid uniform in [0,1]². The realized N may differ from λ.":
-    "Binomial point process: exactly N = n iid uniform points in [0,1]².");
+    "The number of points varies randomly, with mean λ.":
+    "Exactly n points are placed independently across the square.");
 }
 
 function replaceHabitatRealization(){
@@ -185,7 +185,7 @@ function replaceHabitatRealization(){
   state.alphaArc=0;
   syncPgDensityControls();
   if(state.alphaPreset==="poisson"||state.alphaPreset==="binomial")
-    detail("process-realized","Realized N = "+points.length);
+    detail("process-realized","Points in this sample: "+points.length);
   drawHabitat();
 }
 
@@ -260,8 +260,8 @@ function background(svg, tag) {
   el("text",{x:frame.x,y:28,fill:"#76736e","font-size":12,"letter-spacing":1},svg,tag.toUpperCase());
   const historic=tag.startsWith("01") && dataset?.voronoi?.historical;
   el("text",{x:frame.x,y:HEIGHT-18,fill:"#76736e","font-size":11},svg,
-    historic?"Digitized 1854 Soho map · proportionally normalized":
-    "Synthetic teaching coordinates · normalized Euclidean plane");
+    historic?"Soho, London · 1854 map locations":
+    "Illustrative point set · Euclidean distance");
 }
 function site(svg,p,i,selected,handler,displayName,pointRole) {
   const v=xy(p);
@@ -450,7 +450,7 @@ function drawWater(){
   const edges=original?source.delaunay:
     (points.length===2?[[0,1]]:trianglesEdges(tri));
   if(points.length)state.waterSite=Math.max(0,Math.min(state.waterSite,points.length-1));
-  background(svg,"01 / nearest-site & empty-circle constructions");
+  background(svg,"01 / nearest-site regions and Delaunay edges");
   if(hasLayer("water-cells")){
     const palette=["#f0eeeb","#eeeae7","#ecebe6","#ece9e4","#efeeec",
       "#f1eeeb","#ebe9e5","#ecebed","#f1e9e8","#edece9","#eeedef","#efebe6"];
@@ -519,25 +519,26 @@ function drawWater(){
       stroke:"#fdfcfa","stroke-width":4,
       "pointer-events":"none"},svg,source.labels?.[state.waterSite]||"Pump");
   }
-  detail("water-stat",points.length+" pumps · "+edges.length+" Delaunay edges"+
+  detail("water-stat",points.length+(original?" pumps":" sites")+
+    " · "+edges.length+" Delaunay edges"+
     (source?.death_marks?" · "+source.death_marks.length+" death marks":""));
   if(points.length){
     const degree=edges.filter(e=>e.includes(state.waterSite)).length;
     const p=points[state.waterSite];
     const cc=chosen?circumcircle(...chosen.vertices.map(i=>points[i])):null;
-    detail("water-details","Pump "+(state.waterSite+1)+
+    detail("water-details",(original?"Pump ":"Site ")+(state.waterSite+1)+
       (original && source.labels?.[state.waterSite]?
-       " · "+source.labels[state.waterSite]:" · edited site")+" at ("+
-      p[0].toFixed(3)+", "+p[1].toFixed(3)+"). "+
-      polygons[state.waterSite].length+" clipped cell vertices; "+
-      degree+" Delaunay neighbors."+
-      (chosen&&cc?" Witness triangle "+chosen.vertices.map(i=>i+1).join("–")+
-      " has circumradius "+cc.r.toFixed(3)+".":""));
-    detail("water-note","The station's cell is the intersection of "+(points.length-1)+
-      " nearest-site half-planes. Historical death marks are background observations, not graph vertices. A Delaunay witness triangle has no pump strictly inside its circumcircle.");
+        " · "+source.labels[state.waterSite]:"")+
+      " at ("+p[0].toFixed(3)+", "+p[1].toFixed(3)+"). "+
+      degree+" Delaunay neighbors; "+polygons[state.waterSite].length+
+      " corners in its visible Voronoi region."+
+      (chosen&&cc?" Triangle "+chosen.vertices.map(i=>i+1).join("–")+
+        " has circumradius "+cc.r.toFixed(3)+".":""));
+    detail("water-note","The Voronoi region contains the locations closest to the selected site. "+
+      "Delaunay triangles have empty circumcircles. Cholera death marks provide historical context, not graph vertices.");
   } else {
-    detail("water-details","No stations remain. Use Add to place a site.");
-    detail("water-note","At least two sites are needed to create a graph edge.");
+    detail("water-details","No sites are shown. Choose Add to place a point.");
+    detail("water-note","A graph edge needs at least two sites.");
   }
 }
 function drawHabitat(){
@@ -562,21 +563,22 @@ function drawHabitat(){
   const alphaText=Number.isInteger(alpha)?String(alpha):
     String(Number(alpha.toFixed(5)));
   const radiusText=Number.isFinite(radius)?radius.toFixed(3):"∞";
-  background(svg,"02 / alpha boundary and circular construction");
+  background(svg,"02 / straight and curved boundaries");
   detail("alpha-value","α = "+alphaText+" · R = "+radiusText);
   detail("alpha-preset-title",({
-    pg:"Pg · image-traced letterforms",
-    smiley:"Smiling face · randomized interior",
-    poisson:"Homogeneous Poisson point process",
-    binomial:"Binomial point process"
+    pg:"Pg letterform",
+    smiley:"Smiling face",
+    poisson:"Poisson point pattern",
+    binomial:"Binomial point pattern"
   })[state.alphaPreset]);
   const provenance=document.getElementById("habitat-edit-source");
   if(provenance){
-    if(original && dataset)recomputeNotice("habitat");
-    else provenance.textContent=(state.alphaPreset==="poisson"||
-      state.alphaPreset==="binomial"?
-      "Stochastic realization sampled in JavaScript; all geometry recomputed locally.":
-      "Interactive point/alpha configuration · geometry recomputed independently in JavaScript (not a new Python export).");
+    provenance.textContent=({
+      pg:"Letterform point set · outlines remain fixed when generating points.",
+      smiley:"Smiling face · facial features remain fixed when generating points.",
+      poisson:"Poisson point pattern · the point count varies between samples.",
+      binomial:"Binomial point pattern · the point count stays fixed."
+    })[state.alphaPreset];
   }
   if(hasLayer("alpha-triangulation")){
     for(const t of triangles){
@@ -655,18 +657,19 @@ function drawHabitat(){
   const family=({
     pg:"Pg",smiley:"Smiley",poisson:"Poisson",binomial:"Binomial"
   })[state.alphaPreset];
-  detail("habitat-details",family+": α = "+alphaText+"; "+
-    (alpha===0?"the exact convex-hull limit has straight edges.":
-     "radius R = "+radiusText+" with "+(alpha>0?"furthest-site":"ordinary")+
-     " Delaunay triangulation.")+
-    " Retained triangles: "+kept.length+" / "+triangles.length+
-    "; components: "+topology.components+"; enclosed holes: "+topology.holes+
-    "; boundary edges: "+boundary.length+"; circular arcs: "+arcs.length+"."+
-    (c?" Arc "+(state.alphaArc+1)+" center: ("+
+  detail("habitat-details",family+" · α = "+alphaText+". "+
+    (alpha===0?"The boundary is the convex hull.":
+      "The radius cutoff is R = "+radiusText+" ("+
+      (alpha>0?"furthest-site":"ordinary")+" Delaunay).")+
+    " "+kept.length+" of "+triangles.length+" triangles pass the test. "+
+    topology.components+" connected region"+(topology.components===1?"":"s")+
+    ", "+topology.holes+" hole"+(topology.holes===1?"":"s")+
+    " and "+boundary.length+" boundary edges."+
+    (c?" Arc "+(state.alphaArc+1)+" is centered at ("+
       c.center[0].toFixed(3)+", "+c.center[1].toFixed(3)+").":""));
   detail("habitat-note",alpha===0?
-    "At α = 0, ProximityGraphs uses the convex hull with straight edges; R tends to infinity. There are no finite supporting circles.":
-    "A retained triangle satisfies circumradius ≤ 1/|α|. Negative α uses ordinary Delaunay; positive α uses furthest-site Delaunay and inward circular arcs. Browser edits are independent JS constructions.");
+    "At α = 0, the boundary is the convex hull. It consists of straight edges, with no finite supporting circles.":
+    "A triangle passes when its circumradius is at most R. Negative α uses ordinary Delaunay; positive α uses furthest-site Delaunay.");
 }
 function selectBetaPair(pair) {
   state.betaPair=pair?pair.slice():null;
@@ -678,12 +681,12 @@ function inspectBetaPoint(index){
   if(index<0||index>=n)return;
   if(state.betaInspectFirst===null){
     state.betaInspectFirst=index;
-    detail("sensors-note","First endpoint: sensor "+(index+1)+". Choose a second sensor to inspect the candidate.");
+    detail("sensors-note","Sensor "+(index+1)+" selected. Choose a second sensor to test the connection.");
     drawSensors();
     return;
   }
   if(state.betaInspectFirst===index){
-    detail("sensors-note","Choose a different sensor for the second endpoint.");
+    detail("sensors-note","Choose a different sensor to complete the pair.");
     return;
   }
   const pair=[Math.min(state.betaInspectFirst,index),Math.max(state.betaInspectFirst,index)];
@@ -695,7 +698,7 @@ function drawSensors(){
   const beta=betaValues[state.betaIndex];
   const edges=source&&!edited("sensors")?source.options[String(beta)]:betaEdges(points,beta);
   const validKeys=new Set(edges.map(e=>edgeKey(...e)));
-  background(svg,"03 / empty lune · accepted and blocked pairs");
+  background(svg,"03 / geometric connections and blockers");
   detail("beta-value","β = "+beta);
   if(!state.betaPair || state.betaPair[1]>=points.length ||
      state.betaPair[0]===state.betaPair[1]){
@@ -785,15 +788,15 @@ function drawSensors(){
       "; each disk radius "+report.radius.toFixed(3)+
       (names.length?"; blockers: "+names.join(", ")+".":""));
     detail("sensors-note",report.valid?
-      "No third site lies strictly inside both disks. This is a geometric edge.":
-      "Highlighted blocker"+(names.length===1?"":"s")+
-      " lie inside both disks; the selected line is a rejected candidate, not an edge.");
+      "The defining disks share no other interior site, so the pair forms an edge.":
+      "The highlighted site"+(names.length===1?" lies":"s lie")+
+      " inside both disks, so this pair does not form an edge.");
   } else {
-    detail("sensors-details","Add two or more points to test a candidate edge.");
-    detail("sensors-note","β-skeletons use an open empty lune for β ≥ 1.");
+    detail("sensors-details","Add at least two sensors to test a connection.");
+    detail("sensors-note","For β ≥ 1, two sites connect when their open lune contains no other point.");
   }
   if(tooMany && shouldShowInvalid)detail("sensors-note",
-    "Showing all rejected candidates is suppressed above 45 points to keep the editor responsive. Inspect any pair by selecting two sensors.");
+    "There are too many rejected pairs to show at once. Select two sensors to examine a particular connection.");
 }
 /**
  * A stochastic comparison is sampled exactly once per (kind, seed, parameter)
@@ -817,12 +820,12 @@ function syncComparisonControls(){
     String(state.compareParameter);
   if(stochastic){
     detail("compare-parameter-title",state.comparePointSet==="poisson"?
-      "Poisson intensity λ (expected N)":"Binomial count n (exact N)");
+      "Expected number of points (λ)":"Number of points (n)");
     detail("compare-parameter-count",String(state.compareParameter));
     detail("compare-process-definition",state.comparePointSet==="poisson"?
-      "N ~ Poisson(λ), with independent uniform positions in [0,1]².":
-      "N = n exactly, with independent uniform positions in [0,1]².");
-    detail("compare-realized","Realized N = "+compareSourcePoints().length);
+      "The number of points varies randomly, with mean λ.":
+      "Exactly n points are placed independently across the square.");
+    detail("compare-realized","Points in this sample: "+compareSourcePoints().length);
   }
 }
 function setComparisonPointSet(kind){
@@ -882,21 +885,18 @@ function drawCompare(){
     counts.push(edges.length);
   }
   const descriptor=state.comparePointSet==="sensors"?
-    "synthetic sensor sites":
-    state.comparePointSet==="poisson"?
-      "sites from a homogeneous Poisson point process":
-      "sites from a binomial point process";
-  detail("compare-details",points.length+" identical "+descriptor+
-    ". Left: "+counts[0]+" edges; right: "+counts[1]+
-    " edges. Both panels use the exact same coordinates; only the graph rule changes.");
+    "sensor network":state.comparePointSet==="poisson"?
+      "Poisson sample":"binomial sample";
+  detail("compare-details",points.length+" points from the "+descriptor+
+    " appear in both panels. Left: "+counts[0]+" edges; right: "+counts[1]+
+    " edges. Only the connection rule changes.");
   if(state.comparePointSet!=="sensors")
-    detail("compare-realized","Realized N = "+points.length);
-  detail("compare-source",authoritative?
-    "Original sensor geometry and comparison graphs exported by the pinned ProximityGraphs Python library.":
-    state.comparePointSet==="sensors"?
-      "Edited sensor coordinates are hypothetical; graph geometry recomputed independently in JavaScript.":
-      "Seeded synthetic "+(state.comparePointSet==="poisson"?"Poisson":"binomial")+
-      " point-process realization. Both graphs recomputed independently in browser JavaScript, not the Python library.");
+    detail("compare-realized","Points in this sample: "+points.length);
+  detail("compare-source",state.comparePointSet==="sensors"?
+    (authoritative?"The sensor positions are the same in both diagrams.":
+      "The modified sensor positions are used in both diagrams."):
+    "Both diagrams use one "+(state.comparePointSet==="poisson"?"Poisson":"binomial")+
+    " sample. Generate a new sample to explore another arrangement.");
 }
 function setPreset(scene,preset){
   const presets={
@@ -1035,7 +1035,7 @@ async function start(){
     const beta=betaValues[state.betaIndex];
     const blocked=findBlockedBetaPair(points,beta,state.betaPair);
     if(blocked)selectBetaPair(blocked);
-    else detail("sensors-note","Every candidate pair is valid at the current parameter and point configuration.");
+    else detail("sensors-note","No rejected pair was found for the current points and parameter.");
   });
   document.getElementById("beta-next-pair").addEventListener("click",function(){
     const pts=editablePoints("sensors",dataset?.beta?.points||betaPoints);
@@ -1079,11 +1079,9 @@ async function start(){
     if(loaded.format_version!==1||!loaded.voronoi||!loaded.alpha||!loaded.beta)
       throw new Error("Incomplete generated data");
     dataset=loaded;
-    detail("source-status","Authoritative default geometries: ProximityGraphs "+
-      (loaded.metadata?.library_version||"version not reported")+
-      ". Edits are recomputed independently in the browser.");
+    detail("source-status","The interactive figures are ready. Choose a point or adjust the controls to explore.");
   }catch(error){
-    detail("source-status","Python-generated data unavailable; the independent browser preview is active.");
+    detail("source-status","Historical source data are temporarily unavailable. The other geometric examples remain interactive.");
   }
   setupPointEditors(dataset);
   document.getElementById("alpha-point-set").value=state.alphaPreset;
