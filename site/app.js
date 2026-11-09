@@ -535,7 +535,8 @@ function drawWater(){
 }
 function drawHabitat(){
   const svg=document.getElementById("habitat-plot"),source=currentAlphaSource();
-  const points=editablePoints("habitat",presetPointSet());
+  const points=pointEditors.habitat?
+    pointEditors.habitat.points:presetPointSet();
   const alpha=state.alphaValue;
   // Use original Python constructions *only* for the exact precomputed
   // negative-alpha parameter and the unmodified matching reference set.
