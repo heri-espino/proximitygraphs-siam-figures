@@ -41,8 +41,7 @@ PREAMBLE = r"""% AUTO-GENERATED from article/feature.md by scripts/render_articl
 \IfFileExists{../site/assets/#1.png}
  {\includegraphics[width=.57\linewidth]{../site/assets/#1.png}}
  {\fbox{\parbox[c][28mm][c]{.65\linewidth}{\centering #1.png}}}
-\caption{#2 \href{#3}{Explore the interactive figure}. All sites are synthetic.
- Original static artwork generated with ProximityGraphs.}
+\caption{#2 \href{#3}{Explore the interactive figure}.}
 \end{figure}%
 }
 \begin{document}
