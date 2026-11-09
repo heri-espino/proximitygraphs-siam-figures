@@ -519,22 +519,23 @@ function drawWater(){
       stroke:"#fdfcfa","stroke-width":4,
       "pointer-events":"none"},svg,source.labels?.[state.waterSite]||"Pump");
   }
-  detail("water-stat",points.length+" pumps · "+edges.length+" Delaunay edges"+
+  detail("water-stat",points.length+(original?" pumps":" sites")+
+    " · "+edges.length+" Delaunay edges"+
     (source?.death_marks?" · "+source.death_marks.length+" death marks":""));
   if(points.length){
     const degree=edges.filter(e=>e.includes(state.waterSite)).length;
     const p=points[state.waterSite];
     const cc=chosen?circumcircle(...chosen.vertices.map(i=>points[i])):null;
-    detail("water-details","Pump "+(state.waterSite+1)+
+    detail("water-details",(original?"Pump ":"Site ")+(state.waterSite+1)+
       (original && source.labels?.[state.waterSite]?
-       " · "+source.labels[state.waterSite]:" · edited site")+" at ("+
-      p[0].toFixed(3)+", "+p[1].toFixed(3)+"). "+
-      polygons[state.waterSite].length+" clipped cell vertices; "+
-      degree+" Delaunay neighbors."+
-      (chosen&&cc?" Witness triangle "+chosen.vertices.map(i=>i+1).join("–")+
-      " has circumradius "+cc.r.toFixed(3)+".":""));
-    detail("water-note","The station's cell is the intersection of "+(points.length-1)+
-      " nearest-site half-planes. Historical death marks are background observations, not graph vertices. A Delaunay witness triangle has no pump strictly inside its circumcircle.");
+        " · "+source.labels[state.waterSite]:"")+
+      " at ("+p[0].toFixed(3)+", "+p[1].toFixed(3)+"). "+
+      degree+" Delaunay neighbors; "+polygons[state.waterSite].length+
+      " corners in its visible Voronoi region."+
+      (chosen&&cc?" Triangle "+chosen.vertices.map(i=>i+1).join("–")+
+        " has circumradius "+cc.r.toFixed(3)+".":""));
+    detail("water-note","The Voronoi region contains the locations closest to the selected site. "+
+      "Delaunay triangles have empty circumcircles. Cholera death marks provide historical context, not graph vertices.");
   } else {
     detail("water-details","No sites are shown. Choose Add to place a point.");
     detail("water-note","A graph edge needs at least two sites.");
@@ -656,14 +657,15 @@ function drawHabitat(){
   const family=({
     pg:"Pg",smiley:"Smiley",poisson:"Poisson",binomial:"Binomial"
   })[state.alphaPreset];
-  detail("habitat-details",family+": α = "+alphaText+"; "+
-    (alpha===0?"the exact convex-hull limit has straight edges.":
-     "radius R = "+radiusText+" with "+(alpha>0?"furthest-site":"ordinary")+
-     " Delaunay triangulation.")+
-    " Retained triangles: "+kept.length+" / "+triangles.length+
-    "; components: "+topology.components+"; enclosed holes: "+topology.holes+
-    "; boundary edges: "+boundary.length+"; circular arcs: "+arcs.length+"."+
-    (c?" Arc "+(state.alphaArc+1)+" center: ("+
+  detail("habitat-details",family+" · α = "+alphaText+". "+
+    (alpha===0?"The boundary is the convex hull.":
+      "The radius cutoff is R = "+radiusText+" ("+
+      (alpha>0?"furthest-site":"ordinary")+" Delaunay).")+
+    " "+kept.length+" of "+triangles.length+" triangles pass the test. "+
+    topology.components+" connected region"+(topology.components===1?"":"s")+
+    ", "+topology.holes+" hole"+(topology.holes===1?"":"s")+
+    " and "+boundary.length+" boundary edges."+
+    (c?" Arc "+(state.alphaArc+1)+" is centered at ("+
       c.center[0].toFixed(3)+", "+c.center[1].toFixed(3)+").":""));
   detail("habitat-note",alpha===0?
     "At α = 0, the boundary is the convex hull. It consists of straight edges, with no finite supporting circles.":
@@ -818,12 +820,12 @@ function syncComparisonControls(){
     String(state.compareParameter);
   if(stochastic){
     detail("compare-parameter-title",state.comparePointSet==="poisson"?
-      "Poisson intensity λ (expected N)":"Binomial count n (exact N)");
+      "Expected number of points (λ)":"Number of points (n)");
     detail("compare-parameter-count",String(state.compareParameter));
     detail("compare-process-definition",state.comparePointSet==="poisson"?
-      "N ~ Poisson(λ), with independent uniform positions in [0,1]².":
-      "N = n exactly, with independent uniform positions in [0,1]².");
-    detail("compare-realized","Realized N = "+compareSourcePoints().length);
+      "The number of points varies randomly, with mean λ.":
+      "Exactly n points are placed independently across the square.");
+    detail("compare-realized","Points in this sample: "+compareSourcePoints().length);
   }
 }
 function setComparisonPointSet(kind){
@@ -883,21 +885,18 @@ function drawCompare(){
     counts.push(edges.length);
   }
   const descriptor=state.comparePointSet==="sensors"?
-    "synthetic sensor sites":
-    state.comparePointSet==="poisson"?
-      "sites from a homogeneous Poisson point process":
-      "sites from a binomial point process";
-  detail("compare-details",points.length+" identical "+descriptor+
-    ". Left: "+counts[0]+" edges; right: "+counts[1]+
-    " edges. Both panels use the exact same coordinates; only the graph rule changes.");
+    "sensor network":state.comparePointSet==="poisson"?
+      "Poisson sample":"binomial sample";
+  detail("compare-details",points.length+" points from the "+descriptor+
+    " appear in both panels. Left: "+counts[0]+" edges; right: "+counts[1]+
+    " edges. Only the connection rule changes.");
   if(state.comparePointSet!=="sensors")
-    detail("compare-realized","Realized N = "+points.length);
-  detail("compare-source",authoritative?
-    "Original sensor geometry and comparison graphs exported by the pinned ProximityGraphs Python library.":
-    state.comparePointSet==="sensors"?
-      "Edited sensor coordinates are hypothetical; graph geometry recomputed independently in JavaScript.":
-      "Seeded synthetic "+(state.comparePointSet==="poisson"?"Poisson":"binomial")+
-      " point-process realization. Both graphs recomputed independently in browser JavaScript, not the Python library.");
+    detail("compare-realized","Points in this sample: "+points.length);
+  detail("compare-source",state.comparePointSet==="sensors"?
+    (authoritative?"The sensor positions are the same in both diagrams.":
+      "The modified sensor positions are used in both diagrams."):
+    "Both diagrams use one "+(state.comparePointSet==="poisson"?"Poisson":"binomial")+
+    " sample. Generate a new sample to explore another arrangement.");
 }
 function setPreset(scene,preset){
   const presets={
