@@ -895,26 +895,59 @@ async function start(){
   document.getElementById("alpha-point-set").addEventListener("change",function(e){
     switchAlphaPreset(e.target.value);
   });
-  document.getElementById("alpha-slider").addEventListener("input",function(e){
-    state.alphaIndex=Number(e.target.value);state.alphaArc=0;drawHabitat();
-  });
-  const density=document.getElementById("pg-interior-slider");
-  let densityTimer=null;
-  const applyDensity=function(){
-    if(densityTimer!==null)clearTimeout(densityTimer);
-    densityTimer=null;
-    setPgInteriorCount(Number(density.value));
+  const alphaSlider=document.getElementById("alpha-slider");
+  let alphaTimer=null;
+  const commitAlpha=function(){
+    if(alphaTimer!==null)clearTimeout(alphaTimer);
+    alphaTimer=null;
+    drawHabitat();
   };
-  density.addEventListener("input",function(){
-    state.pgInteriorCount=Number(density.value);
-    detail("pg-interior-count",String(state.pgInteriorCount));
-    if(densityTimer!==null)clearTimeout(densityTimer);
-    // Debounce costly Delaunay reconstruction during pointer drags.
-    densityTimer=setTimeout(applyDensity,130);
+  alphaSlider.addEventListener("input",function(e){
+    state.alphaValue=Number(e.target.value);
+    state.alphaArc=0;
+    const a=state.alphaValue;
+    detail("alpha-value","α = "+Number(a.toFixed(3))+
+      " · R = "+(a===0?"∞":(1/Math.abs(a)).toFixed(3)));
+    if(alphaTimer!==null)clearTimeout(alphaTimer);
+    // Recompute once pointer motion settles; signed alpha requires fresh
+    // triangulation and geometry for non-precomputed parameter values.
+    alphaTimer=setTimeout(commitAlpha,110);
   });
-  density.addEventListener("change",applyDensity);
+  alphaSlider.addEventListener("change",commitAlpha);
+
+  function bindDensitySlider(sliderId,preset,previewId,apply){
+    const slider=document.getElementById(sliderId);
+    let timer=null;
+    const commit=function(){
+      if(timer!==null)clearTimeout(timer);
+      timer=null;
+      if(state.alphaPreset===preset)apply(Number(slider.value));
+    };
+    slider.addEventListener("input",function(){
+      detail(previewId,slider.value);
+      if(timer!==null)clearTimeout(timer);
+      timer=setTimeout(commit,130);
+    });
+    slider.addEventListener("change",commit);
+  }
+  bindDensitySlider("pg-interior-slider","pg","pg-interior-count",
+    n=>setPgInteriorCount(n));
+  bindDensitySlider("smiley-interior-slider","smiley","smiley-interior-count",
+    n=>setSmileyInteriorCount(n));
+  bindDensitySlider("process-slider","poisson","process-parameter-count",
+    n=>setProcessParameter(n));
+  // Binomial shares the same parameter slider; its separate listener
+  // is no-op while the Poisson preset is active.
+  bindDensitySlider("process-slider","binomial","process-parameter-count",
+    n=>setProcessParameter(n));
   document.getElementById("pg-reshuffle").addEventListener("click",function(){
     setPgInteriorCount(state.pgInteriorCount,(state.pgSeed+1)>>>0);
+  });
+  document.getElementById("smiley-reshuffle").addEventListener("click",function(){
+    setSmileyInteriorCount(state.smileyInteriorCount,(state.smileySeed+1)>>>0);
+  });
+  document.getElementById("process-reshuffle").addEventListener("click",function(){
+    setProcessParameter(state.processParameter,(state.processSeed+1)>>>0);
   });
   document.getElementById("beta-slider").addEventListener("input",function(e){
     state.betaIndex=Number(e.target.value);drawSensors();
@@ -961,8 +994,7 @@ async function start(){
   }
   setupPointEditors(dataset);
   document.getElementById("alpha-point-set").value=state.alphaPreset;
-  document.getElementById("alpha-slider").max=String(activeAlphaValues().length-1);
-  document.getElementById("alpha-slider").value=state.alphaIndex;
+  document.getElementById("alpha-slider").value=String(state.alphaValue);
   syncPgDensityControls();
   drawWater();drawHabitat();drawSensors();drawCompare();
 }
@@ -970,5 +1002,7 @@ if(typeof document!=="undefined")document.addEventListener("DOMContentLoaded",st
 if(typeof module!=="undefined" && module.exports){
   module.exports={circumcircle,delaunayTriangles,trianglesEdges,betaEdges,cells,
     fallbackAlpha,arcCircle,alphaValues,smileyAlphaValues,betaValues,
-    waterPoints,betaPoints,habitatPoints,smileyPoints,pgWordmarkPoints,PG_MAX_INTERIOR};
+    waterPoints,betaPoints,habitatPoints,smileyPoints,pgWordmarkPoints,PG_MAX_INTERIOR,
+    switchAlphaPreset,setPgInteriorCount,setSmileyInteriorCount,
+    setProcessParameter};
 }
