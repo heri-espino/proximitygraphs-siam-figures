@@ -5,6 +5,7 @@ Historical John Snow pumps/deaths; deterministic Pg wordmark, smiley and sensor 
 """
 from __future__ import annotations
 
+import base64
 import csv
 import json
 import math
@@ -152,7 +153,29 @@ def pg_wordmark_points():
     return result
 
 
-PG_POINTS = pg_wordmark_points()
+def pg_image_points():
+    """Load 380 image-traced points, preserving the serifs and g swash.
+
+    A user-supplied 806x616 screenshot was thresholded at luminance 200.
+    All four sizeable contour loops (two exteriors and two counters) were
+    sampled at approximately 18px intervals; randomized stroke-interior
+    grid sites at 30px intervals preserve ink density. A six-point gap in
+    the lower g flourish deliberately keeps its open white slit from
+    becoming a third alpha hole. Two additional stem sites avoid a sparse
+    corner. The final sites are stored as compact 16-bit normalized XY
+    coordinates, not a text font or an image-only rendering.
+    """
+    raw=(ROOT/"data"/"typography"/"pg_reference.u16.b64").read_text(encoding="ascii")
+    packed=base64.b64decode(raw.strip(),validate=True)
+    points=np.frombuffer(packed,dtype="<u2").astype(np.float64).reshape(-1,2)/65535
+    if points.shape != (380,2) or not np.isfinite(points).all():
+        raise AssertionError("Image-derived Pg point cloud unexpectedly changed")
+    if not np.all((points>=0)&(points<=1)):
+        raise AssertionError("Image-derived Pg coordinates must stay normalized")
+    return points
+
+
+PG_POINTS = pg_image_points()
 HABITAT = PG_POINTS  # Backwards-compatible default for figures and older tools.
 
 
@@ -164,12 +187,13 @@ BETA = np.array([
     [.62,.54],[.76,.56],[.89,.65],[.64,.78],[.79,.81],
 ], dtype=float)
 
-ALPHAS = (8,11,14,18)  # Pg: zero, one, two, then two separate counters.
+ALPHAS = (22,26,28.57142857142857,32)  # Serif Pg: default R=0.035, two closed counters.
 SMILEY_ALPHAS = (4,8,10,12)
 ALPHA_PRESETS = {
-    "pg": {"label": "Pg · two enclosed holes", "points": PG_POINTS,
+    "pg": {"label": "Pg · image-traced serif and swash", "points": PG_POINTS,
+           "point_roles": ["outline"]*298 + ["stroke"]*82,
            "alpha_values": ALPHAS, "default_alpha_index": 2,
-           "description": "synthetic Pg wordmark with one enclosed hole per letter"},
+           "description": "image-traced serif Pg wordmark with two enclosed counters"},
     "smiley": {"label": "Smiling face", "points": SMILEY_POINTS,
                "alpha_values": SMILEY_ALPHAS, "default_alpha_index": 1,
                "description": "synthetic smiling face"},
@@ -289,6 +313,7 @@ def build_alpha_preset(spec):
         "points": arr(points), "alpha_values": list(spec["alpha_values"]),
         "default_alpha_index": spec["default_alpha_index"],
         "triangles": triangles, "options": options,
+        "point_roles": spec.get("point_roles", []),
     }
 
 
@@ -392,24 +417,25 @@ def render_water(s):
 
 
 def render_habitat(s):
-    fig,ax=axis("Figure 2 · Pg wordmark: two enclosed alpha-shape holes")
+    fig,ax=axis("Figure 2 · Image-traced serif Pg · alpha-shape counters")
     # Keep the material visible: the two empty counters are actual holes
     # in the retained simplicial complex, not decorative white circles.
     from matplotlib.collections import PolyCollection
-    kept = s["alpha"]["options"]["14"]["kept_triangles"]
+    selected=s["alpha"]["options"][str(ALPHAS[2])]
+    kept = selected["kept_triangles"]
     ax.add_collection(PolyCollection(
         [HABITAT[t] for t in kept],
         facecolor="#c4c0ba", alpha=.33, edgecolor="none", zorder=1))
-    for i,j in s["alpha"]["options"]["14"]["shape_edges"]:
+    for i,j in selected["shape_edges"]:
         p,q=HABITAT[[i,j]]
         ax.plot([p[0],q[0]],[p[1],q[1]],
                 c="#73717c",lw=1.0,alpha=.7,linestyle="--",zorder=4)
-    for i,a in enumerate(s["alpha"]["options"]["14"]["arcs"]):
+    for i,a in enumerate(selected["arcs"]):
         p=np.asarray(a)
         ax.plot(p[:,0],p[:,1],c="#6d6c75" if i==0 else "#34383c",
                 lw=3 if i==0 else 2.2,zorder=5,solid_capstyle="round")
     # Draw the supporting circle of the highlighted library-generated arc.
-    exemplar=np.asarray(s["alpha"]["options"]["14"]["arcs"][0])
+    exemplar=np.asarray(selected["arcs"][0])
     p,q,r=exemplar[[0,len(exemplar)//2,-1]]
     matrix=2*np.stack([q-p,r-p])
     rhs=np.array([q@q-p@p,r@r-p@p])
@@ -419,7 +445,12 @@ def render_habitat(s):
                             fill=False,edgecolor="#96939b",linestyle="--",
                             linewidth=1.4,alpha=.78,zorder=3))
         ax.scatter([center[0]],[center[1]],s=24,color="#96939b",zorder=4)
-    sites(ax,HABITAT)
+    # Boundary samples define the letters; more transparent interior
+    # points communicate stroke weight without painting a literal font.
+    ax.scatter(HABITAT[:298,0],HABITAT[:298,1],s=20,
+               facecolor="#30302e",edgecolor="white",linewidth=.45,zorder=7)
+    ax.scatter(HABITAT[298:,0],HABITAT[298:,1],s=13,
+               facecolor="#66635f",alpha=.65,edgecolor="none",zorder=6)
     save(fig,"figure02-habitat")
 
 
@@ -462,16 +493,16 @@ def main():
                    for a in preset["alpha_values"]), (
             f"{name}: alpha-shape and alpha-hull boundaries disagree"
         )
-    assert scene["alpha"]["options"]["14"]["topology"] == {
+    assert scene["alpha"]["options"][str(ALPHAS[2])]["topology"] == {
         "components": 1, "holes": 2
-    }, "Pg preset must show exactly two enclosed counters at the default alpha"
+    }, "Image-traced Pg must retain exactly two enclosed counters at the default alpha"
     assert all(scene["alpha"]["options"][str(a)]["arcs"] for a in ALPHAS), (
         "A requested alpha value has no closed circular arcs; inspect the parameters."
     )
     DATA.mkdir(parents=True,exist_ok=True)
     (DATA/"scenes.json").write_text(json.dumps(scene,indent=2)+"\n",encoding="utf-8")
     render_water(scene);render_habitat(scene);render_sensors(scene)
-    print("Generated historical Snow data + authoritative graph geometry and three PNG/SVG figure pairs.")
+    print("Exported image-traced serif Pg, original smiley, historical Snow and sensor geometry.")
 
 
 if __name__=="__main__":
