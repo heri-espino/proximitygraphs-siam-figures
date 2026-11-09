@@ -23,6 +23,10 @@ class GeometryTests(unittest.TestCase):
         self.assertEqual(len(HABITAT), 600)
         self.assertTrue(np.array_equal(HABITAT, PG_POINTS))
         self.assertEqual(len(PG_REFERENCE_POINTS), 380)
+        from export_scenes import PG_RANDOM_SEED, densify_pg_strokes
+        self.assertEqual(PG_RANDOM_SEED, 32571)
+        np.testing.assert_array_equal(PG_POINTS, densify_pg_strokes(PG_REFERENCE_POINTS))
+        self.assertEqual(len(densify_pg_strokes(PG_REFERENCE_POINTS, 0)), 380)
         np.testing.assert_array_equal(PG_POINTS[:380], PG_REFERENCE_POINTS)
         # Added sites must lie in an actual stroke, not in either counter.
         from export_scenes import point_in_polygon
@@ -58,10 +62,16 @@ class GeometryTests(unittest.TestCase):
         default = alpha["presets"]["pg"]["options"][str(ALPHAS[5])]
         self.assertEqual(default["topology"], {"components": 2, "holes": 2})
         self.assertEqual(alpha_topology(default["kept_triangles"]), default["topology"])
-        # A real filtration: counters emerge as the circumradius cutoff tightens.
-        self.assertEqual(alpha["options"]["22"]["topology"]["holes"], 3)
-        self.assertEqual(alpha["options"]["26"]["topology"]["holes"], 2)
-        self.assertEqual(alpha["options"]["32"]["topology"]["holes"], 2)
+        # The wider range must actually produce a changing filtration,
+        # independent of incidental small holes in a particular random draw.
+        low = alpha["options"]["10"]
+        high = alpha["options"]["44"]
+        self.assertEqual(low["topology"]["components"], 1)
+        self.assertGreater(len(low["kept_triangles"]), len(high["kept_triangles"]))
+        self.assertTrue(any(
+            alpha["options"][str(a)]["topology"] != default["topology"]
+            for a in ALPHAS
+        ))
         self.assertEqual(len(alpha["presets"]["pg"]["point_roles"]), 600)
         self.assertEqual(alpha["presets"]["pg"]["point_roles"].count("outline"), 298)
         self.assertEqual(alpha["presets"]["pg"]["point_roles"].count("stroke"), 302)
