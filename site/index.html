@@ -141,6 +141,13 @@
           <select id="alpha-view" class="control-select"><option value="final">Final comparison</option><option value="construction">Construction</option><option value="both" selected>Both</option></select>
           <label class="control-label" for="alpha-slider">Curvature scale <strong id="alpha-value">α = −28.571</strong></label>
           <input id="alpha-slider" type="range" min="0" max="8" step="1" value="5" aria-label="Alpha curvature scale from −10 to −44">
+          <div id="pg-density-controls" class="pg-density-controls">
+            <label class="control-label" for="pg-interior-slider">Random interior points <strong id="pg-interior-count" aria-live="polite">302</strong></label>
+            <input id="pg-interior-slider" type="range" min="0" max="600" step="1" value="302"
+                   aria-label="Number of randomly placed interior points in the Pg glyphs">
+            <p class="density-hint">0–600 inside the letters · outlines always preserved</p>
+            <button type="button" class="utility" id="pg-reshuffle">Reshuffle random points</button>
+          </div>
           <label class="toggle"><input id="alpha-hull" type="checkbox" checked> Alpha-hull · circular arcs</label>
           <label class="toggle"><input id="alpha-shape" type="checkbox" checked> Alpha-shape · straight edges</label>
           <label class="toggle"><input id="alpha-triangulation" type="checkbox"> Delaunay triangulation</label>
@@ -174,7 +181,7 @@
           <p class="insight-note" id="habitat-note">Triangles with circumradius at most R form the displayed alpha-shape construction.</p>
         </aside>
       </div>
-      <p class="context">Both point sets are deterministic synthetic illustrations. The default <strong>Pg</strong> follows the actual supplied letterform: a high-contrast serif P and a flourished lowercase g. At α ≈ −28.57 the retained Delaunay complex has exactly two enclosed counters, one per letter. Contours remain dark and unchanged; stroke interiors now contain 220 additional deterministic, well-spaced sites. Move the scale to see them fill or separate, or select <strong>Smiling face</strong> to restore the original 53-point demonstration. The alpha-shape is the boundary of a retained simplicial complex, not the alpha-complex itself; the circular alpha-hull is a different geometric representation.</p>
+      <p class="context">Both point sets are deterministic synthetic illustrations. The default <strong>Pg</strong> follows the actual supplied letterform: a high-contrast serif P and a flourished lowercase g. At α ≈ −28.57 the retained Delaunay complex has exactly two enclosed counters, one per letter. Contours stay fixed. Use <strong>Random interior points</strong> to choose 0–600 randomly distributed points within the letter strokes, and <strong>Reshuffle</strong> for another reproducible arrangement. At the default setting, 302 interior sites include the 82 original samples and 220 additional randomized sites. Move the scale to see them fill or separate, or select <strong>Smiling face</strong> to restore the original 53-point demonstration. The alpha-shape is the boundary of a retained simplicial complex, not the alpha-complex itself; the circular alpha-hull is a different geometric representation.</p>
     </section>
 
     <section id="sensors" class="exhibit" aria-labelledby="sensors-title">
