@@ -143,3 +143,13 @@ Canonical manuscript source: article/feature.md. The article proof must compile 
 - Keep HTML IDs, option values, keyboard/ARIA labels, slider ranges, graph mathematics, seed logic, graph definitions, download links and conditional UI semantics working. Runtime text in `site/app.js` and editor messages in `site/editor.js` are just as public as `site/index.html`.
 - Run Node source/UI tests and full Playwright desktop/mobile checks after copy changes; update text assertions rather than dropping geometry tests. Reproducible editorial change log: `experiments/experiment013/README.md`.
 - On November 8, 2026 the user explicitly granted **standing authorization to merge completed, validated PRs**. Merge after successful checks and reconcile other agents' branches; this does *not* authorize publication/submission of an SIAM manuscript, which still needs specific human approval.
+
+
+## experiment014 — User-confirmed lead author and staged manuscript export (November 9, 2026)
+
+- Proposed byline is **Heriberto Espino-Montelongo first**, **Héctor Maravillo second**, **Diego Villarreal de la Cerda third**. The lead author specified positions 1 and 2; all contributors still need to sign off before any external submission.
+- **Canonical editable manuscript** is `article/feature.md` and its bibliography/figures/bios. Edit and review Markdown, run `python scripts/check_article.py`; do not directly modify generated TeX.
+- The previously committed `article/main.tex` and PDF are **historical proof artifacts** with an old byline and must not be sent as the current manuscript. Archive them without deletion.
+- **No automatic Markdown-to-PDF on push.** The manuscript PDF workflow requires a manual dispatch with `approved_by_all_authors=true`, only after genuine approval. It regenerates TeX, runs `python scripts/check_article.py --check-generated`, compiles PDF and archives outputs.
+- SIAM News requests **PDF or Word** via email; LaTeX is helpful with math but optional, Markdown is internal source. See `docs/MANUSCRIPT_WORKFLOW.md`, `experiments/experiment014/README.md`.
+- Preserve all past drafts, code, images, experiments and the older proof. Do not claim editorial acceptance or send an email without authorization.
