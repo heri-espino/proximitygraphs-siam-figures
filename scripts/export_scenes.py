@@ -175,7 +175,81 @@ def pg_image_points():
     return points
 
 
-PG_POINTS = pg_image_points()
+PG_RANDOM_SEED = 32571
+PG_DEFAULT_INTERIOR = 302   # 82 image-derived interior + 220 seeded additions.
+PG_MAX_INTERIOR = 600
+
+
+def point_in_polygon(x, y, vertices):
+    """Even–odd point-in-polygon predicate for a sampled closed contour."""
+    inside = False
+    for previous, current in zip(vertices[-1:] + vertices[:-1], vertices):
+        ax, ay = previous
+        bx, by = current
+        if (ay > y) != (by > y) and x < (bx-ax)*(y-ay)/(by-ay)+ax:
+            inside = not inside
+    return inside
+
+
+def densify_pg_strokes(base, additional=220, seed=PG_RANDOM_SEED):
+    """Seeded pseudorandom ink-interior samples; never modify source contours.
+
+    A 32-bit linear congruential generator is used instead of the prior
+    low-discrepancy sequence. The same arithmetic is implemented in browser JS.
+    The four image-traced contour blocks are ordered
+    [0:147] g exterior; [147:176] g counter;
+    [176:257] P exterior; [257:298] P counter.
+    """
+    if base.shape != (380, 2):
+        raise ValueError("Sampling requires the unchanged 380-site reference")
+    if not 0 <= additional <= PG_MAX_INTERIOR - 82:
+        raise ValueError("Requested interior count is outside supported range")
+    g_outer, g_hole = base[:147].tolist(), base[147:176].tolist()
+    p_outer, p_hole = base[176:257].tolist(), base[257:298].tolist()
+    state = int(seed) & 0xffffffff
+
+    def random_fraction():
+        nonlocal state
+        state = (1664525 * state + 1013904223) & 0xffffffff
+        return state / 4294967296
+
+    additions = []
+    for _ in range(150000):
+        if len(additions) == additional:
+            break
+        x = .07 + .86 * random_fraction()
+        y = .16 + .69 * random_fraction()
+        inside_stroke = (
+            point_in_polygon(x, y, g_outer) and
+            not point_in_polygon(x, y, g_hole)
+        ) or (
+            point_in_polygon(x, y, p_outer) and
+            not point_in_polygon(x, y, p_hole)
+        )
+        if not inside_stroke or math.hypot(x - .595, y - .27) < .047:
+            continue
+        candidate = np.array([x, y])
+        # A contour buffer preserves the original font outline and g slit.
+        if np.any(np.sum((base[:298]-candidate)**2, axis=1) < .025**2):
+            continue
+        if np.any(np.sum((base-candidate)**2, axis=1) < .008**2):
+            continue
+        if additions and np.any(
+            np.sum((np.asarray(additions)-candidate)**2, axis=1) < .008**2
+        ):
+            continue
+        additions.append([x, y])
+    if len(additions) != additional:
+        raise AssertionError(
+            f"Requested {additional} new interior sites, accepted {len(additions)}"
+        )
+    if not additional:
+        return base.copy()
+    return np.vstack([base, np.asarray(additions, dtype=float)])
+
+
+PG_REFERENCE_POINTS = pg_image_points()   # Immutable 380 original sites.
+PG_POINTS = densify_pg_strokes(PG_REFERENCE_POINTS)  # 600 default sites; slider can vary browser count.
 HABITAT = PG_POINTS  # Backwards-compatible default for figures and older tools.
 
 
@@ -187,12 +261,12 @@ BETA = np.array([
     [.62,.54],[.76,.56],[.89,.65],[.64,.78],[.79,.81],
 ], dtype=float)
 
-ALPHAS = (22,26,28.57142857142857,32)  # Serif Pg: default R=0.035, two closed counters.
+ALPHAS = (10,14,18,22,26,28.57142857142857,32,38,44)  # Wider filtration; default R=0.035.
 SMILEY_ALPHAS = (4,8,10,12)
 ALPHA_PRESETS = {
     "pg": {"label": "Pg · image-traced serif and swash", "points": PG_POINTS,
-           "point_roles": ["outline"]*298 + ["stroke"]*82,
-           "alpha_values": ALPHAS, "default_alpha_index": 2,
+           "point_roles": ["outline"]*298 + ["stroke"]*(len(PG_POINTS)-298),
+           "alpha_values": ALPHAS, "default_alpha_index": 5,
            "description": "image-traced serif Pg wordmark with two enclosed counters"},
     "smiley": {"label": "Smiling face", "points": SMILEY_POINTS,
                "alpha_values": SMILEY_ALPHAS, "default_alpha_index": 1,
@@ -421,7 +495,7 @@ def render_habitat(s):
     # Keep the material visible: the two empty counters are actual holes
     # in the retained simplicial complex, not decorative white circles.
     from matplotlib.collections import PolyCollection
-    selected=s["alpha"]["options"][str(ALPHAS[2])]
+    selected=s["alpha"]["options"][str(ALPHAS[5])]
     kept = selected["kept_triangles"]
     ax.add_collection(PolyCollection(
         [HABITAT[t] for t in kept],
@@ -445,7 +519,7 @@ def render_habitat(s):
                             fill=False,edgecolor="#96939b",linestyle="--",
                             linewidth=1.4,alpha=.78,zorder=3))
         ax.scatter([center[0]],[center[1]],s=24,color="#96939b",zorder=4)
-    # Boundary samples define the letters; more transparent interior
+    # Boundary samples define the letters; denser transparent interior
     # points communicate stroke weight without painting a literal font.
     ax.scatter(HABITAT[:298,0],HABITAT[:298,1],s=20,
                facecolor="#30302e",edgecolor="white",linewidth=.45,zorder=7)
@@ -493,7 +567,7 @@ def main():
                    for a in preset["alpha_values"]), (
             f"{name}: alpha-shape and alpha-hull boundaries disagree"
         )
-    assert scene["alpha"]["options"][str(ALPHAS[2])]["topology"] == {
+    assert scene["alpha"]["options"][str(ALPHAS[5])]["topology"] == {
         "components": 2, "holes": 2
     }, "Image-traced Pg must retain exactly two enclosed counters at the default alpha"
     assert all(scene["alpha"]["options"][str(a)]["arcs"] for a in ALPHAS), (
@@ -502,7 +576,7 @@ def main():
     DATA.mkdir(parents=True,exist_ok=True)
     (DATA/"scenes.json").write_text(json.dumps(scene,indent=2)+"\n",encoding="utf-8")
     render_water(scene);render_habitat(scene);render_sensors(scene)
-    print("Exported image-traced serif Pg, original smiley, historical Snow and sensor geometry.")
+    print("Exported seeded-random serif Pg (600 default sites), original smiley, historical Snow and sensor geometry.")
 
 
 if __name__=="__main__":

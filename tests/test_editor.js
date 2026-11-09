@@ -23,19 +23,21 @@ function testHistoricalAndSyntheticDefaults(){
   assert.equal(v.points.length,13);
   assert.equal(v.death_marks.length,578);
   assert.equal(v.labels[v.historical.broad_street_index],"Broad St");
-  assert.equal(scene.alpha.points.length,380);
+  assert.equal(scene.alpha.points.length,600);
   assert.equal(scene.alpha.default_preset,"pg");
   assert.equal(scene.alpha.description,"image-traced serif Pg wordmark with two enclosed counters");
-  assert.equal(scene.alpha.presets.pg.points.length,380);
+  assert.equal(scene.alpha.presets.pg.points.length,600);
   assert.equal(scene.alpha.presets.smiley.points.length,53);
   assert.equal(scene.alpha.presets.smiley.description,"synthetic smiling face");
   assert.deepEqual(Object.keys(scene.alpha.presets).sort(),["pg","smiley"]);
-  assert.deepEqual(Array.from(vm.runInContext("alphaValues",context)),[22,26,28.57142857142857,32]);
+  assert.deepEqual(Array.from(vm.runInContext("alphaValues",context)),[10,14,18,22,26,28.57142857142857,32,38,44]);
   assert.deepEqual(Array.from(vm.runInContext("smileyAlphaValues",context)),[4,8,10,12]);
   assert.equal(scene.alpha.options["28.57142857142857"].topology.holes,2);
   assert.equal(scene.alpha.options["28.57142857142857"].topology.components,2);
   assert.equal(scene.alpha.presets.pg.point_roles.filter(x=>x==="outline").length,298);
-  assert.equal(scene.alpha.presets.pg.point_roles.filter(x=>x==="stroke").length,82);
+  assert.equal(scene.alpha.presets.pg.alpha_values.length,9);
+  assert.equal(scene.alpha.presets.pg.default_alpha_index,5);
+  assert.equal(scene.alpha.presets.pg.point_roles.filter(x=>x==="stroke").length,302);
   assert.equal(scene.beta.points.length,25);
   assert.equal(scene.beta.description,"synthetic relay-corridor sensor network");
   const transform=v.historical.normalization;
@@ -72,11 +74,31 @@ function testAlpha(){
     }
   }
   const fallback=context.pgWordmarkPoints();
-  assert.equal(fallback.length,380);
+  assert.equal(fallback.length,600);
   for(let i=0;i<fallback.length;i++)
     for(let j=0;j<2;j++)
       assert.ok(Math.abs(fallback[i][j]-scene.alpha.points[i][j])<1e-8,
         "Browser Pg generator must match the Python reference coordinates");
+  // Interior counts are arbitrary integers; exact original 298 contour sites
+  // are never changed, including after reshuffling.
+  for(const n of [0,1,82,83,150,302,450,600]){
+    const sampled=context.pgWordmarkPoints(n);
+    assert.equal(sampled.length,298+n);
+    for(let i=0;i<298;i++)
+      assert.deepEqual(sampled[i],fallback[i],
+        "All traced glyph contours must remain fixed");
+  }
+  assert.deepEqual(context.pgWordmarkPoints(302),
+    context.pgWordmarkPoints(302),"Same seeded density is reproducible");
+  assert.notDeepEqual(context.pgWordmarkPoints(302,32572).slice(380,385),
+    fallback.slice(380,385),"Reshuffle changes the new pseudorandom interior sites");
+  assert.notDeepEqual(context.pgWordmarkPoints(20,32572).slice(298),
+    context.pgWordmarkPoints(20).slice(298),
+    "Reshuffle must also change low-density interior configurations");
+  assert.equal(context.pgWordmarkPoints(20,32572).length,318);
+  assert.equal(context.pgWordmarkPoints(600,32572).length,898);
+  assert.deepEqual(context.pgWordmarkPoints(82),fallback.slice(0,380),
+    "Reducing density to 82 returns exactly the original image-derived cloud");
   assert.equal(context.fallbackAlpha(scene.alpha.points.slice(0,2),-28.57142857142857).arcs.length,0);
 }
 function testBeta(){
@@ -184,10 +206,18 @@ function testUI(){
   }
   assert.ok(html.includes('src="data/pg_reference_points.js"'));
   assert.ok(html.includes("serif Pg traced from the supplied image"));
+  assert.match(html,/id="pg-interior-slider"[^>]*max="600"[^>]*value="302"/);
+  assert.match(html,/id="pg-interior-count"/);
+  assert.match(html,/id="pg-reshuffle"/);
+  assert.match(html,/id="pg-density-controls"/);
+  assert.match(fs.readFileSync(path.join(root,"site/app.js"),"utf8"), /pgInteriorCount/);
+  assert.match(css,/\.pg-density-controls\[hidden\]/);
+  assert.match(html, /id="alpha-slider"[^>]*max="8"[^>]*value="5"/);
+  assert.match(fs.readFileSync(path.join(root,"site/editor.js"),"utf8"), /habitat:1100/);
   const encoded=fs.readFileSync(path.join(root,"data/typography/pg_reference.u16.b64"),"ascii").trim();
   const mirrored=fs.readFileSync(path.join(root,"site/data/pg_reference_points.js"),"utf8");
   assert.ok(mirrored.includes(encoded),"Browser source must match archived sample");
-  assert.equal(context.pgWordmarkPoints().length,380);
+  assert.equal(context.pgWordmarkPoints().length,600);
   assert.ok(html.includes("Historical cholera death marks"));
   assert.match(html,/id="alpha-point-set"/);
   assert.match(html,/<option value="pg" selected>/);

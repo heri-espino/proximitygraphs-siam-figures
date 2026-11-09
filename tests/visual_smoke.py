@@ -69,7 +69,7 @@ def main():
         assert len(scenes["voronoi"]["points"])==13
         assert len(scenes["voronoi"]["death_marks"])==578
         assert scenes["voronoi"]["labels"][scenes["voronoi"]["historical"]["broad_street_index"]]=="Broad St"
-        assert len(scenes["alpha"]["points"])==380
+        assert len(scenes["alpha"]["points"])==600
         assert scenes["alpha"]["default_preset"]=="pg"
         assert len(scenes["alpha"]["presets"]["smiley"]["points"])==53
         assert scenes["alpha"]["options"]["28.57142857142857"]["topology"]=={"components":2,"holes":2}
@@ -141,21 +141,52 @@ def main():
         arcs=page.locator("#habitat-plot polyline").count()
         assert arcs>0
         assert page.locator("#habitat-plot circle").count()>2*arcs
-        assert page.locator("#habitat-plot circle.editable-site").count()==760
-        assert page.locator("#habitat-plot circle.editable-site[opacity]").count()==380
+        assert page.locator("#habitat-plot circle.editable-site").count()==1200
+        assert page.locator("#habitat-plot circle.editable-site[opacity]").count()==600
         assert "2 holes" in page.locator("#habitat-stat").inner_text()
+        slider=page.locator("#alpha-slider")
+        assert slider.get_attribute("max")=="8"
+        slider.fill("0")
+        assert "α = −10" in page.locator("#alpha-value").inner_text()
+        slider.fill("8")
+        assert "α = −44" in page.locator("#alpha-value").inner_text()
+        slider.fill("5")
+        assert "2 holes" in page.locator("#habitat-stat").inner_text()
+        density=page.locator("#pg-interior-slider")
+        assert density.get_attribute("min")=="0"
+        assert density.get_attribute("max")=="600"
+        assert density.input_value()=="302"
+        assert page.locator("#pg-interior-count").inner_text()=="302"
+        density.fill("0")
+        assert "298 sites" in page.locator("#habitat-stat").inner_text()
+        assert "Edited points" in page.locator("#habitat-edit-source").inner_text()
+        density.fill("420")
+        assert "718 sites" in page.locator("#habitat-stat").inner_text()
+        before=page.locator("#habitat-plot .editable-site[data-point-index='400']").last.get_attribute("cx")
+        page.locator("#pg-reshuffle").click()
+        after=page.locator("#habitat-plot .editable-site[data-point-index='400']").last.get_attribute("cx")
+        assert before!=after,"Reshuffle must produce a different random point cloud"
+        page.locator('button[data-editor-reset="habitat"]').click()
+        assert density.input_value()=="302"
+        assert "600 sites" in page.locator("#habitat-stat").inner_text()
+        assert "Original points" in page.locator("#habitat-edit-source").inner_text()
         page.locator("#habitat").screenshot(path=str(output/"03-alpha-construction.png"))
         checks.append("Pg alpha-hull and alpha-shape render two enclosed holes with circles")
         page.locator("#alpha-point-set").select_option("smiley")
         assert page.locator("#alpha-point-set").input_value()=="smiley"
         assert "53 sites" in page.locator("#habitat-stat").inner_text()
         assert "α = −8" in page.locator("#alpha-value").inner_text()
+        assert slider.get_attribute("max")=="3"
+        assert page.locator("#pg-density-controls").is_hidden()
         assert "Original points" in page.locator("#habitat-edit-source").inner_text()
         page.locator("#habitat").screenshot(path=str(output/"08-smiley-preset.png"))
         page.locator("#alpha-point-set").select_option("pg")
-        assert "380 sites" in page.locator("#habitat-stat").inner_text()
+        assert "600 sites" in page.locator("#habitat-stat").inner_text()
+        assert slider.get_attribute("max")=="8"
+        assert page.locator("#pg-density-controls").is_visible()
+        assert density.input_value()=="302"
         assert "2 holes" in page.locator("#habitat-stat").inner_text()
-        checks.append("Switching Pg ↔ smiley preserves separate alpha grids and clean editor baselines")
+        checks.append("Random interior slider, reshuffle and reset preserve originals; Pg ↔ smiley switches alpha grids")
 
         page.locator("#beta-show-blocked").click()
         detail=page.locator("#sensors-details").inner_text()
@@ -201,7 +232,7 @@ def main():
         mobile.set_content(html,wait_until="load",timeout=60000)
         mobile.screenshot(path=str(output/"06-mobile-home.png"))
         mobile.locator("#habitat").screenshot(path=str(output/"07-mobile-alpha.png"))
-        assert "380 sites" in mobile.locator("#habitat-stat").inner_text()
+        assert "600 sites" in mobile.locator("#habitat-stat").inner_text()
         assert not mobile_errors,mobile_errors
         checks.append("Desktop and mobile render without browser exceptions")
         reduced=browser.new_page(viewport={"width":1000,"height":800},

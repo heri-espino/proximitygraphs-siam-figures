@@ -168,6 +168,22 @@ Python exporter uses pinned ProximityGraphs for both presets, Figure02 reflects 
 - [Postmerge figures and GitHub Pages #42539173588](https://github.com/heri-espino/proximitygraphs-siam-figures/actions/runs/42539173588): **success**, at https://heri-espino.github.io/proximitygraphs-siam-figures/#habitat . [Postmerge Playwright #42539173559](https://github.com/heri-espino/proximitygraphs-siam-figures/actions/runs/42539173559): **success**, 13 checks and eight archived screenshots in `docs/visual-qa/`. [Article PDF #42539173490](https://github.com/heri-espino/proximitygraphs-siam-figures/actions/runs/42539173490): **success**.
 - Source-image sampling diagnostics: 380/380 emitted sites lie on image dark pixels (threshold200), original contour-to-outline-site median 4.35px, 95th percentile 8.8px. These diagnostics are specific to the attached 806×616 raster. Do not claim vector-font identity or glyph licensing. The screenshot itself was not redistributed; only point-derived text source is in the public repo. The SIAM feature is still **unsubmitted**.
 
+
+## experiment008 — Pg interior densification and wider alpha filtration (2026-11-08)
+User requested more interior points in the `#habitat` panel and a wider alpha slider. Changes on branch `feature/denser-pg-interior-wider-alpha`:
+- Immutable reference `data/typography/pg_reference.u16.b64` and browser mirror retain the original 380 sites; Python `densify_pg_strokes()` and browser `pgWordmarkPoints()` append 220 Halton (2,3) points restricted by four traced contour polygons, both counters, a new 0.025 clearance from 298 source contour points, lower-g open-slit exclusion and 0.012 site separation. Result: **600 sites** = 298 contour + 302 stroke.
+- Pg slider now has nine alpha magnitudes `[10,14,18,22,26,28.57142857142857,32,38,44]`, default index5. Smiley retains four independent settings, with slider max and value updated on preset change. Editor cap raised from 480 to 800.
+- An independent in-memory JS Delaunay prototype over the constructed coordinates found **b0=2, b1=2** at default R=.035, with zero boundary vertices of non-two degree. This is a preliminary diagnostic; verify against pinned Python/CI and browser QA before release.
+- Python, Node and Playwright assertions updated. Regenerate `site/data/scenes.json`, static figures, screenshots and article PDF through main workflows after a validated merge. Preserve experiment006 source data and historical outputs.
+- See `experiments/experiment008/README.md`. Record PR, CI, merge and deployment URLs once verified.
+
+
+**experiment008 CI diagnostic:** PR #7 first failed on a stale Python assertion that selected `ALPHAS[2]` (now alpha magnitude 18), while the new default is `ALPHAS[5]` (28.57142857142857). This explains the reported `components=1, holes=3`: it was an intentional alternate slider state, not evidence that the default failed. Fixed the assertion. Added additional 0.025 contour-site clearance as a conservative refinement; regenerate and verify all exact topology values.
+
+
+## experiment008 follow-up — interactive randomized interior-point slider (2026-11-08)
+The user requested an additional slider that controls the number of points inside the Pg glyphs and makes them random rather than evenly spaced. On the open PR #7 feature branch, `scripts/export_scenes.py` now uses a seeded 32-bit LCG (seed32571) for its 220 default extra sites, and `site/app.js` reproduces the same generator. The new slider `#pg-interior-slider` selects any **0–600** interior sites (total 298+n). The original 298 outline sites always remain; the first up to 82 original interior sites remain; above 82 the browser adds random samples inside the strokes with contour/counter/slit exclusions. `#pg-reshuffle` increments the seed. Reset returns n302, original seed; selecting smiley hides the density control. The slider debounces browser recomputations and labels nondefault cases as local JS results. Expand editor cap to1100. The earlier two successful CI runs (42548352571 and 42548352577) validated the Halton version, not this updated random-slider revision. Re-run the current PR CI and visual QA before reporting deployment.
+
 ## experiment007 — final editorial validation (2026-11-08)
 
 - Canonical feature and caption provenance updated; the SIAM News-style article is approximately 1,345 words before references, with 3 figure captions and 10 references.

@@ -7,7 +7,7 @@ import numpy as np
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "scripts"))
 from export_scenes import (ALPHAS, SMILEY_ALPHAS, BETAS, BETA, WATER, HABITAT,
-                           PG_POINTS, SMILEY_POINTS, SNOW_DEATHS, PUMP_LABELS,
+                           PG_POINTS, PG_REFERENCE_POINTS, SMILEY_POINTS, SNOW_DEATHS, PUMP_LABELS,
                            BROAD_STREET, build, cells, alpha_topology)  # noqa: E402
 
 
@@ -20,8 +20,26 @@ class GeometryTests(unittest.TestCase):
         self.assertEqual(len(WATER), 13)
         self.assertEqual(len(SNOW_DEATHS), 578)
         self.assertEqual(PUMP_LABELS[BROAD_STREET], "Broad St")
-        self.assertEqual(len(HABITAT), 380)
+        self.assertEqual(len(HABITAT), 600)
         self.assertTrue(np.array_equal(HABITAT, PG_POINTS))
+        self.assertEqual(len(PG_REFERENCE_POINTS), 380)
+        from export_scenes import PG_RANDOM_SEED, densify_pg_strokes
+        self.assertEqual(PG_RANDOM_SEED, 32571)
+        np.testing.assert_array_equal(PG_POINTS, densify_pg_strokes(PG_REFERENCE_POINTS))
+        self.assertEqual(len(densify_pg_strokes(PG_REFERENCE_POINTS, 0)), 380)
+        np.testing.assert_array_equal(PG_POINTS[:380], PG_REFERENCE_POINTS)
+        # Added sites must lie in an actual stroke, not in either counter.
+        from export_scenes import point_in_polygon
+        g_outer, g_counter = PG_REFERENCE_POINTS[:147].tolist(), PG_REFERENCE_POINTS[147:176].tolist()
+        p_outer, p_counter = PG_REFERENCE_POINTS[176:257].tolist(), PG_REFERENCE_POINTS[257:298].tolist()
+        for x,y in PG_POINTS[380:]:
+            self.assertGreaterEqual(np.min(np.hypot(PG_REFERENCE_POINTS[:298,0]-x,
+                                                      PG_REFERENCE_POINTS[:298,1]-y)), .025-1e-12)
+            self.assertTrue(
+                (point_in_polygon(x,y,g_outer) and not point_in_polygon(x,y,g_counter)) or
+                (point_in_polygon(x,y,p_outer) and not point_in_polygon(x,y,p_counter))
+            )
+            self.assertGreaterEqual(np.hypot(x-.595,y-.27),.047)
         self.assertEqual(len(SMILEY_POINTS), 53)
         self.assertEqual(len(BETA), 25)
         self.assertEqual(self.scenes["voronoi"]["labels"], PUMP_LABELS)
@@ -38,19 +56,25 @@ class GeometryTests(unittest.TestCase):
         self.assertEqual(alpha["options"], alpha["presets"]["pg"]["options"])
         self.assertEqual(alpha["presets"]["pg"]["alpha_values"], list(ALPHAS))
         self.assertEqual(alpha["presets"]["smiley"]["alpha_values"], list(SMILEY_ALPHAS))
-        self.assertEqual(len(alpha["presets"]["pg"]["points"]), 380)
+        self.assertEqual(len(alpha["presets"]["pg"]["points"]), 600)
         self.assertEqual(len(alpha["presets"]["smiley"]["points"]), 53)
-        self.assertEqual(alpha["presets"]["pg"]["default_alpha_index"], 2)
-        default = alpha["presets"]["pg"]["options"][str(ALPHAS[2])]
+        self.assertEqual(alpha["presets"]["pg"]["default_alpha_index"], 5)
+        default = alpha["presets"]["pg"]["options"][str(ALPHAS[5])]
         self.assertEqual(default["topology"], {"components": 2, "holes": 2})
         self.assertEqual(alpha_topology(default["kept_triangles"]), default["topology"])
-        # A real filtration: counters emerge as the circumradius cutoff tightens.
-        self.assertEqual(alpha["options"]["22"]["topology"]["holes"], 3)
-        self.assertEqual(alpha["options"]["26"]["topology"]["holes"], 2)
-        self.assertEqual(alpha["options"]["32"]["topology"]["holes"], 2)
-        self.assertEqual(len(alpha["presets"]["pg"]["point_roles"]), 380)
+        # The wider range must actually produce a changing filtration,
+        # independent of incidental small holes in a particular random draw.
+        low = alpha["options"]["10"]
+        high = alpha["options"]["44"]
+        self.assertEqual(low["topology"]["components"], 1)
+        self.assertGreater(len(low["kept_triangles"]), len(high["kept_triangles"]))
+        self.assertTrue(any(
+            alpha["options"][str(a)]["topology"] != default["topology"]
+            for a in ALPHAS
+        ))
+        self.assertEqual(len(alpha["presets"]["pg"]["point_roles"]), 600)
         self.assertEqual(alpha["presets"]["pg"]["point_roles"].count("outline"), 298)
-        self.assertEqual(alpha["presets"]["pg"]["point_roles"].count("stroke"), 82)
+        self.assertEqual(alpha["presets"]["pg"]["point_roles"].count("stroke"), 302)
         # Verify the four genuine loops: two outer letter contours and the
         # two counter boundaries, without a spurious closed lower-g flourish.
         boundary = default["shape_edges"]
