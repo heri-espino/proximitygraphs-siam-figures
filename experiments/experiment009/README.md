@@ -38,3 +38,11 @@ Successful [editorial PDF workflow #42553296658](https://github.com/heri-espino/
 ## Findings, boundaries, and next steps
 
 The public API has 16 named geometric/related constructors and 2 bio-inspired ones. Gamma_Graph, Beta_Skeleton and Stepping_Stone are actually implemented; a broad research motivation is not evidence that every constructor works in arbitrary dimension. Physarum/Fungal are algorithmic analogues of adaptive biological networks, not biological data or optimal-routing guarantees. The article remains a provisional SIAM News draft. Review the proof and request coauthor approval before submission; any new comparative performance claims require dedicated numerical experiments.
+
+
+## Final PDF and repository verification
+
+- Editorial PDF CI [run #42553296658](https://github.com/heri-espino/proximitygraphs-siam-figures/actions/runs/42553296658) completed **successfully** after the nested Greek character fix; the reproducible scientific figure/mathematics [run #42553296605](https://github.com/heri-espino/proximitygraphs-siam-figures/actions/runs/42553296605) also passed.
+- Downloaded the actual PDF artifact and inspected every page in a four-panel rendered image montage. Verified **4 US Letter pages**, **3 embedded images**, correct figure-to-text associations, mathematical symbols β and γ, the feature's Physarum/Fungal section on page 4, references, and the three biographies on page 4 rather than an orphan page.
+- The source draft stays within editorial length (approximately 1,300 words under the article's preflight method), with **3 figure captions and 10 bibliography entries**. Citation author identities and publication status remain unchanged.
+- No independent algorithmic performance comparison was executed; marketing claims are source/API audit and qualitative scientific examples only.

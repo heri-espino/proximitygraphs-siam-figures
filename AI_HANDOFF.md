@@ -214,3 +214,11 @@ Edited canonical article/feature.md: the geometry laboratory section now groups 
 The first PDF proof run 42553015465 failed because Greek β was nested inside bold Markdown and the legacy LaTeX renderer did not escape it. Updated tex_escape for alpha, beta and gamma inside bold/hyperlinks. Verified successful PDF build [#42553296658](https://github.com/heri-espino/proximitygraphs-siam-figures/actions/runs/42553296658) and reproducible figure/math CI [#42553296605](https://github.com/heri-espino/proximitygraphs-siam-figures/actions/runs/42553296605). The CI PDF is stored at article/output/proximitygraphs-siam-news-draft.pdf. Experiment detail in experiments/experiment009/README.md.
 
 The webpage docs supplied by the user could not be downloaded through ordinary web search, so this audit used official upstream Sphinx *source* and implementation, not unsupported claims. The project is unsubmitted to SIAM News; coauthor review and source licensing remain necessary.
+
+
+## Final PDF and repository verification
+
+- Editorial PDF CI [run #42553296658](https://github.com/heri-espino/proximitygraphs-siam-figures/actions/runs/42553296658) completed **successfully** after the nested Greek character fix; the reproducible scientific figure/mathematics [run #42553296605](https://github.com/heri-espino/proximitygraphs-siam-figures/actions/runs/42553296605) also passed.
+- Downloaded the actual PDF artifact and inspected every page in a four-panel rendered image montage. Verified **4 US Letter pages**, **3 embedded images**, correct figure-to-text associations, mathematical symbols β and γ, the feature's Physarum/Fungal section on page 4, references, and the three biographies on page 4 rather than an orphan page.
+- The source draft stays within editorial length (approximately 1,300 words under the article's preflight method), with **3 figure captions and 10 bibliography entries**. Citation author identities and publication status remain unchanged.
+- No independent algorithmic performance comparison was executed; marketing claims are source/API audit and qualitative scientific examples only.
