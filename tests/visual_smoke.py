@@ -341,7 +341,7 @@ def main():
         mobile.set_content(html,wait_until="load",timeout=60000)
         mobile.screenshot(path=str(output/"06-mobile-home.png"))
         mobile.locator("#habitat").screenshot(path=str(output/"07-mobile-alpha.png"))
-        assert "600 sites" in mobile.locator("#habitat-stat").inner_text()
+        assert "645 sites" in mobile.locator("#habitat-stat").inner_text()
         assert not mobile_errors,mobile_errors
         checks.append("Desktop and mobile render without browser exceptions")
         reduced=browser.new_page(viewport={"width":1000,"height":800},
