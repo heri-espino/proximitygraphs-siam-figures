@@ -226,6 +226,33 @@ function testShapeAndComparison(){
       "Compare-panel graph "+key+" must match authoritative library.");
   }
 }
+function testComparisonPointGenerators(){
+  assert.equal(vm.runInContext("state.comparePointSet",context),"sensors");
+  assert.equal(vm.runInContext("state.compareParameter",context),25);
+  const points=context.compareSourcePoints();
+  assert.equal(points.length,25,"Default comparison is the original sensor set");
+  // Setting these values explicitly exercises the same cached array used
+  // by left/right graph rendering, without requiring a simulated DOM.
+  vm.runInContext('state.comparePointSet="binomial";state.compareParameter=37;'+
+    'state.compareSeed=90311;state.comparePoints=stochasticPointSet("binomial",37,90311)',context);
+  const binomial=context.compareSourcePoints();
+  assert.equal(binomial.length,37);
+  assert.equal(binomial,context.compareSourcePoints(),
+    "Switching graph definitions must not regenerate the point cloud");
+  for(const key of ["delaunay","gabriel","rng","beta","alpha-shape"]){
+    const edges=context.compareGraphEdges(binomial,key);
+    assert.ok(edges.every(([i,j])=>i<37&&j<37));
+  }
+  vm.runInContext('state.comparePointSet="poisson";state.compareParameter=37;'+
+    'state.comparePoints=stochasticPointSet("poisson",37,90311)',context);
+  const poisson=context.compareSourcePoints();
+  assert.equal(poisson,context.compareSourcePoints());
+  assert.equal(poisson.length,context.stochasticPointSet("poisson",37,90311).length);
+  assert.notEqual(poisson.length,binomial.length,
+    "With the regression seed, Poisson N differs from fixed binomial n");
+  vm.runInContext('state.comparePointSet="sensors";state.comparePoints=null',context);
+  assert.equal(context.compareSourcePoints().length,25);
+}
 function testPointValidation(){
   const pts=[[.2,.2],[.5,.5]];
   assert.equal(context.validPoint(pts,[.8,.7]),true);
@@ -264,14 +291,19 @@ function testUI(){
   }
   assert.ok(html.includes('src="data/pg_reference_points.js"'));
   assert.ok(html.includes("Choose the traced"));
-  assert.match(html,/id="pg-interior-slider"[^>]*max="600"[^>]*value="302"/);
+  assert.match(html,/id="pg-interior-slider"[^>]*max="600"[^>]*value="347"/);
+  assert.equal(vm.runInContext("state.alphaValue",context),-48.65245);
+  assert.equal(vm.runInContext("state.pgInteriorCount",context),347);
+  assert.equal(context.pgWordmarkPoints(347).length,645);
+  assert.match(html,/id="alpha-circle"[^>]*type="checkbox"(?![^>]*checked)/);
+  assert.match(html,/id="alpha-all-circles"[^>]*type="checkbox" checked/);
   assert.match(html,/id="pg-interior-count"/);
   assert.match(html,/id="pg-reshuffle"/);
   assert.match(html,/id="pg-density-controls"/);
   assert.match(fs.readFileSync(path.join(root,"site/app.js"),"utf8"), /pgInteriorCount/);
   assert.match(css,/\.pg-density-controls\[hidden\]/);
   assert.match(html,/id="alpha-slider"[^>]*min="-100"[^>]*max="100"[^>]*step="any"/);
-  assert.ok(html.includes('value="-28.57142857142857"'));
+  assert.ok(html.includes('value="-48.65245"'));
   for(const name of ["pg","smiley","poisson","binomial"])
     assert.ok(html.includes('value="'+name+'"'));
   for(const id of ["smiley-interior-slider","smiley-reshuffle","process-controls",
@@ -288,6 +320,12 @@ function testUI(){
   assert.match(html,/<option value="pg" selected>/);
   assert.match(html,/<option value="smiley">/);
   assert.match(html,/id="alpha-kept" type="checkbox" checked/);
+  for(const id of ["compare-point-set","compare-process-controls",
+    "compare-process-slider","compare-parameter-title","compare-parameter-count",
+    "compare-process-definition","compare-realized","compare-reshuffle","compare-source"])
+    assert.ok(html.includes('id="'+id+'"'),"Missing comparison control "+id);
+  assert.match(html,/id="compare-process-slider"[^>]*max="80"[^>]*value="25"/);
+  assert.match(css,/\.compare-process-controls\[hidden\]/);
   assert.ok(css.includes(".point-toolbar"));
   assert.ok(css.includes(".studio"));
   assert.match(css,/--bg:\s*#faf9f7/);
@@ -315,6 +353,7 @@ testSignedAlphaAndPointProcesses();
 testBeta();
 testGeometryWitnesses();
 testShapeAndComparison();
+testComparisonPointGenerators();
 testPointValidation();
 testUI();
 console.log("Construction witnesses, alpha shape, comparison, responsive sections and link checks passed.");
