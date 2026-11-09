@@ -88,6 +88,7 @@ function pgWordmarkPoints(){
     const ink=(insidePgPolygon(x,y,gOuter)&&!insidePgPolygon(x,y,gHole))||
       (insidePgPolygon(x,y,pOuter)&&!insidePgPolygon(x,y,pHole));
     if(!ink||Math.hypot(x-.595,y-.27)<.047)continue;
+    if(base.slice(0,298).some(p=>(p[0]-x)**2+(p[1]-y)**2<.025**2))continue;
     if([...base,...extra].some(p=>(p[0]-x)**2+(p[1]-y)**2<.012**2))continue;
     extra.push([x,y]);
   }
