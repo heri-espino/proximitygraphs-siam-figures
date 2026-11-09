@@ -155,7 +155,12 @@ def main():
         slider.fill("100")
         assert "α = 100" in page.locator("#alpha-value").inner_text()
         assert "furthest-site" in page.locator("#habitat-note").inner_text()
-        slider.fill("-28.57142857142857")
+        page.evaluate("""() => {
+          const slider=document.getElementById("alpha-slider");
+          slider.value="-28.57142857142857";
+          slider.dispatchEvent(new Event("input",{bubbles:true}));
+          slider.dispatchEvent(new Event("change",{bubbles:true}));
+        }""")
         assert "2 holes" in page.locator("#habitat-stat").inner_text()
         density=page.locator("#pg-interior-slider")
         assert density.get_attribute("min")=="0"
