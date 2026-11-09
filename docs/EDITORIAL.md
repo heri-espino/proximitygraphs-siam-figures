@@ -40,3 +40,7 @@ SIAM permits videos in online articles and links in the web version. The guides 
 ## Current figure provenance (November 8, 2026)
 
 The PDF renderer must use per-figure attribution from the Markdown captions. The historical John Snow pump/death marks are digitized evidence, so never append a universal claim that *all* sites are synthetic. The image-traced Pg/smiley and relay-sensor configurations are synthetic instructional data. Both the paper's three chapter links and the new graph-comparison link must resolve. Inspect the rebuilt PDF for credits, equations, legibility, and link behavior before submission.
+
+## SIAM News official submission readiness — experiment011
+
+The comprehensive [current official guideline audit](SIAM_SUBMISSION_AUDIT.md) supersedes stale preliminary status lines elsewhere in this document. The PDF workflow now gates publication proofs on scripts/check_article.py: word count, ordered APA surname list, numbered credited captions, short bios, standalone PNG/SVG figures, software links and unsubmitted status. PDF or Word is accepted by SIAM; LaTeX is useful but an official journal template is not required. Coauthor authorization, historical digitization reproduction rights, source serif artwork rights and editor approval of interactive links remain unverified manual requirements.

@@ -177,6 +177,10 @@ The habitat control now accepts the **continuous signed alpha parameter `−100 
 
 The **Point-cloud preset** selector contains **Pg, Smiling face, homogeneous Poisson point process, and binomial point process**. Pg keeps 298 original letter outlines with a 0–600 interior-point slider; Smiley preserves its 53 original facial sites and can add 0–600 random interior points, excluding the eyes and mouth. The binomial process uses exactly `n` independent uniform points in `[0,1]²`; the homogeneous Poisson process uses `N~Poisson(λ)` independent uniform points, so the realized count can differ from the slider's intensity λ. Both processes have a reproducible seed, a new-realization button and 0–600 parameter controls. See [experiment010](experiments/experiment010/README.md) for reproducible sampling, positive-alpha limitations and tests.
 
+## SIAM News official submission readiness — experiment011
+
+The current draft is an **unsubmitted SIAM News Software and Programming feature**, not a SIAM research journal paper. Read the [official-guideline compliance audit](docs/SIAM_SUBMISSION_AUDIT.md), [unsent cover-email draft](article/submission-email.md), and [experiment011 reproduction record](experiments/experiment011/README.md). The PDF workflow runs the editorial preflight before compiling. SIAM accepts PDF or Word drafts and recommends sharing LaTeX if mathematical symbols are present; no journal class is required. Remaining manual gates: approval by all three authors, source/artwork redistribution rights, final proof, and editorial confirmation of print/online interactive-link policy.
+
 
 ## Screenshot-matched startup and stochastic comparison — experiment012
 

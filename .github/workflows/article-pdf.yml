@@ -7,6 +7,7 @@ on:
       - 'article/main.tex'
       - 'article/feature.md'
       - 'scripts/render_article.py'
+      - 'scripts/check_article.py'
       - 'site/assets/**'
       - '.github/workflows/article-pdf.yml'
   workflow_dispatch:
@@ -39,6 +40,8 @@ jobs:
           test -s site/assets/figure03-sensors.png
       - name: Render LaTeX deterministically from the canonical Markdown article
         run: python scripts/render_article.py
+      - name: Verify official SIAM News mechanical requirements
+        run: python scripts/check_article.py
       - name: Compile polished editorial PDF
         working-directory: article
         run: |
