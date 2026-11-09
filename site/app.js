@@ -14,7 +14,7 @@ const state = {
   alphaPreset:"pg",alphaValue:-28.57142857142857,alphaArc:0,
   pgInteriorCount:302,pgSeed:32571,
   smileyInteriorCount:SMILEY_DEFAULT_INTERIOR,smileySeed:SMILEY_DEFAULT_SEED,
-  processParameter:PROCESS_DEFAULT_PARAMETER,processSeed:PROCESS_DEFAULT_SEED,pgInteriorCount:302,pgSeed:32571,
+  processParameter:PROCESS_DEFAULT_PARAMETER,processSeed:PROCESS_DEFAULT_SEED,
   betaIndex:2,betaPair:null,betaInspectFirst:null
 };
 let dataset = null;
