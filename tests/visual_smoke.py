@@ -169,7 +169,7 @@ def main():
         assert page.locator("#pg-interior-count").inner_text()=="302"
         density.fill("0")
         assert "298 sites" in page.locator("#habitat-stat").inner_text()
-        assert "Edited points" in page.locator("#habitat-edit-source").inner_text()
+        assert "JavaScript" in page.locator("#habitat-edit-source").inner_text()
         density.fill("420")
         assert "718 sites" in page.locator("#habitat-stat").inner_text()
         before=page.locator("#habitat-plot .editable-site[data-point-index='400']").last.get_attribute("cx")
