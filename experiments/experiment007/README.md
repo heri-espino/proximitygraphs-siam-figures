@@ -12,13 +12,13 @@ Increase the number of points **inside the existing serif Pg glyphs**, while pre
 - The immutable source `data/typography/pg_reference.u16.b64` contains **380 normalized sites**: 298 ordered contour samples and 82 stroke samples. Browser file `site/data/pg_reference_points.js` mirrors these exact coordinates.
 - Contour ranges: `[0:147]` g exterior, `[147:176]` g counter, `[176:257]` P exterior, `[257:298]` P counter. Sample indices are preserved without modification.
 - Generate candidates from the Halton radical-inverse sequence: `x = .07 + .86 H_2(k)`, `y = .16 + .69 H_3(k)` for integers `k >= 1`, with `H_b` the base-b radical inverse.
-- Accept candidates inside a glyph exterior and outside its counter, at least **0.012** from all other sites and outside the **0.047**-radius exclusion zone centered at `(.595,.27)` that preserves the open lower-g slit.
+- Accept candidates inside a glyph exterior and outside its counter, at least **0.025** from all 298 original contour sites, at least **0.012** from every existing/new site, and outside the **0.047**-radius exclusion zone centered at `(.595,.27)` that preserves the open lower-g slit.
 - Append the first **220** accepted points. Final point count: **600 = 298 contour + 302 interior**. The original 380 sites remain exactly equal to the reference, and the added points are deterministic. Python and browser both implement this procedure; no user raster is required during ordinary builds.
 - Alpha magnitudes: `[10,14,18,22,26,28.57142857142857,32,38,44]`, where the corresponding parameter is negative, with default index **5**, `R = 1/|alpha| = .035`. The 53-point smiley keeps `[4,8,10,12]`. The slider maximum updates on preset selection. The habitat point-editor cap increases to **800**.
 
 ## Preliminary geometric results
 
-An independent in-memory JavaScript incremental triangulation of the new point set reported:
+An initial in-memory JavaScript incremental triangulation without the additional 0.025 contour clearance reported the following **exploratory, superseded** values; the pinned Python test subsequently rejected that initial sample (components=1, holes=3 at the default). The current contour-safe sample must be checked against pinned Python before any values below are used as current results:
 
 | Magnitude | Retained triangles | Components | Holes |
 | ---: | ---: | ---: | ---: |
@@ -32,7 +32,7 @@ An independent in-memory JavaScript incremental triangulation of the new point s
 | 38 | 928 | 2 | 3 |
 | 44 | 914 | 2 | 3 |
 
-At the default alpha, no boundary vertex has degree other than two. Hole count follows the planar Euler characteristic `b1 = E - V - F + b0` for the retained triangle complex. These are prototype diagnostics, **not** verification of the pinned Python library or browser deployment until CI completes.
+For the initial prototype, no boundary vertex had degree other than two. Hole count follows the planar Euler characteristic `b1 = E - V - F + b0` for the retained triangle complex. These values are retained to document the rejected configuration, not to represent the current contour-safe output. The failed initial PR CI runs were 42547749087 and 42547749124; both identified the topology mismatch. A contour clearance was added and CI must be rerun.
 
 ## Reproduction
 
