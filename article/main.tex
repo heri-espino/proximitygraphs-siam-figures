@@ -46,6 +46,32 @@ In 1969, \textbf{Gabriel and Sokal} sought a principled way to join geographical
 
 The family grew rapidly. \textbf{Edelsbrunner, Kirkpatrick, and Seidel (1983)} introduced alpha-shapes to reveal structure obscured by a convex hull. \textbf{Kirkpatrick and Radke (1985)} organized parameterized notions of point-set morphology into the $\beta$-skeleton family. \textbf{Veltkamp (1992)} went further: the two-parameter $\gamma$-neighborhood construction placed several established graphs in a wider continuum. Different rules now expressed different understandings of locality rather than competing claims to a single \emph{correct} graph.
 
+
+\section*{Why the choice of an edge matters}
+
+For generic planar samples, the classical inclusion chain is
+\[
+\mathrm{MST}\subseteq\mathrm{RNG}\subseteq\mathrm{GG}\subseteq\mathrm{Delaunay}.
+\]
+Moving right generally makes a graph denser; moving left preserves fewer candidate connections. In spatial infrastructure, that changes construction cost and travel detours (Aldous and Shun, 2010). In computer vision or microscopy, it changes which gaps and boundaries survive. Indeed, Maravillo G\'omez and colleagues (2023) used $\beta$-skeletons to recover cyclic tiling patterns and study street-like structures.
+
+Figure~2 makes scale visible. A convex hull encloses the entire letterform but fills its holes. An alpha-shape retains Delaunay triangles below a selected circumradius, producing straight segments; the related alpha-hull replaces boundary segments with circular arcs. As the scale moves, disconnected pieces and enclosed counters can appear or disappear. The geometry matters in shape reconstruction and motivates, but does not replace, topological data analysis.
+
+\pgfigure{figure02-habitat}{\textbf{Shape from points.} A synthetic 600-site \emph{Pg} point cloud demonstrates the straight alpha-shape boundary, circular alpha-hull arcs, and two enclosed counters at $\alpha\simeq-28.57$. An interactive smiley and point-density controls offer other experiments. Illustration and sampling: the authors.}{https://heri-espino.github.io/proximitygraphs-siam-figures/\#habitat}
+
+In data science, each observation may instead be a vector of gene-expression measurements or a learned image embedding. Gabriel neighborhoods have even served as an initial graph for adaptive manifold learning (Dyballa and Zucker, 2023). The general mathematics extends to $\mathbb R^d$, although the current ProximityGraphs software is strongest in the plane; not every constructor is dimension-general. Nor does a geometric neighborhood alone implement a graph neural network or a nearest-neighbor search service.
+
+\section*{A probabilistic surprise}
+
+Random points do not make the geometry arbitrary. Devroye (1988) investigated expected sizes of empty-region graphs. For a stationary Poisson process of intensity $\rho$, suppose the exclusion region of two points at separation $r$ has volume $a_K r^d$; then its emptiness probability is $e^{-\rho a_Kr^d}$. Writing $v_d$ for the volume of the unit $d$-ball yields
+\[
+\Pr(\text{edge}\mid r)=e^{-\rho a_Kr^d},\qquad
+\mathbb E[\deg]=\frac{v_d}{a_K}.
+\]
+Under these assumptions, the expected degree is \emph{independent of point intensity}: it is the geometry of the forbidden region that fixes the constant. In the plane, this gives mean degree $4$ for Gabriel graphs and about $2.56$ for RNGs. Such predictions make proximity networks experimentally testable, rather than merely visually suggestive.
+
+\pgfigure{figure03-sensors}{\textbf{Edges justified by emptiness.} Twenty-five synthetic sensor sites form two clusters joined by relays. The $\beta$-skeleton inspector reveals each pair's defining disks, their overlapping lune, and points that block an otherwise plausible edge. Illustration: the authors using ProximityGraphs.}{https://heri-espino.github.io/proximitygraphs-siam-figures/\#sensors}
+
 \renewcommand{\refname}{References}
 \begingroup
 \footnotesize
