@@ -4,10 +4,10 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#faf9f7">
-  <meta name="description" content="Interactive proximity graph laboratory: editable Voronoi and Delaunay diagrams, circular alpha-hulls, alpha-shapes, and beta-skeleton construction witnesses.">
+  <meta name="description" content="Explore Voronoi diagrams, alpha-shapes, alpha-hulls, and proximity graphs through interactive geometric constructions.">
   <meta property="og:type" content="website">
   <meta property="og:title" content="One Point Cloud, Many Graphs | ProximityGraphs Lab">
-  <meta property="og:description" content="Move points, inspect empty disks and blockers, compare alpha-shapes with alpha-hulls, and discover which geometric rules construct a graph.">
+  <meta property="og:description" content="Change the points and the rules to discover how geometric networks and boundaries take shape.">
   <meta property="og:url" content="https://heri-espino.github.io/proximitygraphs-siam-figures/">
   <title>ProximityGraphs Lab | Who Counts as a Neighbor?</title>
   <link rel="stylesheet" href="styles.css">
@@ -21,7 +21,7 @@
 <body>
   <header class="masthead">
     <div class="wrap masthead-inner">
-      <a class="brand" href="#top"><span class="mark" aria-hidden="true">Pg.</span><span>ProximityGraphs <span class="muted">/ field notes</span></span></a>
+      <a class="brand" href="#top"><span class="mark" aria-hidden="true">Pg.</span><span>ProximityGraphs <span class="muted">/ interactive geometry</span></span></a>
       <nav aria-label="Sections">
         <a href="#top">Home</a><a href="#water">Voronoi</a><a href="#habitat">Alpha</a>
         <a href="#sensors">β-skeleton</a><a href="#compare">Compare</a><a href="#about">About</a>
@@ -33,43 +33,43 @@
       <div class="hero-copy">
         <p class="eyebrow">A FIELD GUIDE TO COMPUTATIONAL GEOMETRY <span aria-hidden="true">/</span> NO. 01</p>
         <h1 id="page-title">Who counts as a <em>neighbor?</em></h1>
-        <p class="lead">The same points can form different graphs and boundaries. Change the points or the geometric rule, then inspect <em>why</em> each edge, cell, or circular arc exists.</p>
+        <p class="lead">A collection of points does not determine a single network. The rule for connecting them does. Explore how distance, empty regions, and scale shape the patterns we see.</p>
         <div class="hero-actions">
-          <a class="button primary" href="#explore">Explore the mathematics</a>
+          <a class="button primary" href="#explore">Explore the geometry</a>
           <a class="button" href="https://github.com/ProximityGraphs/ProximityGraphs" target="_blank" rel="noopener noreferrer">Source code</a>
           <a class="button" href="https://pypi.org/project/proximitygraphs/" target="_blank" rel="noopener noreferrer">Python package</a>
         </div>
-        <p class="install-hint">Install: <code>pip install proximitygraphs</code><span>MIT-licensed research software</span></p>
-        <p class="source" id="source-status" role="status">Loading authoritative ProximityGraphs data…</p>
+        <p class="install-hint">Install: <code>pip install proximitygraphs</code><span>Open-source computational geometry</span></p>
+        <p class="source" id="source-status" role="status">Preparing the interactive figures…</p>
       </div>
       <div class="hero-visual">
-        <img src="assets/figure02-habitat.png" width="760" height="640" alt="Serif Pg letterforms sampled as contour-first dots, with two genuine alpha-shape counters">
-        <span>FIG. 02 &nbsp; A GEOMETRY OF NEIGHBORHOODS</span>
+        <img src="assets/figure02-habitat.png" width="760" height="640" alt="Dotted Pg letterform with straight and curved geometric boundaries">
+        <span>FIG. 02 &nbsp; SHAPE FROM POINTS</span>
       </div>
     </section>
 
     <section id="explore" class="directory" aria-labelledby="explore-title">
-      <div class="section-kicker">INDEX / THREE CONSTRUCTIONS</div>
-      <h2 id="explore-title">Three ways to see a point cloud.</h2>
-      <p class="section-intro">Each experiment has editable points and an interactive construction inspector. The Voronoi example uses <strong>digitized historical John Snow locations</strong>; the smiley and relay network are synthetic.</p>
+      <div class="section-kicker">EXPLORE / THREE IDEAS</div>
+      <h2 id="explore-title">The geometry of connection.</h2>
+      <p class="section-intro">Begin with historical water-pump locations, reconstruct a shape from scattered points, and test which sensors become neighbors. Each example lets you explore the rule behind the result.</p>
       <div class="chapter-grid">
         <a class="chapter-card" href="#water">
-          <img loading="lazy" src="assets/figure01-water.png" alt="John Snow historical pump locations, cholera death marks, Voronoi cells and Delaunay adjacency">
+          <img loading="lazy" src="assets/figure01-water.png" alt="Historical Soho water-pump locations and cholera death marks overlaid with Voronoi regions">
           <span class="chapter-meta">01 · SPATIAL PARTITIONS</span>
           <strong>Voronoi &amp; Delaunay</strong>
-          <span>John Snow’s 1854 pump locations, cholera deaths, and nearest-site boundaries.</span>
+          <span>Discover how nearby locations divide a map into regions.</span>
         </a>
         <a class="chapter-card" href="#habitat">
-          <img loading="lazy" src="assets/figure02-habitat.png" alt="Image-traced serif Pg in dotted contours with curved alpha-hull and two holes">
+          <img loading="lazy" src="assets/figure02-habitat.png" alt="Dotted Pg letterform with an alpha-shape and a curved alpha-hull">
           <span class="chapter-meta">02 · SHAPE RECONSTRUCTION</span>
           <strong>Alpha-Hull &amp; Alpha-Shape</strong>
-          <span>Type from a real reference: outline dots, stippled strokes, two enclosed counters.</span>
+          <span>See how straight and circular boundaries recover a shape from points.</span>
         </a>
         <a class="chapter-card" href="#sensors">
-          <img loading="lazy" src="assets/figure03-sensors.png" alt="Synthetic beta-skeleton and empty lune">
+          <img loading="lazy" src="assets/figure03-sensors.png" alt="Illustrative sensor network with a beta-skeleton and empty-lune construction">
           <span class="chapter-meta">03 · EMPTY-REGION GRAPHS</span>
           <strong>β-Skeleton</strong>
-          <span>A relay corridor links two sensor clusters; inspect edge blockers.</span>
+          <span>Discover why nearby sensors connect—or fail the empty-region test.</span>
         </a>
       </div>
     </section>
@@ -78,30 +78,30 @@
       <div class="section-kicker">01 / Spatial allocation</div>
       <div class="section-heading">
         <div><h2 id="water-title">Voronoi &amp; Delaunay</h2>
-          <p class="intro">Explore <strong>John Snow’s historical Soho water pumps</strong> and the locations of cholera deaths. The pumps define Voronoi service areas; the deaths are contextual observations, never graph vertices. Reveal bisectors, triangles, and empty circumcircles.</p></div>
+          <p class="intro">In 1854, John Snow mapped water pumps and cholera deaths in London’s Soho district. Use the pump locations to explore how a <strong>Voronoi diagram</strong> divides space by proximity, and how <strong>Delaunay edges</strong> connect neighboring sites.</p></div>
         <a class="section-next" href="#habitat">Next: Alpha geometry →</a>
       </div>
       <div class="studio">
         <aside class="studio-panel" aria-label="Voronoi controls">
-          <h3>Display &amp; construction</h3>
-          <label class="control-label" for="water-view">Preset</label>
+          <h3>Show the geometry</h3>
+          <label class="control-label" for="water-view">View</label>
           <select id="water-view" class="control-select"><option value="final">Final geometry</option><option value="construction">Construction</option><option value="both" selected>Both</option></select>
           <label class="toggle"><input id="water-cells" type="checkbox" checked> Voronoi cells</label>
           <label class="toggle"><input id="water-dual" type="checkbox" checked> Delaunay edges</label>
-          <label class="toggle"><input id="water-deaths" type="checkbox" checked> Historical cholera death marks</label>
+          <label class="toggle"><input id="water-deaths" type="checkbox" checked> Cholera death locations</label>
           <label class="toggle"><input id="water-pump-label" type="checkbox" checked> Selected pump name</label>
-          <label class="toggle"><input id="water-bisectors" type="checkbox"> Selected-site bisectors</label>
+          <label class="toggle"><input id="water-bisectors" type="checkbox"> Perpendicular bisectors</label>
           <label class="toggle"><input id="water-circumcircle" type="checkbox" checked> Triangle circumcircle</label>
           <label class="toggle"><input id="water-triangles" type="checkbox"> Delaunay triangles</label>
           <button id="water-next-triangle" type="button" class="utility">Next triangle</button>
           <div class="panel-divider"></div>
-          <div class="point-toolbar" role="group" aria-label="Edit water points">
+          <div class="point-toolbar" role="group" aria-label="Edit water-pump sites">
             <span class="point-toolbar-label">Edit points</span>
             <button type="button" class="tool-mode" data-editor-scene="water" data-mode="move" aria-pressed="true">Move</button>
             <button type="button" class="tool-mode" data-editor-scene="water" data-mode="add" aria-pressed="false">+ Add</button>
             <button type="button" class="tool-mode" data-editor-scene="water" data-mode="delete" aria-pressed="false">− Delete</button>
             <button type="button" class="reset-points" data-editor-reset="water">Reset points</button>
-            <span id="water-edit-help" class="point-help" aria-live="polite">Drag a station to move it.</span>
+            <span id="water-edit-help" class="point-help" aria-live="polite">Drag a pump to change the diagram.</span>
           </div>
         </aside>
         <div class="studio-main">
@@ -109,18 +109,18 @@
             <div class="chart-top"><span>John Snow’s Soho pumps · 1854</span><span>13 PUMPS · DIGITIZED</span></div>
             <svg id="water-plot" role="img" aria-label="Interactive Voronoi cells, bisectors, Delaunay triangles and circumcircles" viewBox="0 0 640 600"></svg>
           </div>
-          <p id="water-edit-source" class="geometry-source">Loading original point set.</p>
+          <p id="water-edit-source" class="geometry-source">Loading points…</p>
           <div class="figure-actions"><span id="water-stat" class="stat" aria-live="polite"></span><button type="button" class="export" data-export="water-plot">Export SVG</button><button type="button" class="export" data-png="water-plot">Export PNG</button></div>
         </div>
         <aside class="studio-panel insight" aria-label="Voronoi computation details">
-          <h3>Computation inspector</h3>
+          <h3>Geometry explained</h3>
           <p class="insight-label">Selected station</p>
-          <p id="water-details" class="insight-result" aria-live="polite">Select a point to inspect its nearest-site cell.</p>
+          <p id="water-details" class="insight-result" aria-live="polite">Choose a pump to examine its Voronoi region.</p>
           <p class="formula">Vᵢ = { x : ‖x−pᵢ‖ ≤ ‖x−pⱼ‖ ∀j }</p>
-          <p class="insight-note" id="water-note">Every cell is the intersection of nearest-site half-planes.</p>
+          <p class="insight-note" id="water-note">A Voronoi region contains the locations closer to its pump than to any other.</p>
         </aside>
       </div>
-      <p class="context"><strong>Historically sourced coordinates:</strong> 13 water-pump locations and 578 individual cholera death marks from the digitized <a href="https://vincentarelbundock.github.io/Rdatasets/doc/HistData/Snow.pumps.html" target="_blank" rel="noopener noreferrer">HistData John Snow collection</a>. The same uniform scaling preserves the original map proportions. Stacked death marks reproduce historical map conventions; this is not a modern georeferenced GIS survey. The Voronoi diagram is a contemporary mathematical illustration, <strong>not a procedure Snow computed</strong>. Straight-line distance differs from street-network access and does not establish causation.</p>
+      <p class="context">The pump locations and cholera death marks come from <a href="https://vincentarelbundock.github.io/Rdatasets/doc/HistData/Snow.pumps.html" target="_blank" rel="noopener noreferrer">digitized historical map records</a>. The Voronoi regions are a modern mathematical overlay, not part of Snow’s original analysis. They measure straight-line proximity, not actual walking routes, water use, or disease transmission.</p>
     </section>
 
     <section id="habitat" class="exhibit" aria-labelledby="habitat-title">
@@ -195,11 +195,11 @@
             <div class="chart-top"><span id="alpha-preset-title">Pg · image-traced serif and swash</span><span>SYNTHETIC · SIGNED α</span></div>
             <svg id="habitat-plot" role="img" aria-label="Interactive circular alpha-hull, straight alpha-shape, Delaunay simplices and supporting circles" viewBox="0 0 640 600"></svg>
           </div>
-          <p id="habitat-edit-source" class="geometry-source">Loading original point set.</p>
+          <p id="habitat-edit-source" class="geometry-source">Loading points…</p>
           <div class="figure-actions"><span id="habitat-stat" class="stat" aria-live="polite"></span><button type="button" class="export" data-export="habitat-plot">Export SVG</button><button type="button" class="export" data-png="habitat-plot">Export PNG</button></div>
         </div>
         <aside class="studio-panel insight" aria-label="Alpha construction details">
-          <h3>Computation inspector</h3>
+          <h3>Geometry explained</h3>
           <p class="insight-label">Selected circular arc</p>
           <p id="habitat-details" class="insight-result" aria-live="polite">Select an arc to inspect its radius and supporting circle.</p>
           <p class="formula">R = 1 / |α|</p>
@@ -246,11 +246,11 @@
             <div class="chart-top"><span>Synthetic sensor outposts and relay corridor</span><span>OPEN LUNE · β ≥ 1</span></div>
             <svg id="sensors-plot" role="img" aria-label="Interactive beta-skeleton with candidate valid and rejected pairs and their lune blockers" viewBox="0 0 640 600"></svg>
           </div>
-          <p id="sensors-edit-source" class="geometry-source">Loading original point set.</p>
+          <p id="sensors-edit-source" class="geometry-source">Loading points…</p>
           <div class="figure-actions"><span id="sensors-stat" class="stat" aria-live="polite"></span><button type="button" class="export" data-export="sensors-plot">Export SVG</button><button type="button" class="export" data-png="sensors-plot">Export PNG</button></div>
         </div>
         <aside class="studio-panel insight" aria-label="Beta-skeleton computation details">
-          <h3>Computation inspector</h3>
+          <h3>Geometry explained</h3>
           <p class="insight-label">Selected pair</p>
           <p id="sensors-details" class="insight-result" aria-live="polite">Select a candidate to inspect its empty-region test.</p>
           <p class="formula">edge(p,q) ⇔ lune(p,q) ∩ (P\{p,q}) = ∅</p>
