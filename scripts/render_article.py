@@ -22,7 +22,7 @@ PREAMBLE = r"""% AUTO-GENERATED from article/feature.md by scripts/render_articl
 \documentclass[10pt,letterpaper]{article}
 \usepackage[T1]{fontenc}
 \usepackage[utf8]{inputenc}
-\usepackage[margin=20mm]{geometry}
+\usepackage[margin=18mm]{geometry}
 \usepackage{lmodern,microtype,graphicx,amsmath,amssymb,xcolor,parskip,hyperref,caption,float}
 \definecolor{ProxTeal}{HTML}{166B75}
 \definecolor{ProxInk}{HTML}{253C49}
@@ -34,7 +34,7 @@ PREAMBLE = r"""% AUTO-GENERATED from article/feature.md by scripts/render_articl
  justification=raggedright,singlelinecheck=false}
 \renewcommand{\familydefault}{\sfdefault}
 \setlength{\parindent}{0pt}
-\setlength{\parskip}{0.30em}
+\setlength{\parskip}{0.22em}
 \raggedbottom
 \newcommand{\featurefigure}[3]{%
 \begin{figure}[H]\centering
@@ -151,11 +151,16 @@ def make_references(source: str) -> str:
     entries = [v.strip() for v in re.split(r"\n\s*\n", refs.strip()) if v.strip()]
     if not 1 <= len(entries) <= 10:
         raise ValueError(f"SIAM News reference limit exceeded: {len(entries)}")
-    chunks = [r"\renewcommand{\refname}{References}", r"\begin{thebibliography}{10}"]
+    # The ten APA-style entries are supplementary metadata. Set them compactly
+    # so that the three biographies do not spill onto an otherwise empty page.
+    chunks = [r"\renewcommand{\refname}{References}", r"\begingroup",
+              r"\footnotesize", r"\begin{thebibliography}{10}",
+              r"\setlength{\itemsep}{1pt}", r"\setlength{\parsep}{0pt}"]
     for i, entry in enumerate(entries, 1):
         chunks.append(r"\bibitem{source" + str(i) + "} " +
                       inline_md(re.sub(r"\s*\n\s*", " ", entry)))
     chunks.append(r"\end{thebibliography}")
+    chunks.append(r"\endgroup")
     return "\n".join(chunks) + "\n"
 
 
