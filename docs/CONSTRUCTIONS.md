@@ -9,7 +9,7 @@
 
 The page is now divided into anchored sections: **Home → Voronoi/Delaunay → Alpha-Hull/Alpha-Shape → β-Skeleton → Compare → About**. Existing article deep links \`/#water\`, \`/#habitat\`, \`/#sensors\` remain stable. Internal navigation stays in the same tab; external resources open in new tabs with \`noopener noreferrer\`.
 
-Each main figure has **Move**, **Add**, **Delete**, and **Reset points** modes; the sensor plot additionally supports **Inspect pair** (click two different sites). Mouse, touch, and keyboard input are supported. The editor limits water and sensor point sets to 80 sites and alpha wordmark/smiley sets to 800 sites, normalized coordinates in \`[0,1]^2\`, and a minimum site separation of 0.008 to avoid coincident-point degeneracy.
+Each main figure has **Move**, **Add**, **Delete**, and **Reset points** modes; the sensor plot additionally supports **Inspect pair** (click two different sites). Mouse, touch, and keyboard input are supported. The editor limits water and sensor point sets to 80 sites and alpha wordmark/smiley sets to 1100 sites, normalized coordinates in \`[0,1]^2\`, and a minimum site separation of 0.008 to avoid coincident-point degeneracy.
 
 Each main figure includes **Final**, **Construction**, and **Both** display presets and can export the *currently displayed state* as SVG or PNG. Exporting a browser-edited scene does **not** turn that scene into an authoritative Python-library calculation.
 
