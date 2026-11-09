@@ -203,5 +203,26 @@ The user requested an additional slider that controls the number of points insid
 - Reproduce with `python scripts/export_scenes.py`, `python -m unittest discover -s tests -v`, `node tests/test_editor.js`, `python tests/visual_smoke.py --output docs/visual-qa` (after pinned dependencies). See `experiments/experiment008/README.md` for source, defaults and limitations.
 
 
+## experiment009 completed — graph-family audit and scientific software positioning (2026-11-08)
+
+The user requested a richer SIAM News pitch for ProximityGraphs, with verified γ-neighborhoods, β-skeletons, stepping-stone graphs, RNG, Gabriel and a distinct bio-inspired module. They explicitly preferred not listing every constructor in the public article.
+
+Inspected the official ProximityGraphs repository at source commit d1a216d7255cbebea68dcaad6a97382168a3ec55 (library exported API, gamma/beta/stepping constructors, bio-inspired Physarum/Fungal source, Sphinx source, README and package metadata). Verified 16 public named geometric/related constructors plus 2 bio-inspired constructors. Recorded all names, implementation paths, math meaning, API scope and caveats in docs/IMPLEMENTED_FAMILIES.md.
+
+Edited canonical article/feature.md: the geometry laboratory section now groups graph families by applications instead of an API catalogue; emphasizes implemented γ, β, stepping-stone and elliptic variants; describes Physarum flow reinforcement and fungal-network growth/pruning accurately; explains SetPoints / Experiment for reproducible comparison. Trimmed other paragraphs to retain the SIAM word limit and kept the same 3 figures, 10 references and stochastic degree identity. Updated article/pitch.md, README, marketing kit and docs audit; no figures, point-set sources or browser implementations were changed.
+
+The first PDF proof run 42553015465 failed because Greek β was nested inside bold Markdown and the legacy LaTeX renderer did not escape it. Updated tex_escape for alpha, beta and gamma inside bold/hyperlinks. Verified successful PDF build [#42553296658](https://github.com/heri-espino/proximitygraphs-siam-figures/actions/runs/42553296658) and reproducible figure/math CI [#42553296605](https://github.com/heri-espino/proximitygraphs-siam-figures/actions/runs/42553296605). The CI PDF is stored at article/output/proximitygraphs-siam-news-draft.pdf. Experiment detail in experiments/experiment009/README.md.
+
+The webpage docs supplied by the user could not be downloaded through ordinary web search, so this audit used official upstream Sphinx *source* and implementation, not unsupported claims. The project is unsubmitted to SIAM News; coauthor review and source licensing remain necessary.
+
+
+## Final PDF and repository verification
+
+- Editorial PDF CI [run #42553296658](https://github.com/heri-espino/proximitygraphs-siam-figures/actions/runs/42553296658) completed **successfully** after the nested Greek character fix; the reproducible scientific figure/mathematics [run #42553296605](https://github.com/heri-espino/proximitygraphs-siam-figures/actions/runs/42553296605) also passed.
+- Downloaded the actual PDF artifact and inspected every page in a four-panel rendered image montage. Verified **4 US Letter pages**, **3 embedded images**, correct figure-to-text associations, mathematical symbols β and γ, the feature's Physarum/Fungal section on page 4, references, and the three biographies on page 4 rather than an orphan page.
+- The source draft stays within editorial length (approximately 1,300 words under the article's preflight method), with **3 figure captions and 10 bibliography entries**. Citation author identities and publication status remain unchanged.
+- No independent algorithmic performance comparison was executed; marketing claims are source/API audit and qualitative scientific examples only.
+
+
 ## experiment010 — Signed alpha and stochastic point-set presets (2026-11-08)
 Requested in `#habitat`: signed α slider −100..+100, random points also inside the original smiling face, and two additional point-cloud selector presets for homogeneous Poisson and binomial point processes. Branch `feature/alpha-signed-smiley-poisson-binomial` includes independent JS `site/point-processes.js`, signed α helpers in `site/geometry-details.js` and habitat UI in `site/app.js`/`index.html`. User-intent mathematical semantics: α negative ordinary Delaunay/exterior arcs; α positive furthest-site Delaunay/interior arcs; α0 convex hull. Pg default α=-28.57142857142857 and the source 600 points remain unchanged. Smiley base53 now has optional 0–600 random interior additions avoiding eyes/mouth; default120. PPP draws N~Poisson(λ) via exponential interarrivals, Binomial has exactly N=n, positions iid uniform in unit square; seed and resample controls are independent. Arbitrary signed α and new random presets are independent browser JS, not ProximityGraphs library outputs. Reproduction and limits: `experiments/experiment010/README.md`. Pending: verify CI, visual screenshots, PR and merge authorization. Leave concurrent editorial PDF and Snow historical data untouched.

@@ -104,6 +104,15 @@ Preserve both untouched source CSVs at `data/historical/`, the exact common aspe
 - Pg editor cap 1100. At default n=302 and alpha magnitude28.57142857142857, pinned-library topology must remain 2 connected components and 2 holes with 4 simple boundary loops. Nondefault counts/seeds may have different topology. Test 0,82,302,600 counts, reload and reset, reshuffle and smiley switching. Regenerate scenes, figures, QA and PDF after CI passes.
 
 
+## experiment009 — Verified graph-family breadth and bio-inspired algorithms
+
+The source-backed constructor inventory at docs/IMPLEMENTED_FAMILIES.md was checked against the pinned ProximityGraphs upstream commit d1a216d7255cbebea68dcaad6a97382168a3ec55. Its public root exports 16 named geometric/proximity graph or diagram constructors (excluding the base ProximityGraph) and two separately bio-inspired models, PhysarumGraph and FungalGraph.
+
+In SIAM News, name representative classes in connected prose and relate them to modeling changes; do not reproduce all names in a column. Gamma_Graph, Beta_Skeleton, Stepping_Stone, and Elliptic_GabrielG are real exported classes, not proposed future features. The biological module is heuristic; simulated flow conductivities and constructive fungal growth do not establish biological fidelity or guaranteed optimal networks. Most algorithms remain planar; only claim higher-dimensional support for specifically tested constructors.
+
+Canonical manuscript source: article/feature.md. The article proof must compile with bold Greek β/γ; scripts/render_article.py now escapes Greek letters in linked/bold text. The CI workflow regenerates and commits the LaTeX and PDF. Keep 3 credited figures, <=10 references and 800–1400 words. Always preserve the historical Snow data, optional smiley and 600-site Pg, original figures and prior experiment records.
+
+
 ## experiment010 — Signed alpha and Poisson/binomial presets
 - Respect the **pinned source library's sign convention**: α < 0 ordinary Delaunay and exterior arcs; α > 0 furthest-site Delaunay and interior arcs; α = 0 convex hull, R→∞ and no finite circular arcs. Browser range is −100 through +100 with `step=any` to retain exact default α = −28.57142857142857. Keep legacy Python scene exports intact and label all other signed α as independent JS results. The JS farthest-site witness enumerates candidate triangles from hull vertices, checking that their circumcircle encloses all hull sites; document its degeneracy limitations.
 - Preserve all original 380 Pg reference sites and 53 Smiley features. Smiley sampling adds 0–600 seeded random sites inside the facial outline but not within its eyes or close to its mouth; this conditional sampler is not a PPP. Default Smiley extra count120, seed64017. Pg original default remains 600 sites, 2 components and 2 holes at α≈−28.571.

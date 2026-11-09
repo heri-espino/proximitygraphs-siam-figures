@@ -66,6 +66,10 @@ def tex_escape(value: str) -> str:
     substitutions = {
         "\\": r"\textbackslash{}", "&": r"\&", "%": r"\%",
         "#": r"\#", "_": r"\_", "{": r"\{", "}": r"\}",
+        # Handle Greek letters even *inside* bold or linked text: those spans
+        # are escaped before the regular inline-math substitution stage.
+        "α": r"\ensuremath{\alpha}", "β": r"\ensuremath{\beta}",
+        "γ": r"\ensuremath{\gamma}",
         "$": r"\$", "~": r"\textasciitilde{}",
         "^": r"\textasciicircum{}", "—": "---", "–": "--",
     }
