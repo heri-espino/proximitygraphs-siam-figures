@@ -9,8 +9,8 @@ const fs=require("node:fs");
 const path=require("node:path");
 const vm=require("node:vm");
 const root=path.resolve(__dirname,"..");
-const context=vm.createContext({console});
-for(const file of ["site/editor.js","site/geometry-details.js","site/app.js"]){
+const context=vm.createContext({console,atob});
+for(const file of ["site/editor.js","site/geometry-details.js","site/data/pg_reference_points.js","site/app.js"]){
   vm.runInContext(fs.readFileSync(path.join(root,file),"utf8"),context,{filename:file});
 }
 const scene=JSON.parse(fs.readFileSync(path.join(root,"site/data/scenes.json"),"utf8"));
@@ -23,17 +23,19 @@ function testHistoricalAndSyntheticDefaults(){
   assert.equal(v.points.length,13);
   assert.equal(v.death_marks.length,578);
   assert.equal(v.labels[v.historical.broad_street_index],"Broad St");
-  assert.equal(scene.alpha.points.length,111);
+  assert.equal(scene.alpha.points.length,380);
   assert.equal(scene.alpha.default_preset,"pg");
-  assert.equal(scene.alpha.description,"synthetic Pg wordmark with one enclosed hole per letter");
-  assert.equal(scene.alpha.presets.pg.points.length,111);
+  assert.equal(scene.alpha.description,"image-traced serif Pg wordmark with two enclosed counters");
+  assert.equal(scene.alpha.presets.pg.points.length,380);
   assert.equal(scene.alpha.presets.smiley.points.length,53);
   assert.equal(scene.alpha.presets.smiley.description,"synthetic smiling face");
   assert.deepEqual(Object.keys(scene.alpha.presets).sort(),["pg","smiley"]);
-  assert.deepEqual(Array.from(vm.runInContext("alphaValues",context)),[8,11,14,18]);
+  assert.deepEqual(Array.from(vm.runInContext("alphaValues",context)),[22,26,28.57142857142857,32]);
   assert.deepEqual(Array.from(vm.runInContext("smileyAlphaValues",context)),[4,8,10,12]);
-  assert.equal(scene.alpha.options["14"].topology.holes,2);
-  assert.equal(scene.alpha.options["14"].topology.components,1);
+  assert.equal(scene.alpha.options["28.57142857142857"].topology.holes,2);
+  assert.equal(scene.alpha.options["28.57142857142857"].topology.components,2);
+  assert.equal(scene.alpha.presets.pg.point_roles.filter(x=>x==="outline").length,298);
+  assert.equal(scene.alpha.presets.pg.point_roles.filter(x=>x==="stroke").length,82);
   assert.equal(scene.beta.points.length,25);
   assert.equal(scene.beta.description,"synthetic relay-corridor sensor network");
   const transform=v.historical.normalization;
@@ -70,12 +72,12 @@ function testAlpha(){
     }
   }
   const fallback=context.pgWordmarkPoints();
-  assert.equal(fallback.length,111);
+  assert.equal(fallback.length,380);
   for(let i=0;i<fallback.length;i++)
     for(let j=0;j<2;j++)
       assert.ok(Math.abs(fallback[i][j]-scene.alpha.points[i][j])<1e-8,
         "Browser Pg generator must match the Python reference coordinates");
-  assert.equal(context.fallbackAlpha(scene.alpha.points.slice(0,2),-14).arcs.length,0);
+  assert.equal(context.fallbackAlpha(scene.alpha.points.slice(0,2),-28.57142857142857).arcs.length,0);
 }
 function testBeta(){
   for(const beta of [1,1.25,1.5,1.75,2]){
@@ -134,9 +136,9 @@ function testShapeAndComparison(){
       assert.equal(context.allAlphaCircles(exported.arcs).length,exported.arcs.length);
     }
   }
-  assert.equal(scene.alpha.presets.pg.options["8"].topology.holes,0);
-  assert.equal(scene.alpha.presets.pg.options["11"].topology.holes,1);
-  assert.equal(scene.alpha.presets.pg.options["14"].topology.holes,2);
+  assert.equal(scene.alpha.presets.pg.options["22"].topology.holes,3);
+  assert.equal(scene.alpha.presets.pg.options["26"].topology.holes,2);
+  assert.equal(scene.alpha.presets.pg.options["28.57142857142857"].topology.holes,2);
   const sample=scene.compare.points;
   for(const key of ["delaunay","gabriel","rng","beta","alpha-shape"]){
     assertEdgeSets(context.compareGraphEdges(sample,key),
@@ -180,6 +182,12 @@ function testUI(){
   for(const id of ["water-deaths","water-pump-label"]){
     assert.match(html,new RegExp('id="'+id+'"'),"Missing historical layer control "+id);
   }
+  assert.ok(html.includes('src="data/pg_reference_points.js"'));
+  assert.ok(html.includes("serif Pg traced from the supplied image"));
+  const encoded=fs.readFileSync(path.join(root,"data/typography/pg_reference.u16.b64"),"ascii").trim();
+  const mirrored=fs.readFileSync(path.join(root,"site/data/pg_reference_points.js"),"utf8");
+  assert.ok(mirrored.includes(encoded),"Browser source must match archived sample");
+  assert.equal(context.pgWordmarkPoints().length,380);
   assert.ok(html.includes("Historical cholera death marks"));
   assert.match(html,/id="alpha-point-set"/);
   assert.match(html,/<option value="pg" selected>/);
