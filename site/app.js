@@ -129,8 +129,8 @@ function presetPointSet(){
       pgWordmarkPoints(state.pgInteriorCount,state.pgSeed);
   }
   if(state.alphaPreset==="smiley")
-    return smileyWithInteriorPoints(smileyPoints,state.smileyInteriorCount,
-      state.smileySeed);
+    return smileyWithInteriorPoints(currentAlphaSource()?.points||smileyPoints,
+      state.smileyInteriorCount,state.smileySeed);
   return stochasticPointSet(state.alphaPreset,state.processParameter,
     state.processSeed);
 }
