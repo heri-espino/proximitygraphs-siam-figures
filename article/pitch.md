@@ -3,7 +3,7 @@
 **Section:** Software and Programming  
 **Title:** Who Counts as a Neighbor?  
 **Subtitle:** From Empty Regions to AI, Topology, and Stochastic Geometry  
-**Proposed authors, pending approval:** Héctor Maravillo (Universidad Autónoma Metropolitana, Mexico); Diego Villarreal de la Cerda (T-Systems); Heriberto Espino-Montelongo (Universidad de las Américas Puebla)
+**Proposed authors, collective approval pending:** Heriberto Espino-Montelongo (Universidad de las Américas Puebla; first author); Héctor Maravillo (Universidad Autónoma Metropolitana, Mexico; second author); Diego Villarreal de la Cerda (T-Systems; third author)
 
 A cloud of points has no edges until we define a neighborhood. That choice affects service-area partitions, transport-network detours, manifold geometry, topological holes, and which observations can exchange information in machine learning. The open-source Python library **ProximityGraphs** makes these alternatives comparable on the same coordinates.
 
