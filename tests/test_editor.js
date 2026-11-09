@@ -323,7 +323,7 @@ function testUI(){
   assert.ok(html.includes("Pg letterform"));
   assert.ok(html.includes("digitized historical map records"));
   assert.ok(html.includes("They measure straight-line proximity"));
-  assert.ok(html.includes("the number itself vary"));
+  assert.ok(html.includes("whose number of sites varies randomly"));
   assert.ok(html.includes("Poisson process"));
   assert.ok(html.includes("Binomial process"));
   assert.match(fs.readFileSync(path.join(root,"site/editor.js"),"utf8"), /habitat:1100/);
