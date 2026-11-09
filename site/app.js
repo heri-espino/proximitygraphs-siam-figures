@@ -346,49 +346,57 @@ function betaEdges(points,beta){
 function signedArea(pts){
   return pts.reduce(function(s,p,i){const q=pts[(i+1)%pts.length];return s+p[0]*q[1]-p[1]*q[0];},0)/2;
 }
-function curveBetween(p,q,r,orientation){
+function curveBetween(p,q,r,orientation,alpha){
   const d=dist(p,q);if(d>2*r||d===0)return [p,q];
-  const m=[(p[0]+q[0])/2,(p[1]+q[1])/2],h=Math.sqrt(Math.max(0,r*r-d*d/4));
+  const m=[(p[0]+q[0])/2,(p[1]+q[1])/2];
+  const h=Math.sqrt(Math.max(0,r*r-d*d/4));
   const normal=[-(q[1]-p[1])/d,(q[0]-p[0])/d];
-  // Library chooses the exterior center with smaller side for positive cycle orientation.
-  const c=[m[0]-(orientation>0?1:-1)*h*normal[0],m[1]-(orientation>0?1:-1)*h*normal[1]];
-  let a=Math.atan2(p[1]-c[1],p[0]-c[0]);
+  // Pinned library: negative alpha chooses exterior circle centers;
+  // positive alpha chooses interior centers based on boundary orientation.
+  const side=(orientation>0?1:-1)*(alpha>0?1:-1);
+  const c=[m[0]+side*h*normal[0],m[1]+side*h*normal[1]];
+  const a=Math.atan2(p[1]-c[1],p[0]-c[0]);
   let delta=Math.atan2(q[1]-c[1],q[0]-c[0])-a;
-  while(delta>Math.PI)delta-=2*Math.PI;while(delta< -Math.PI)delta+=2*Math.PI;
-  return Array.from({length:32},function(_,k){const t=a+delta*k/31;return [c[0]+r*Math.cos(t),c[1]+r*Math.sin(t)];});
+  while(delta>Math.PI)delta-=2*Math.PI;
+  while(delta< -Math.PI)delta+=2*Math.PI;
+  return Array.from({length:32},(_,k)=>{
+    const t=a+delta*k/31;
+    return [c[0]+r*Math.cos(t),c[1]+r*Math.sin(t)];
+  });
 }
 function fallbackAlpha(points,alpha,triangles){
-  const tris=(triangles||delaunayTriangles(points)).filter(function(t){return t.r<=1/Math.abs(alpha)+1e-9;});
-  const counts=new Map(), pairs=new Map();
-  tris.forEach(function(t){
-    [[0,1],[1,2],[2,0]].forEach(function(ab){
-      const i=t.vertices[ab[0]],j=t.vertices[ab[1]],key=edgeKey(i,j);
-      counts.set(key,(counts.get(key)||0)+1);
-      pairs.set(key,[Math.min(i,j),Math.max(i,j)]);
-    });
-  });
-  const boundaries=Array.from(counts.keys()).filter(function(k){return counts.get(k)===1;}).map(function(k){return pairs.get(k);});
-  if(!boundaries.length)return {arcs:[],segments:[]};
+  const filtered=alphaSimplices(points,alpha,triangles);
+  const boundaries=filtered.boundary;
+  // The exact alpha=0 limit is the convex hull with straight edges,
+  // not a circle of infinite radius.
+  if(alpha===0||!boundaries.length)return {arcs:[],segments:boundaries};
   const neighbors=new Map();
-  boundaries.forEach(function(edge){edge.forEach(function(i,t){if(!neighbors.has(i))neighbors.set(i,[]);neighbors.get(i).push(edge[1-t]);});});
+  for(const [i,j] of boundaries){
+    if(!neighbors.has(i))neighbors.set(i,[]);
+    if(!neighbors.has(j))neighbors.set(j,[]);
+    neighbors.get(i).push(j);neighbors.get(j).push(i);
+  }
   const visited=new Set(),arcs=[];
-  boundaries.forEach(function(edge){
-    if(visited.has(edgeKey(edge[0],edge[1])))return;
-    const cycle=[edge[0]],start=edge[0];let previous=-1,current=start;
+  for(const edge of boundaries){
+    if(visited.has(edgeKey(edge[0],edge[1])))continue;
+    const cycle=[edge[0]],start=edge[0];
+    let previous=-1,current=start;
     for(let tries=0;tries<=boundaries.length+1;tries++){
-      const next=(neighbors.get(current)||[]).find(function(q){return q!==previous&&!visited.has(edgeKey(current,q));});
+      const next=(neighbors.get(current)||[]).find(q=>
+        q!==previous&&!visited.has(edgeKey(current,q)));
       if(next==null)break;
       visited.add(edgeKey(current,next));previous=current;current=next;
-      if(current===start)break;cycle.push(current);
+      if(current===start)break;
+      cycle.push(current);
     }
-    if(cycle.length<3||current!==start)return;
-    const area=signedArea(cycle.map(function(i){return points[i];}));
+    if(cycle.length<3||current!==start)continue;
+    const area=signedArea(cycle.map(i=>points[i]));
     for(let k=0;k<cycle.length;k++){
       const i=cycle[k],j=cycle[(k+1)%cycle.length];
-      arcs.push(curveBetween(points[i],points[j],1/Math.abs(alpha),area));
+      arcs.push(curveBetween(points[i],points[j],1/Math.abs(alpha),area,alpha));
     }
-  });
-  return {arcs:arcs,segments:boundaries};
+  }
+  return {arcs,segments:boundaries};
 }
 function arcCircle(arc){
   if(!arc||arc.length<3)return null;
