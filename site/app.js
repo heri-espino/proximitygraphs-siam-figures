@@ -78,9 +78,11 @@ function pgWordmarkPoints(interiorCount=PG_DEFAULT_INTERIOR, seed=PG_RANDOM_SEED
   // Varying the density never changes the 298 authentic source contours.
   const target=Math.max(0,Math.min(PG_MAX_INTERIOR,Math.round(interiorCount)));
   const base=rasterPgPoints.map(p=>p.slice());
-  const originalInterior=Math.min(82,target);
+  // Keep original ink sites at the reference seed. Any reshuffle generates
+  // a fresh set even when the requested density is below 82.
+  const originalInterior=(seed>>>0)===PG_RANDOM_SEED?Math.min(82,target):0;
   const chosen=base.slice(0,298+originalInterior);
-  if(target<=82)return chosen;
+  if(target===originalInterior)return chosen;
   const [gOuter,gHole,pOuter,pHole]=[
     base.slice(0,147),base.slice(147,176),
     base.slice(176,257),base.slice(257,298)
