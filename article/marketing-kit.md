@@ -4,7 +4,7 @@
 
 ## One-sentence positioning
 
-**ProximityGraphs is an open-source Python toolkit for constructing, comparing, and exploring how different geometric definitions of neighborhood change the structure of a network.**
+**ProximityGraphs is an open-source Python laboratory for comparing geometric neighborhood models and bio-inspired network heuristics on the same point set.**
 
 ## Alternative headlines
 
@@ -16,8 +16,9 @@
 
 - Published on PyPI as `proximitygraphs`; install with `pip install proximitygraphs`.
 - MIT-licensed Python source with explicit citation metadata and public repository.
-- Construct classical models including Delaunay, Gabriel, relative neighborhood, beta-skeleton, alpha-shape, circular alpha-hull, and other geometric graphs.
-- Point-set handling, visualization, repeated experiment helpers, and optional GIS integration.
+- Audited public API: 16 named geometric or proximity graph and diagram constructors, from Voronoi, Delaunay, Gabriel, RNG and alpha boundaries to gamma-neighborhood, beta-skeleton, stepping-stone and elliptic-Gabriel models. Full source-level inventory: [IMPLEMENTED_FAMILIES](../docs/IMPLEMENTED_FAMILIES.md).
+- Two separate bio-inspired public constructors: PhysarumGraph uses simulated flow reinforcement; FungalGraph grows and prunes candidate connections using a constructive heuristic. Neither is a validated organism simulation or guaranteed optimal network.
+- Point-set handling, seeded simulations, graph metrics, repeated experiments, visualization, and optional GIS integration.
 - Reproducible three-figure companion using library-exported default geometry; user-edited scenes use independent, clearly labeled browser recomputation.
 
 **Important caveat:** PyPI currently labels the package as a pre-release. Do not describe it as fully production-hardened or claim verified speed advantages.
@@ -84,3 +85,10 @@ The website now displays **digitized John Snow pump positions (13) and cholera d
 
 
 **Image-traced Pg update (November 8, 2026):** The current alpha default samples the genuine outer contours of a supplied serif P and ornamental g as **380 normalized points** (298 contour, 82 subtle randomized stroke points); the original 53-point smiley remains optional. At its default scale the true alpha-shape has two bounded counters, and the open g descender does not become a third hole. These are synthetic geometry illustrations, not validated design software or historical observations.
+
+
+## experiment009 current positioning — November 8, 2026
+
+The upstream package exports sixteen named geometric graph and diagram constructors and two bio-inspired algorithmic network builders, documented in [the pinned API audit](../docs/IMPLEMENTED_FAMILIES.md). For SIAM News, show **several modeling choices**, not an alphabetical API list: proximity and sparse adjacency, exclusion-region shapes, scale-dependent boundaries and adaptive transport heuristics. Readers can compare these models on one point set with the same Python experiment interface. Never claim all algorithms work in every dimension, biological fidelity, guaranteed shortest paths or operational deployment validation.
+
+**Current visualization provenance:** the default Pg wordmark contains 600 sites (298 original contours, 302 interior including 220 seeded-random sites); the 53-point smiley is an alternate preset. The John Snow pump and cholera marks are digitized historical data; the sensor network is synthetic. Earlier notes above describe prior editorial stages; these counts supersede them.
