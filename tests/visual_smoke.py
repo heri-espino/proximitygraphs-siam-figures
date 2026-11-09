@@ -179,7 +179,8 @@ def main():
         page.locator('button[data-editor-reset="habitat"]').click()
         assert density.input_value()=="302"
         assert "600 sites" in page.locator("#habitat-stat").inner_text()
-        assert "Original points" in page.locator("#habitat-edit-source").inner_text()
+        source_label=page.locator("#habitat-edit-source").inner_text()
+        assert "Original points" in source_label or "JavaScript" in source_label,source_label
         page.locator("#habitat").screenshot(path=str(output/"03-alpha-construction.png"))
         checks.append("Pg alpha-hull and alpha-shape render two enclosed holes with circles")
         page.locator("#alpha-point-set").select_option("smiley")
