@@ -9,7 +9,8 @@
     "Scrolling is static; navigation clicks animate only the chosen section",
     "Voronoi bisectors, circumcircle and Delaunay triangulation render",
     "Pg alpha-hull and alpha-shape render two enclosed holes with circles",
-    "Random interior slider, reshuffle and reset preserve originals; Pg ↔ smiley switches alpha grids",
+    "Signed alpha −100..100 including convex hull at zero and furthest-site positive alpha",
+    "Pg/Smiley interior point sliders preserve contours, and PPP/BPP sampling updates observed counts",
     "Rejected beta candidate exposes blocking points and both disks",
     "Pair inspection and pointer dragging update source provenance",
     "Same-site graph comparison reacts to selections and edits",
@@ -26,6 +27,8 @@
     "05-comparison.png",
     "06-mobile-home.png",
     "07-mobile-alpha.png",
-    "08-smiley-preset.png"
+    "08-smiley-preset.png",
+    "09-poisson.png",
+    "10-binomial.png"
   ]
 }
