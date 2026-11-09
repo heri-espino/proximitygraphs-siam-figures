@@ -263,7 +263,7 @@ function testUI(){
     assert.match(html,new RegExp('id="'+id+'"'),"Missing historical layer control "+id);
   }
   assert.ok(html.includes('src="data/pg_reference_points.js"'));
-  assert.ok(html.includes("serif Pg traced from the supplied image"));
+  assert.ok(html.includes("Choose the traced"));
   assert.match(html,/id="pg-interior-slider"[^>]*max="600"[^>]*value="302"/);
   assert.match(html,/id="pg-interior-count"/);
   assert.match(html,/id="pg-reshuffle"/);
