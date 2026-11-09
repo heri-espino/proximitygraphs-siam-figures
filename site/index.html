@@ -41,7 +41,7 @@
         <p class="source" id="source-status" role="status">Loading authoritative ProximityGraphs data…</p>
       </div>
       <div class="hero-visual">
-        <img src="assets/figure02-habitat.png" width="760" height="640" alt="Pg point-cloud wordmark with two enclosed alpha-shape counters">
+        <img src="assets/figure02-habitat.png" width="760" height="640" alt="Serif Pg letterforms sampled as contour-first dots, with two genuine alpha-shape counters">
         <span>FIG. 02 &nbsp; A GEOMETRY OF NEIGHBORHOODS</span>
       </div>
     </section>
@@ -58,10 +58,10 @@
           <span>John Snow’s 1854 pump locations, cholera deaths, and nearest-site boundaries.</span>
         </a>
         <a class="chapter-card" href="#habitat">
-          <img loading="lazy" src="assets/figure02-habitat.png" alt="Pg wordmark represented by an alpha-shape with two holes and curved alpha-hull arcs">
+          <img loading="lazy" src="assets/figure02-habitat.png" alt="Image-traced serif Pg in dotted contours with curved alpha-hull and two holes">
           <span class="chapter-meta">02 · SHAPE RECONSTRUCTION</span>
           <strong>Alpha-Hull &amp; Alpha-Shape</strong>
-          <span>Pg drawn as points, with two enclosed holes; original smiley remains available.</span>
+          <span>Type from a real reference: outline dots, stippled strokes, two enclosed counters.</span>
         </a>
         <a class="chapter-card" href="#sensors">
           <img loading="lazy" src="assets/figure03-sensors.png" alt="Synthetic beta-skeleton and empty lune">
@@ -125,7 +125,7 @@
       <div class="section-kicker">02 / Geometric morphology</div>
       <div class="section-heading">
         <div><h2 id="habitat-title">Alpha-Hull &amp; Alpha-Shape</h2>
-          <p class="intro">A point cloud spells <strong>Pg</strong>. The straight-edge alpha-shape reveals two closed internal holes—one in each letter—while the related alpha-hull follows circular arcs. Switch to the original smiley at any time.</p></div>
+          <p class="intro">A <strong>serif Pg traced from the supplied image</strong> becomes a stippled point cloud. Contour sites preserve the font’s outer edges, tapered strokes and descending flourish; lighter interior dots suggest its weight. The alpha-shape retains two enclosed counters, and the original smiley remains selectable.</p></div>
         <a class="section-next" href="#sensors">Next: Empty regions →</a>
       </div>
       <div class="studio">
@@ -133,12 +133,12 @@
           <h3>Layers &amp; scale</h3>
           <label class="control-label" for="alpha-point-set">Point-cloud preset</label>
           <select id="alpha-point-set" class="control-select">
-            <option value="pg" selected>Pg · two enclosed holes</option>
+            <option value="pg" selected>Pg · serif image sampling</option>
             <option value="smiley">Smiling face · original</option>
           </select>
           <label class="control-label" for="alpha-view">Construction view</label>
           <select id="alpha-view" class="control-select"><option value="final">Final comparison</option><option value="construction">Construction</option><option value="both" selected>Both</option></select>
-          <label class="control-label" for="alpha-slider">Curvature scale <strong id="alpha-value">α = −14</strong></label>
+          <label class="control-label" for="alpha-slider">Curvature scale <strong id="alpha-value">α = −28.571</strong></label>
           <input id="alpha-slider" type="range" min="0" max="3" step="1" value="2">
           <label class="toggle"><input id="alpha-hull" type="checkbox" checked> Alpha-hull · circular arcs</label>
           <label class="toggle"><input id="alpha-shape" type="checkbox" checked> Alpha-shape · straight edges</label>
@@ -159,7 +159,7 @@
         </aside>
         <div class="studio-main">
           <div class="chart-frame">
-            <div class="chart-top"><span id="alpha-preset-title">Pg · two closed counters</span><span>SYNTHETIC · NEGATIVE α</span></div>
+            <div class="chart-top"><span id="alpha-preset-title">Pg · image-traced serif and swash</span><span>SYNTHETIC · NEGATIVE α</span></div>
             <svg id="habitat-plot" role="img" aria-label="Interactive circular alpha-hull, straight alpha-shape, Delaunay simplices and supporting circles" viewBox="0 0 640 600"></svg>
           </div>
           <p id="habitat-edit-source" class="geometry-source">Loading original point set.</p>
@@ -173,7 +173,7 @@
           <p class="insight-note" id="habitat-note">Triangles with circumradius at most R form the displayed alpha-shape construction.</p>
         </aside>
       </div>
-      <p class="context">Both point sets are deterministic synthetic illustrations. The default <strong>Pg</strong> consists of a block P and a lowercase g, each with one unsampled counter; at α = −14 the retained Delaunay complex has exactly two topological holes. Move the scale to see them fill or separate, or select <strong>Smiling face</strong> to restore the original 53-point demonstration. The alpha-shape is the boundary of a retained simplicial complex, not the alpha-complex itself; the circular alpha-hull is a different geometric representation.</p>
+      <p class="context">Both point sets are deterministic synthetic illustrations. The default <strong>Pg</strong> follows the actual supplied letterform: a high-contrast serif P and a flourished lowercase g. At α ≈ −28.57 the retained Delaunay complex has exactly two enclosed counters, one per letter. Contours receive denser, darker dots; stroke interiors are sampled with deterministic, slightly random spacing. Move the scale to see them fill or separate, or select <strong>Smiling face</strong> to restore the original 53-point demonstration. The alpha-shape is the boundary of a retained simplicial complex, not the alpha-complex itself; the circular alpha-hull is a different geometric representation.</p>
     </section>
 
     <section id="sensors" class="exhibit" aria-labelledby="sensors-title">
@@ -270,7 +270,7 @@
         <div class="section-kicker">Source · Reproducibility · Scope</div>
         <h2 id="about-title">Geometry you can inspect</h2>
         <p>Original diagrams and the alpha-shape boundaries are exported from the pinned <a href="https://github.com/ProximityGraphs/ProximityGraphs" target="_blank" rel="noopener noreferrer">ProximityGraphs Python library</a>. Voronoi cells are separately clipped by Euclidean half-planes. Edited configurations are recomputed by documented browser algorithms and are labeled accordingly.</p>
-        <p>The mathematical families extend beyond the plane, but these demonstrations and most current package constructors are two-dimensional. The Snow pump and death marks are historical map digitizations; the smiley and sensor network are synthetic. The accompanying SIAM News manuscript has not been submitted or endorsed.</p>
+        <p>The mathematical families extend beyond the plane, but these demonstrations and most current package constructors are two-dimensional. The Snow pump and death marks are historical map digitizations; the image-derived Pg, optional smiley and sensor network are illustrative point clouds. The accompanying SIAM News manuscript has not been submitted or endorsed.</p>
       </div>
       <div class="resource-links">
         <h3>Continue exploring</h3>
