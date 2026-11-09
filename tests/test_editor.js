@@ -290,7 +290,7 @@ function testUI(){
     assert.match(html,new RegExp('id="'+id+'"'),"Missing historical layer control "+id);
   }
   assert.ok(html.includes('src="data/pg_reference_points.js"'));
-  assert.ok(html.includes("Choose the traced"));
+  assert.ok(html.includes("How does a cloud of points become a recognizable shape?"));
   assert.match(html,/id="pg-interior-slider"[^>]*max="600"[^>]*value="347"/);
   assert.equal(vm.runInContext("state.alphaValue",context),-48.65245);
   assert.equal(vm.runInContext("state.pgInteriorCount",context),347);
@@ -310,12 +310,28 @@ function testUI(){
     "process-slider","process-reshuffle","process-realized","process-definition"])
     assert.ok(html.includes('id="'+id+'"'),"Missing "+id);
   assert.ok(html.includes('src="point-processes.js"'));
+  // Public-facing copy should teach the geometry, not expose the drafting
+  // history, technical provenance notes, or screenshot-derived parameters.
+  for(const phrase of ["reference screenshot","pinned Python export",
+    "serif image sampling","editorial draft","recomputed independently in JavaScript",
+    "synthetic teaching coordinates","original point set","not a benchmark",
+    "The accompanying SIAM News manuscript has not been submitted"]){
+    assert.ok(!html.toLowerCase().includes(phrase.toLowerCase()),
+      "Public copy still contains development-era wording: "+phrase);
+  }
+  assert.ok(html.includes("Same points. Different networks."));
+  assert.ok(html.includes("Pg letterform"));
+  assert.ok(html.includes("digitized historical map records"));
+  assert.ok(html.includes("They measure straight-line proximity"));
+  assert.ok(html.includes("the number itself vary"));
+  assert.ok(html.includes("Poisson process"));
+  assert.ok(html.includes("Binomial process"));
   assert.match(fs.readFileSync(path.join(root,"site/editor.js"),"utf8"), /habitat:1100/);
   const encoded=fs.readFileSync(path.join(root,"data/typography/pg_reference.u16.b64"),"ascii").trim();
   const mirrored=fs.readFileSync(path.join(root,"site/data/pg_reference_points.js"),"utf8");
   assert.ok(mirrored.includes(encoded),"Browser source must match archived sample");
   assert.equal(context.pgWordmarkPoints().length,600);
-  assert.ok(html.includes("Historical cholera death marks"));
+  assert.ok(html.includes("Cholera death locations"));
   assert.match(html,/id="alpha-point-set"/);
   assert.match(html,/<option value="pg" selected>/);
   assert.match(html,/<option value="smiley">/);
