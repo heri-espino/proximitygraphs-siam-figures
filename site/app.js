@@ -70,32 +70,9 @@ function insidePgPolygon(x,y,vertices){
   return inside;
 }
 function pgWordmarkPoints(){
-  const pBowl=[[.13,.55],[.42,.55],[.49,.60],[.52,.67],
-               [.52,.78],[.48,.85],[.13,.85]];
-  const gTail=[[.655,.12],[.805,.12],[.895,.17],[.895,.255],
-               [.819,.255],[.811,.204],[.655,.204]];
-  const onLetter=(x,y)=>{
-    const stem=x>=.10&&x<=.22&&y>=.17&&y<=.85;
-    const pUpper=insidePgPolygon(x,y,pBowl);
-    const pCounter=((x-.345)/.090)**2+((y-.705)/.082)**2<1;
-    const capitalP=(stem||pUpper)&&!pCounter;
-    const gOuter=((x-.725)/.160)**2+((y-.555)/.158)**2<1;
-    const gCounter=((x-.727)/.081)**2+((y-.560)/.077)**2<1;
-    const descender=(x>=.820&&x<=.895&&y>=.16&&y<=.58)||
-      insidePgPolygon(x,y,gTail);
-    return capitalP||(gOuter&&!gCounter)||descender;
-  };
-  const pts=[],step=.047;
-  for(let j=0;j<17;j++){
-    const y=.13+j*step;if(y>=.90)break;
-    for(let i=0;i<19;i++){
-      const x=.09+i*step;if(x>=.94)break;
-      const p=[x+step*.085*Math.sin(i*1.18+j*2.13),
-               y+step*.080*Math.cos(i*2.31-j*.87)];
-      if(onLetter(p[0],p[1]))pts.push(p);
-    }
-  }
-  return pts;
+  // The exact user-image point sample, decoded from the shared u16 source.
+  // Keep the smiley generator and original preset completely unchanged.
+  return rasterPgPoints.map(p=>p.slice());
 }
 const habitatPoints=pgWordmarkPoints();
 
