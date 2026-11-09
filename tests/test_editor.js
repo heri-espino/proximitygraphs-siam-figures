@@ -208,7 +208,7 @@ function testUI(){
   assert.match(fs.readFileSync(path.join(root,"site/app.js"),"utf8"), /pgInteriorCount/);
   assert.match(css,/\.pg-density-controls\[hidden\]/);
   assert.match(html, /id="alpha-slider"[^>]*max="8"[^>]*value="5"/);
-  assert.match(fs.readFileSync(path.join(root,"site/editor.js"),"utf8"), /habitat:800/);
+  assert.match(fs.readFileSync(path.join(root,"site/editor.js"),"utf8"), /habitat:1100/);
   const encoded=fs.readFileSync(path.join(root,"data/typography/pg_reference.u16.b64"),"ascii").trim();
   const mirrored=fs.readFileSync(path.join(root,"site/data/pg_reference_points.js"),"utf8");
   assert.ok(mirrored.includes(encoded),"Browser source must match archived sample");
