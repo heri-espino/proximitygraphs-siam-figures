@@ -6,12 +6,12 @@ const NS = "http://www.w3.org/2000/svg";
 const WIDTH = 640, HEIGHT = 600;
 const frame = { x: 65, y: 43, w: 510, h: 510 };
 const teal = "#34383c", orange = "#6d6c75", dark = "#30302e";
-const alphaValues = [22, 26, 28.57142857142857, 32]; // image-traced serif Pg, R=0.035
+const alphaValues = [10, 14, 18, 22, 26, 28.57142857142857, 32, 38, 44]; // wider alpha filtration, default R=0.035
 const smileyAlphaValues = [4, 8, 10, 12];
 const betaValues = [1, 1.25, 1.5, 1.75, 2];
 const state = {
   waterSite:6, waterTriangleIndex:0,
-  alphaPreset:"pg",alphaIndex:2,alphaArc:0,
+  alphaPreset:"pg",alphaIndex:5,alphaArc:0,
   betaIndex:2,betaPair:null,betaInspectFirst:null
 };
 let dataset = null;
@@ -58,8 +58,8 @@ const smileyPoints=(function(){
  return [...outline,...eyes,...mouth];
 })();
 
-// Fallback for the exact Python Pg generator (no font or SVG source required).
-// 111 sample sites form a block P and single-storey g with open counters.
+// Augment the exact traced reference with deterministic ink-interior samples.
+// The 380 original sites, including 298 boundary sites, remain unchanged.
 function insidePgPolygon(x,y,vertices){
   let inside=false;
   for(let k=0;k<vertices.length;k++){
@@ -70,9 +70,29 @@ function insidePgPolygon(x,y,vertices){
   return inside;
 }
 function pgWordmarkPoints(){
-  // The exact user-image point sample, decoded from the shared u16 source.
-  // Keep the smiley generator and original preset completely unchanged.
-  return rasterPgPoints.map(p=>p.slice());
+  // Mirrors densify_pg_strokes() in scripts/export_scenes.py exactly.
+  const base=rasterPgPoints.map(p=>p.slice());
+  const [gOuter,gHole,pOuter,pHole]=[
+    base.slice(0,147),base.slice(147,176),
+    base.slice(176,257),base.slice(257,298)
+  ];
+  const halton=function(index,prime){
+    let fraction=1,value=0;
+    while(index){fraction/=prime;value+=fraction*(index%prime);
+      index=Math.floor(index/prime);}
+    return value;
+  };
+  const extra=[];
+  for(let k=1;k<=100000&&extra.length<220;k++){
+    const x=.07+.86*halton(k,2),y=.16+.69*halton(k,3);
+    const ink=(insidePgPolygon(x,y,gOuter)&&!insidePgPolygon(x,y,gHole))||
+      (insidePgPolygon(x,y,pOuter)&&!insidePgPolygon(x,y,pHole));
+    if(!ink||Math.hypot(x-.595,y-.27)<.047)continue;
+    if([...base,...extra].some(p=>(p[0]-x)**2+(p[1]-y)**2<.012**2))continue;
+    extra.push([x,y]);
+  }
+  if(extra.length!==220)throw Error("Pg interior sample count changed");
+  return [...base,...extra];
 }
 const habitatPoints=pgWordmarkPoints();
 
@@ -91,8 +111,9 @@ function switchAlphaPreset(key){
   state.alphaPreset=key;
   const source=currentAlphaSource();
   state.alphaIndex=source?.default_alpha_index ??
-    (key==="pg"?2:1);
+    (key==="pg"?5:1);
   state.alphaArc=0;
+  document.getElementById("alpha-slider").max=String(activeAlphaValues().length-1);
   document.getElementById("alpha-slider").value=state.alphaIndex;
   const points=source?.points || (key==="pg"?habitatPoints:smileyPoints);
   if(pointEditors.habitat)replaceEditorPointSet("habitat",points);
@@ -779,6 +800,7 @@ async function start(){
   }
   setupPointEditors(dataset);
   document.getElementById("alpha-point-set").value=state.alphaPreset;
+  document.getElementById("alpha-slider").max=String(activeAlphaValues().length-1);
   document.getElementById("alpha-slider").value=state.alphaIndex;
   drawWater();drawHabitat();drawSensors();drawCompare();
 }
