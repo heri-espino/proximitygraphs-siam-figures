@@ -6,7 +6,7 @@ This project develops a proposed **SIAM News — Software and Programming** feat
 
 **[Explore the deployed GitHub Pages companion](https://heri-espino.github.io/proximitygraphs-siam-figures/)** — editable points, interactive geometry and image export. The redesigned site was rebuilt and deployed on November 5, 2026; verify the live page after future releases.
 
-**[Read the completed feature draft](article/feature.md)** · **[LaTeX manuscript](article/main.tex)** · **[Outreach and marketing kit](article/marketing-kit.md)** · **[Editorial pitch](article/pitch.md)** · **[Python library](https://github.com/ProximityGraphs/ProximityGraphs)**
+**[Read the completed feature draft](article/feature.md)** · **[Audited graph and bio-inspired model inventory](docs/IMPLEMENTED_FAMILIES.md)** · **[LaTeX manuscript](article/main.tex)** · **[Outreach and marketing kit](article/marketing-kit.md)** · **[Editorial pitch](article/pitch.md)** · **[Python library](https://github.com/ProximityGraphs/ProximityGraphs)**
 
 ## Sectioned mathematical construction laboratory
 
