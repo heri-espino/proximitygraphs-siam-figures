@@ -28,7 +28,7 @@ PREAMBLE = r"""% AUTO-GENERATED from article/feature.md by scripts/render_articl
 \definecolor{ProxInk}{HTML}{253C49}
 \definecolor{ProxGray}{HTML}{60717B}
 \hypersetup{colorlinks=true,urlcolor=ProxTeal,linkcolor=ProxTeal,
- pdfauthor={Hector Maravillo; Diego Villarreal de la Cerda; Heriberto Espino-Montelongo},
+ pdfauthor={Heriberto Espino-Montelongo; Hector Maravillo; Diego Villarreal de la Cerda},
  pdftitle={Who Counts as a Neighbor?}}
 \captionsetup{font=footnotesize,labelfont={bf,color=ProxInk},
  justification=raggedright,singlelinecheck=false}
