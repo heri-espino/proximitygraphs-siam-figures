@@ -11,7 +11,7 @@ const smileyAlphaValues = [4, 8, 10, 12];
 const betaValues = [1, 1.25, 1.5, 1.75, 2];
 const state = {
   waterSite:6, waterTriangleIndex:0,
-  alphaPreset:"pg",alphaIndex:5,alphaArc:0,
+  alphaPreset:"pg",alphaIndex:5,alphaArc:0,pgInteriorCount:302,pgSeed:32571,
   betaIndex:2,betaPair:null,betaInspectFirst:null
 };
 let dataset = null;
@@ -69,32 +69,43 @@ function insidePgPolygon(x,y,vertices){
   }
   return inside;
 }
-function pgWordmarkPoints(){
-  // Mirrors densify_pg_strokes() in scripts/export_scenes.py exactly.
+const PG_DEFAULT_INTERIOR = 302;
+const PG_MAX_INTERIOR = 600;
+const PG_RANDOM_SEED = 32571;
+
+function pgWordmarkPoints(interiorCount=PG_DEFAULT_INTERIOR, seed=PG_RANDOM_SEED){
+  // Mirrors Python's densify_pg_strokes() for the 600-site reference state.
+  // Varying the density never changes the 298 authentic source contours.
+  const target=Math.max(0,Math.min(PG_MAX_INTERIOR,Math.round(interiorCount)));
   const base=rasterPgPoints.map(p=>p.slice());
+  const originalInterior=Math.min(82,target);
+  const chosen=base.slice(0,298+originalInterior);
+  if(target<=82)return chosen;
   const [gOuter,gHole,pOuter,pHole]=[
     base.slice(0,147),base.slice(147,176),
     base.slice(176,257),base.slice(257,298)
   ];
-  const halton=function(index,prime){
-    let fraction=1,value=0;
-    while(index){fraction/=prime;value+=fraction*(index%prime);
-      index=Math.floor(index/prime);}
-    return value;
-  };
-  const extra=[];
-  for(let k=1;k<=100000&&extra.length<220;k++){
-    const x=.07+.86*halton(k,2),y=.16+.69*halton(k,3);
+  let rng=seed>>>0;
+  function randomFraction(){
+    rng=(Math.imul(1664525,rng)+1013904223)>>>0;
+    return rng/4294967296;
+  }
+  const extra=[],wanted=target-82;
+  // Samples are uniformly pseudorandom in the proposal rectangle,
+  // accepted only within glyph ink (not the two empty counters).
+  for(let k=0;k<150000&&extra.length<wanted;k++){
+    const x=.07+.86*randomFraction(),y=.16+.69*randomFraction();
     const ink=(insidePgPolygon(x,y,gOuter)&&!insidePgPolygon(x,y,gHole))||
       (insidePgPolygon(x,y,pOuter)&&!insidePgPolygon(x,y,pHole));
     if(!ink||Math.hypot(x-.595,y-.27)<.047)continue;
     if(base.slice(0,298).some(p=>(p[0]-x)**2+(p[1]-y)**2<.025**2))continue;
-    if([...base,...extra].some(p=>(p[0]-x)**2+(p[1]-y)**2<.012**2))continue;
+    if([...base,...extra].some(p=>(p[0]-x)**2+(p[1]-y)**2<.008**2))continue;
     extra.push([x,y]);
   }
-  if(extra.length!==220)throw Error("Pg interior sample count changed");
-  return [...base,...extra];
+  if(extra.length!==wanted)throw Error("Requested Pg interior density could not be sampled");
+  return [...chosen,...extra];
 }
+
 const habitatPoints=pgWordmarkPoints();
 
 function currentAlphaSource(){
@@ -107,9 +118,43 @@ function activeAlphaValues(){
   return currentAlphaSource()?.alpha_values ||
     (state.alphaPreset==="smiley"?smileyAlphaValues:alphaValues);
 }
+function syncPgDensityControls(){
+  const group=document.getElementById("pg-density-controls");
+  if(!group)return;
+  group.hidden=state.alphaPreset!=="pg";
+  const slider=document.getElementById("pg-interior-slider");
+  slider.value=String(state.pgInteriorCount);
+  detail("pg-interior-count",String(state.pgInteriorCount));
+}
+function setPgInteriorCount(count,seed=state.pgSeed){
+  if(state.alphaPreset!=="pg")return;
+  state.pgInteriorCount=Math.max(0,Math.min(PG_MAX_INTERIOR,Math.round(count)));
+  state.pgSeed=seed>>>0;
+  syncPgDensityControls();
+  const editor=pointEditors.habitat;
+  const original=currentAlphaSource()?.points || habitatPoints;
+  const isReference=state.pgInteriorCount===PG_DEFAULT_INTERIOR &&
+    state.pgSeed===PG_RANDOM_SEED;
+  if(editor){
+    editor.original=original.map(p=>p.slice());
+    editor.points=(isReference?original:pgWordmarkPoints(state.pgInteriorCount,state.pgSeed))
+      .map(p=>p.slice());
+    editor.dirty=!isReference;
+    editor.active=null;
+    editor.pending=false;
+    editor.generation=(editor.generation||0)+1;
+    recomputeNotice("habitat");
+  }
+  state.alphaArc=0;
+  drawHabitat();
+}
+
 function switchAlphaPreset(key){
   if(key!=="pg"&&key!=="smiley")return;
   state.alphaPreset=key;
+  state.pgInteriorCount=PG_DEFAULT_INTERIOR;
+  state.pgSeed=PG_RANDOM_SEED;
+  syncPgDensityControls();
   const source=currentAlphaSource();
   state.alphaIndex=source?.default_alpha_index ??
     (key==="pg"?5:1);
@@ -496,8 +541,8 @@ function drawHabitat(){
       el("title",{},line,"Arc "+(index+1)+" · click for its circle");
     });
   }
-  const roles=original && state.alphaPreset==="pg" && source?.point_roles?.length===points.length
-    ?source.point_roles:null;
+  const roles=state.alphaPreset==="pg"
+    ?points.map((_,i)=>i<298?"outline":"stroke"):null;
   points.forEach(function(p,i){
     site(svg,p,i,false,undefined,undefined,roles?roles[i]:undefined);
   });
@@ -756,6 +801,24 @@ async function start(){
   document.getElementById("alpha-slider").addEventListener("input",function(e){
     state.alphaIndex=Number(e.target.value);state.alphaArc=0;drawHabitat();
   });
+  const density=document.getElementById("pg-interior-slider");
+  let densityTimer=null;
+  const applyDensity=function(){
+    if(densityTimer!==null)clearTimeout(densityTimer);
+    densityTimer=null;
+    setPgInteriorCount(Number(density.value));
+  };
+  density.addEventListener("input",function(){
+    state.pgInteriorCount=Number(density.value);
+    detail("pg-interior-count",String(state.pgInteriorCount));
+    if(densityTimer!==null)clearTimeout(densityTimer);
+    // Debounce costly Delaunay reconstruction during pointer drags.
+    densityTimer=setTimeout(applyDensity,130);
+  });
+  density.addEventListener("change",applyDensity);
+  document.getElementById("pg-reshuffle").addEventListener("click",function(){
+    setPgInteriorCount(state.pgInteriorCount,(state.pgSeed+1)>>>0);
+  });
   document.getElementById("beta-slider").addEventListener("input",function(e){
     state.betaIndex=Number(e.target.value);drawSensors();
   });
@@ -803,11 +866,12 @@ async function start(){
   document.getElementById("alpha-point-set").value=state.alphaPreset;
   document.getElementById("alpha-slider").max=String(activeAlphaValues().length-1);
   document.getElementById("alpha-slider").value=state.alphaIndex;
+  syncPgDensityControls();
   drawWater();drawHabitat();drawSensors();drawCompare();
 }
 if(typeof document!=="undefined")document.addEventListener("DOMContentLoaded",start);
 if(typeof module!=="undefined" && module.exports){
   module.exports={circumcircle,delaunayTriangles,trianglesEdges,betaEdges,cells,
     fallbackAlpha,arcCircle,alphaValues,smileyAlphaValues,betaValues,
-    waterPoints,betaPoints,habitatPoints,smileyPoints,pgWordmarkPoints};
+    waterPoints,betaPoints,habitatPoints,smileyPoints,pgWordmarkPoints,PG_MAX_INTERIOR};
 }
