@@ -92,6 +92,11 @@ function testAlpha(){
     context.pgWordmarkPoints(302),"Same seeded density is reproducible");
   assert.notDeepEqual(context.pgWordmarkPoints(302,32572).slice(380,385),
     fallback.slice(380,385),"Reshuffle changes the new pseudorandom interior sites");
+  assert.notDeepEqual(context.pgWordmarkPoints(20,32572).slice(298),
+    context.pgWordmarkPoints(20).slice(298),
+    "Reshuffle must also change low-density interior configurations");
+  assert.equal(context.pgWordmarkPoints(20,32572).length,318);
+  assert.equal(context.pgWordmarkPoints(600,32572).length,898);
   assert.deepEqual(context.pgWordmarkPoints(82),fallback.slice(0,380),
     "Reducing density to 82 returns exactly the original image-derived cloud");
   assert.equal(context.fallbackAlpha(scene.alpha.points.slice(0,2),-28.57142857142857).arcs.length,0);
