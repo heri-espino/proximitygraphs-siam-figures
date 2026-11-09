@@ -1,7 +1,7 @@
 # experiment010 — Signed-alpha laboratory and spatial point-process presets
 
 **Date:** 2026-11-08  
-**Status:** Implemented on a feature branch; CI validation and deployment not yet confirmed.
+**Status:** Complete — PR #8 merged, pinned-library and JavaScript CI passed, Playwright desktop/mobile QA passed, and GitHub Pages deployed.
 
 ## Goal
 
@@ -66,4 +66,14 @@ The browser uses a seeded **pseudorandom** stream, not an unpredictable cryptogr
 
 The 53 smiling-face feature sites are deliberately retained, so a *smiley plus randomized interior* is not itself an unconditional homogeneous PPP. The empty interior of eyes and a clearance around the mouth are aesthetic constraints. Positive-alpha rendering and arbitrary edits use independent JS and may differ from the pinned SciPy library in degenerate cases.
 
-Next actions: validate Node tests and Python invariants, execute Playwright mobile/desktop suite, inspect screenshots and deployed default, update this status with exact CI/PR results. Do not merge without user authorization.
+Next: review the deployed point-set choices on slower mobile devices and verify the figure caption before submitting the still-unsubmitted editorial article. The browser is a teaching renderer, not a claim of exact positive-alpha parity under degenerate Qhull inputs.
+
+
+## Verified release and reproducibility evidence
+
+- [PR #8](https://github.com/heri-espino/proximitygraphs-siam-figures/pull/8) **merged** into main at commit `7c5ab8c32e22be4dd626a65cabc97376947d5c51`; the project preserves the concurrent editorial experiment009 and every original historical, figure and reference artifact.
+- [Final PR Python/pinned ProximityGraphs and Node checks #42554842142](https://github.com/heri-espino/proximitygraphs-siam-figures/actions/runs/42554842142): **success**; includes two-hole Pg default, mathematical alpha controls, positive/negative/zero alpha tests, binomial exact N and Poisson point-count mean/variance diagnostics, deterministic seeds, and original Smiley feature-preservation tests.
+- [Final PR desktop/mobile Playwright #42554842050](https://github.com/heri-espino/proximitygraphs-siam-figures/actions/runs/42554842050): **success**.
+- [Postmerge source geometry build and Pages deployment #42555064505](https://github.com/heri-espino/proximitygraphs-siam-figures/actions/runs/42555064505): both **success**; deployed figure at https://heri-espino.github.io/proximitygraphs-siam-figures/#habitat .
+- [Postmerge Playwright QA #42555064726](https://github.com/heri-espino/proximitygraphs-siam-figures/actions/runs/42555064726): **success**. The committed `docs/visual-qa/visual-summary.json` records **14 passed checks** and **10 screenshots**, including `08-smiley-preset.png`, `09-poisson.png`, and `10-binomial.png`. Original historical points, figure captions and reduced-motion handling were also checked.
+- The deployed `site/index.html` was inspected in the repository and contains the full `[-100,100]` slider range plus Poisson/Binomial dropdown options and Smiley interior controls. External independent fetch of the Pages URL was not available in the assistant environment, although the GitHub Pages deploy job completed successfully.
