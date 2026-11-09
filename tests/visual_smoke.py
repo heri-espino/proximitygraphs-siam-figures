@@ -74,7 +74,17 @@ def main():
         assert len(scenes["alpha"]["presets"]["smiley"]["points"])==53
         assert scenes["alpha"]["options"]["28.57142857142857"]["topology"]=={"components":2,"holes":2}
         assert page.locator("#alpha-point-set").input_value()=="pg"
-        assert "2 holes" in page.locator("#habitat-stat").inner_text()
+        assert page.locator("#alpha-slider").input_value()=="-48.65245"
+        assert page.locator("#pg-interior-slider").input_value()=="347"
+        assert page.locator("#alpha-view").input_value()=="both"
+        assert page.locator("#alpha-hull").is_checked()
+        assert page.locator("#alpha-shape").is_checked()
+        assert page.locator("#alpha-kept").is_checked()
+        assert page.locator("#alpha-all-circles").is_checked()
+        assert not page.locator("#alpha-circle").is_checked()
+        assert not page.locator("#alpha-centers").is_checked()
+        assert not page.locator("#alpha-triangulation").is_checked()
+        assert "645 sites" in page.locator("#habitat-stat").inner_text()
         assert len(scenes["beta"]["points"])==25
         assert page.locator("#water-plot g[aria-hidden='true'] circle").count()==578
         assert "Broad St" in page.locator("#water-details").inner_text()
@@ -141,9 +151,9 @@ def main():
         arcs=page.locator("#habitat-plot polyline").count()
         assert arcs>0
         assert page.locator("#habitat-plot circle").count()>2*arcs
-        assert page.locator("#habitat-plot circle.editable-site").count()==1200
-        assert page.locator("#habitat-plot circle.editable-site[opacity]").count()==600
-        assert "2 holes" in page.locator("#habitat-stat").inner_text()
+        assert page.locator("#habitat-plot circle.editable-site").count()==1290
+        assert page.locator("#habitat-plot circle.editable-site[opacity]").count()==645
+        assert "645 sites" in page.locator("#habitat-stat").inner_text()
         slider=page.locator("#alpha-slider")
         assert slider.get_attribute("min")=="-100"
         assert slider.get_attribute("max")=="100"
@@ -161,8 +171,10 @@ def main():
           slider.dispatchEvent(new Event("input",{bubbles:true}));
           slider.dispatchEvent(new Event("change",{bubbles:true}));
         }""")
-        assert "2 holes" in page.locator("#habitat-stat").inner_text()
         density=page.locator("#pg-interior-slider")
+        density.fill("302")
+        assert "600 sites" in page.locator("#habitat-stat").inner_text()
+        assert "2 holes" in page.locator("#habitat-stat").inner_text()
         assert density.get_attribute("min")=="0"
         assert density.get_attribute("max")=="600"
         assert density.input_value()=="302"
@@ -177,12 +189,12 @@ def main():
         after=page.locator("#habitat-plot .editable-site[data-point-index='400']").last.get_attribute("cx")
         assert before!=after,"Reshuffle must produce a different random point cloud"
         page.locator('button[data-editor-reset="habitat"]').click()
-        assert density.input_value()=="302"
-        assert "600 sites" in page.locator("#habitat-stat").inner_text()
+        assert density.input_value()=="347"
+        assert "645 sites" in page.locator("#habitat-stat").inner_text()
         source_label=page.locator("#habitat-edit-source").inner_text()
         assert "Original points" in source_label or "JavaScript" in source_label,source_label
         page.locator("#habitat").screenshot(path=str(output/"03-alpha-construction.png"))
-        checks.append("Pg alpha-hull and alpha-shape render two enclosed holes with circles")
+        checks.append("Screenshot Pg defaults render 645 sites at alpha -48.65245; source reference still yields two holes")
         page.locator("#alpha-point-set").select_option("smiley")
         assert page.locator("#alpha-point-set").input_value()=="smiley"
         assert "173 sites" in page.locator("#habitat-stat").inner_text()
@@ -226,13 +238,14 @@ def main():
         assert "Realized N = 27" in page.locator("#process-realized").inner_text()
         page.locator("#habitat").screenshot(path=str(output/"10-binomial.png"))
         page.locator("#alpha-point-set").select_option("pg")
-        assert "600 sites" in page.locator("#habitat-stat").inner_text()
+        assert "645 sites" in page.locator("#habitat-stat").inner_text()
+        assert page.locator("#alpha-slider").input_value()=="-48.65245"
         assert slider.get_attribute("max")=="100"
         assert page.locator("#pg-density-controls").is_visible()
         assert page.locator("#smiley-density-controls").is_hidden()
         assert page.locator("#process-controls").is_hidden()
-        assert density.input_value()=="302"
-        assert "2 holes" in page.locator("#habitat-stat").inner_text()
+        assert density.input_value()=="347"
+        assert page.locator("#alpha-all-circles").is_checked()
         checks.append("Signed alpha −100..100 including convex hull at zero and furthest-site positive alpha")
         checks.append("Pg/Smiley interior point sliders preserve contours, and PPP/BPP sampling updates observed counts")
 
@@ -262,6 +275,54 @@ def main():
         after=page.locator("#compare-details").inner_text()
         assert before!=after,(before,after)
         checks.append("Same-site graph comparison reacts to selections and edits")
+        assert page.locator("#compare-point-set").input_value()=="sensors"
+        assert page.locator("#compare-process-controls").is_hidden()
+        page.locator("#compare-point-set").select_option("binomial")
+        assert page.locator("#compare-process-controls").is_visible()
+        assert "Binomial count" in page.locator("#compare-parameter-title").inner_text()
+        param=page.locator("#compare-process-slider")
+        param.fill("37")
+        assert page.locator("#compare-realized").inner_text()=="Realized N = 37"
+        assert page.locator("#compare-left-plot circle").count()==37
+        assert page.locator("#compare-right-plot circle").count()==37
+        def both_panels_identical():
+            return page.evaluate("""() => {
+              const xy=side=>Array.from(
+                document.querySelectorAll('#compare-'+side+'-plot circle'),
+                p=>[p.getAttribute('cx'),p.getAttribute('cy')]);
+              return JSON.stringify(xy('left'))===JSON.stringify(xy('right'));
+            }""")
+        assert both_panels_identical(), "Two graph panels must use identical binomial sites"
+        first=page.locator("#compare-left-plot circle").first.get_attribute("cx")
+        page.locator("#compare-swap").click()
+        assert first==page.locator("#compare-left-plot circle").first.get_attribute("cx")
+        assert both_panels_identical(), "Swapping graph definitions cannot resample points"
+        page.locator("#compare-reshuffle").click()
+        assert first!=page.locator("#compare-left-plot circle").first.get_attribute("cx")
+        assert both_panels_identical()
+        page.locator("#compare").screenshot(path=str(output/"11-comparison-binomial.png"))
+        page.locator("#compare-point-set").select_option("poisson")
+        assert "Poisson intensity" in page.locator("#compare-parameter-title").inner_text()
+        param.fill("0")
+        assert page.locator("#compare-realized").inner_text()=="Realized N = 0"
+        assert page.locator("#compare-left-plot circle").count()==0
+        assert page.locator("#compare-right-plot circle").count()==0
+        param.fill("30")
+        n=int(page.locator("#compare-realized").inner_text().split("=")[-1].strip())
+        assert 10<=n<=50,n
+        assert page.locator("#compare-left-plot circle").count()==n
+        assert page.locator("#compare-right-plot circle").count()==n
+        assert both_panels_identical()
+        page.locator("#compare").screenshot(path=str(output/"12-comparison-poisson.png"))
+        assert "JavaScript" in page.locator("#compare-source").inner_text()
+        page.locator("#compare-reset").click()
+        assert page.locator("#compare-point-set").input_value()=="sensors"
+        assert page.locator("#compare-process-controls").is_hidden()
+        assert page.locator("#compare-left").input_value()=="gabriel"
+        assert page.locator("#compare-right").input_value()=="rng"
+        assert page.locator("#compare-left-plot circle").count()==25
+        assert both_panels_identical()
+        checks.append("Binomial exact site count, Poisson random site count and synchronized comparison panels")
         # Deliberate control changes show a short diagram transition. Dragging
         # remains unanimated, and the site must honor OS reduced-motion.
         animated=page.evaluate("""() => {
@@ -280,7 +341,7 @@ def main():
         mobile.set_content(html,wait_until="load",timeout=60000)
         mobile.screenshot(path=str(output/"06-mobile-home.png"))
         mobile.locator("#habitat").screenshot(path=str(output/"07-mobile-alpha.png"))
-        assert "600 sites" in mobile.locator("#habitat-stat").inner_text()
+        assert "645 sites" in mobile.locator("#habitat-stat").inner_text()
         assert not mobile_errors,mobile_errors
         checks.append("Desktop and mobile render without browser exceptions")
         reduced=browser.new_page(viewport={"width":1000,"height":800},

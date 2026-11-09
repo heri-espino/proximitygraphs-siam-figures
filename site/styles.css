@@ -538,6 +538,13 @@ svg .editable-site { pointer-events: all; }
   font-weight: 520;
 }
 .compare-controls .control-select { min-width: 210px; }
+.compare-process-controls { max-width: 460px; margin: -15px 0 30px; }
+.compare-process-controls[hidden] { display: none; }
+.compare-process-controls .control-label { margin: 12px 0 7px; }
+.compare-process-controls input[type="range"] { margin: 12px 0; }
+.compare-process-controls .density-hint { margin: 5px 0; font-size: .75rem; color: var(--muted); line-height: 1.5; }
+.compare-process-controls .utility { margin: 9px 0 0; }
+
 .compare-controls button { height: 40px; }
 .compare-grid { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: clamp(17px,4vw,65px); }
 .compare-grid .figure-actions { padding: 10px 4px 0; }

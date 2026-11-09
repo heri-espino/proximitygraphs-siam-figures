@@ -146,13 +146,13 @@
           </select>
           <label class="control-label" for="alpha-view">Construction view</label>
           <select id="alpha-view" class="control-select"><option value="final">Final comparison</option><option value="construction">Construction</option><option value="both" selected>Both</option></select>
-          <label class="control-label" for="alpha-slider">Signed alpha parameter <strong id="alpha-value">α = −28.57143 · R = 0.035</strong></label>
+          <label class="control-label" for="alpha-slider">Signed alpha parameter <strong id="alpha-value">α = -48.65245 · R = 0.021</strong></label>
           <input id="alpha-slider" type="range" min="-100" max="100" step="any"
-                 value="-28.57142857142857" aria-label="Alpha parameter from minus 100 to plus 100, including zero">
+                 value="-48.65245" aria-label="Alpha parameter from minus 100 to plus 100, including zero">
           <p class="density-hint">Negative: ordinary Delaunay · Zero: convex hull · Positive: furthest-site Delaunay</p>
           <div id="pg-density-controls" class="pg-density-controls">
-            <label class="control-label" for="pg-interior-slider">Random interior points <strong id="pg-interior-count" aria-live="polite">302</strong></label>
-            <input id="pg-interior-slider" type="range" min="0" max="600" step="1" value="302"
+            <label class="control-label" for="pg-interior-slider">Random interior points <strong id="pg-interior-count" aria-live="polite">347</strong></label>
+            <input id="pg-interior-slider" type="range" min="0" max="600" step="1" value="347"
                    aria-label="Number of randomly placed interior points in the Pg glyphs">
             <p class="density-hint">0–600 inside the letters · outlines always preserved</p>
             <button type="button" class="utility" id="pg-reshuffle">Reshuffle random points</button>
@@ -177,8 +177,8 @@
           <label class="toggle"><input id="alpha-shape" type="checkbox" checked> Alpha-shape · straight edges</label>
           <label class="toggle"><input id="alpha-triangulation" type="checkbox"> Delaunay triangulation</label>
           <label class="toggle"><input id="alpha-kept" type="checkbox" checked> Retained simplices · reveal holes</label>
-          <label class="toggle"><input id="alpha-circle" type="checkbox" checked> Selected arc circle</label>
-          <label class="toggle"><input id="alpha-all-circles" type="checkbox"> All supporting circles</label>
+          <label class="toggle"><input id="alpha-circle" type="checkbox"> Selected arc circle</label>
+          <label class="toggle"><input id="alpha-all-circles" type="checkbox" checked> All supporting circles</label>
           <label class="toggle"><input id="alpha-centers" type="checkbox"> Circle centers</label>
           <div class="panel-divider"></div>
           <div class="point-toolbar" role="group" aria-label="Edit habitat points">
@@ -206,7 +206,7 @@
           <p class="insight-note" id="habitat-note">Triangles with circumradius at most R form the displayed alpha-shape construction.</p>
         </aside>
       </div>
-      <p class="context">The original 298 Pg outline sites and 53 smiling-face feature sites are preserved. Both letterform presets permit 0–600 additional/interior random points and deterministic reshuffling. Pg defaults to 302 interior points (82 source sites plus 220 seeded samples); at α ≈ −28.57 it has two distinct components and two enclosed counters. The <strong>binomial point process</strong> fixes N = n uniformly sampled sites, whereas the <strong>homogeneous Poisson point process</strong> draws N ~ Poisson(λ) before sampling coordinates uniformly over [0,1]². Both are independent stochastic-geometry examples, not observations of a real habitat. Only exact original precomputed configurations are sourced from the pinned Python library; all other realizations and signed-alpha calculations are independently computed in the browser.</p>
+      <p class="context">The original 298 Pg outline sites and 53 smiling-face feature sites are preserved. Both letterform presets permit 0–600 additional/interior random points and deterministic reshuffling. The interactive Pg view starts with 347 interior points (645 total) at α = −48.65245, matching the reference screenshot; the preserved pinned Python export has 302 interior sites at α ≈ −28.57 with two components and two enclosed counters. The <strong>binomial point process</strong> fixes N = n uniformly sampled sites, whereas the <strong>homogeneous Poisson point process</strong> draws N ~ Poisson(λ) before sampling coordinates uniformly over [0,1]². Both are independent stochastic-geometry examples, not observations of a real habitat. Only exact original precomputed configurations are sourced from the pinned Python library; all other realizations and signed-alpha calculations are independently computed in the browser.</p>
     </section>
 
     <section id="sensors" class="exhibit" aria-labelledby="sensors-title">
@@ -263,8 +263,15 @@
     <section id="compare" class="exhibit compare-exhibit" aria-labelledby="compare-title">
       <div class="section-kicker">04 / Controlled comparison</div>
       <h2 id="compare-title">One point set. Two definitions.</h2>
-      <p class="intro">Compare Delaunay, Gabriel, relative neighborhood, β-skeleton, and alpha-shape graphs on the <strong>same synthetic sensor coordinates</strong>. Changes you make to the sensors above carry into both panels.</p>
+      <p class="intro">Compare Delaunay, Gabriel, relative neighborhood, β-skeleton, and alpha-shape graphs on <strong>exactly the same points</strong>. Choose the original synthetic sensors or generate a binomial or homogeneous Poisson point process. Sensor edits above carry into both panels when the sensor preset is selected.</p>
       <div class="compare-controls">
+        <label for="compare-point-set">Shared point-set generator
+          <select id="compare-point-set" class="control-select">
+            <option value="sensors" selected>Synthetic sensors · original</option>
+            <option value="binomial">Binomial point process</option>
+            <option value="poisson">Poisson point process</option>
+          </select>
+        </label>
         <label for="compare-left">Left graph
           <select id="compare-left" class="control-select">
             <option value="delaunay">Delaunay</option><option value="gabriel" selected>Gabriel</option>
@@ -282,6 +289,21 @@
         <button id="compare-swap" class="utility" type="button">Swap</button>
         <button id="compare-reset" class="utility" type="button">Reset to defaults</button>
       </div>
+      <div id="compare-process-controls" class="compare-process-controls" hidden>
+        <label class="control-label" for="compare-process-slider">
+          <span id="compare-parameter-title">Binomial count n (exact N)</span>
+          <strong id="compare-parameter-count" aria-live="polite">25</strong>
+        </label>
+        <input id="compare-process-slider" type="range" min="0" max="80" step="1" value="25"
+               aria-label="Shared point-process parameter for both comparison graphs">
+        <p class="density-hint" id="compare-process-definition">
+          Select a stochastic process to sample independent uniform sites on [0,1]².
+        </p>
+        <p class="density-hint" id="compare-realized" aria-live="polite">Realized N = 25</p>
+        <button id="compare-reshuffle" class="utility" type="button">
+          Generate new shared realization
+        </button>
+      </div>
       <div class="compare-grid">
         <div class="chart-frame">
           <div class="chart-top"><span id="compare-left-label">Gabriel graph</span><span id="compare-left-count"></span></div>
@@ -295,7 +317,7 @@
         </div>
       </div>
       <p id="compare-details" class="compare-insight" aria-live="polite">Identical coordinates; different definitions of adjacency.</p>
-      <p class="geometry-source">Original comparison edges come from the pinned Python ProximityGraphs library. Edited sensor coordinates trigger independent JavaScript recomputation; this section is illustrative, not a benchmark.</p>
+      <p class="geometry-source" id="compare-source">Original sensor comparison edges come from the pinned Python ProximityGraphs library. Generated point-process samples and edited sensors are recomputed independently in JavaScript; this is an illustrative comparison, not a benchmark.</p>
     </section>
 
     <section id="about" class="about-section" aria-labelledby="about-title">
