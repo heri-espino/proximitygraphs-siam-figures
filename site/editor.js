@@ -129,7 +129,12 @@ function resetEditor(name) {
   editor.generation=(editor.generation||0)+1;
   if(name==="water")state.waterSite=(typeof dataset!=="undefined" && dataset?.voronoi?.historical ?
     dataset.voronoi.historical.broad_street_index : 6);
-  if(name==="habitat")state.alphaArc=0;
+  if(name==="habitat"){
+    state.alphaArc=0;
+    state.pgInteriorCount=302;
+    state.pgSeed=32571;
+    if(typeof syncPgDensityControls==="function")syncPgDensityControls();
+  }
   if(name==="sensors"){state.betaEdge=null;state.betaPair=null;state.betaInspectFirst=null;}
   recomputeNotice(name);
   editor.render();
