@@ -9,13 +9,20 @@ const teal = "#34383c", orange = "#6d6c75", dark = "#30302e";
 const alphaValues = [10, 14, 18, 22, 26, 28.57142857142857, 32, 38, 44]; // wider alpha filtration, default R=0.035
 const smileyAlphaValues = [4, 8, 10, 12];
 const betaValues = [1, 1.25, 1.5, 1.75, 2];
+// Screenshot's requested interactive view; Python source exports remain unchanged.
+const PG_VIEW_ALPHA = -48.65245;
+const PG_VIEW_INTERIOR = 347;
+const COMPARE_DEFAULT_PARAMETER = 25;
+const COMPARE_DEFAULT_SEED = 90311;
 const state = {
   waterSite:6, waterTriangleIndex:0,
-  alphaPreset:"pg",alphaValue:-28.57142857142857,alphaArc:0,
-  pgInteriorCount:302,pgSeed:32571,
+  alphaPreset:"pg",alphaValue:PG_VIEW_ALPHA,alphaArc:0,
+  pgInteriorCount:PG_VIEW_INTERIOR,pgSeed:32571,
   smileyInteriorCount:SMILEY_DEFAULT_INTERIOR,smileySeed:SMILEY_DEFAULT_SEED,
   processParameter:PROCESS_DEFAULT_PARAMETER,processSeed:PROCESS_DEFAULT_SEED,
-  betaIndex:2,betaPair:null,betaInspectFirst:null
+  betaIndex:2,betaPair:null,betaInspectFirst:null,
+  comparePointSet:"sensors",compareParameter:COMPARE_DEFAULT_PARAMETER,
+  compareSeed:COMPARE_DEFAULT_SEED,comparePoints:null
 };
 let dataset = null;
 
@@ -205,7 +212,7 @@ function setProcessParameter(count,seed=state.processSeed){
 
 function resetHabitatPointSet(){
   if(state.alphaPreset==="pg"){
-    state.pgInteriorCount=PG_DEFAULT_INTERIOR;
+    state.pgInteriorCount=PG_VIEW_INTERIOR;
     state.pgSeed=PG_RANDOM_SEED;
   }else if(state.alphaPreset==="smiley"){
     state.smileyInteriorCount=SMILEY_DEFAULT_INTERIOR;
@@ -221,7 +228,7 @@ function resetHabitatPointSet(){
 function switchAlphaPreset(key){
   if(!["pg","smiley","poisson","binomial"].includes(key))return;
   state.alphaPreset=key;
-  state.alphaValue=key==="pg"?-28.57142857142857:
+  state.alphaValue=key==="pg"?PG_VIEW_ALPHA:
     key==="smiley"?-8:-10;
   document.getElementById("alpha-slider").value=String(state.alphaValue);
   resetHabitatPointSet();
@@ -788,9 +795,68 @@ function drawSensors(){
   if(tooMany && shouldShowInvalid)detail("sensors-note",
     "Showing all rejected candidates is suppressed above 45 points to keep the editor responsive. Inspect any pair by selecting two sensors.");
 }
+/**
+ * A stochastic comparison is sampled exactly once per (kind, seed, parameter)
+ * change; both graph panels consume the SAME array reference, and swapping
+ * graph definitions never samples a second point cloud.
+ */
+function compareSourcePoints(){
+  if(state.comparePointSet==="sensors")
+    return editablePoints("sensors",dataset?.beta?.points||betaPoints);
+  if(!state.comparePoints)state.comparePoints=stochasticPointSet(
+    state.comparePointSet,state.compareParameter,state.compareSeed);
+  return state.comparePoints;
+}
+function syncComparisonControls(){
+  const stochastic=state.comparePointSet!=="sensors";
+  const group=document.getElementById("compare-process-controls");
+  if(!group)return;
+  group.hidden=!stochastic;
+  document.getElementById("compare-point-set").value=state.comparePointSet;
+  document.getElementById("compare-process-slider").value=
+    String(state.compareParameter);
+  if(stochastic){
+    detail("compare-parameter-title",state.comparePointSet==="poisson"?
+      "Poisson intensity λ (expected N)":"Binomial count n (exact N)");
+    detail("compare-parameter-count",String(state.compareParameter));
+    detail("compare-process-definition",state.comparePointSet==="poisson"?
+      "N ~ Poisson(λ), with independent uniform positions in [0,1]².":
+      "N = n exactly, with independent uniform positions in [0,1]².");
+    detail("compare-realized","Realized N = "+compareSourcePoints().length);
+  }
+}
+function setComparisonPointSet(kind){
+  if(!["sensors","poisson","binomial"].includes(kind))return;
+  state.comparePointSet=kind;
+  state.comparePoints=kind==="sensors"?null:stochasticPointSet(
+    kind,state.compareParameter,state.compareSeed);
+  syncComparisonControls();
+  drawCompare();
+}
+function setComparisonParameter(parameter,seed=state.compareSeed){
+  if(state.comparePointSet==="sensors")return;
+  state.compareParameter=Math.max(0,Math.min(80,Math.round(parameter)));
+  state.compareSeed=seed>>>0;
+  state.comparePoints=stochasticPointSet(state.comparePointSet,
+    state.compareParameter,state.compareSeed);
+  syncComparisonControls();
+  drawCompare();
+}
+function resetComparison(){
+  state.comparePointSet="sensors";
+  state.compareParameter=COMPARE_DEFAULT_PARAMETER;
+  state.compareSeed=COMPARE_DEFAULT_SEED;
+  state.comparePoints=null;
+  document.getElementById("compare-left").value="gabriel";
+  document.getElementById("compare-right").value="rng";
+  syncComparisonControls();
+  drawCompare();
+}
 function drawCompare(){
-  const source=dataset?.compare,editedPoints=edited("sensors");
-  const points=editablePoints("sensors",dataset?.beta?.points||betaPoints);
+  const source=dataset?.compare;
+  const points=compareSourcePoints();
+  const authoritative=state.comparePointSet==="sensors" &&
+    !edited("sensors") && !!source?.options;
   const catalog={
     delaunay:"Delaunay triangulation",gabriel:"Gabriel graph",
     rng:"Relative neighborhood graph",beta:"β-skeleton (β = 1.5)",
@@ -799,27 +865,38 @@ function drawCompare(){
   const counts=[];
   for(const side of ["left","right"]){
     const graph=document.getElementById("compare-"+side).value;
-    const original=source&&!editedPoints&&
-      source.options&&source.options[graph];
-    const edges=original?source.options[graph]:compareGraphEdges(points,graph);
+    const edges=authoritative&&source.options[graph]?
+      source.options[graph]:compareGraphEdges(points,graph);
     const svg=document.getElementById("compare-"+side+"-plot");
     background(svg,"04 / "+graph.replace("-"," "));
-    edges.forEach(function(e){
-      segment(svg,points[e[0]],points[e[1]],
+    for(const [i,j] of edges)
+      segment(svg,points[i],points[j],
         side==="left"?"#303338":"#89818a",2.2,.8);
-    });
-    points.forEach(function(p){
+    for(const p of points){
       const v=xy(p);
       el("circle",{cx:v[0],cy:v[1],r:5.4,fill:"#303136",
         stroke:"#fff","stroke-width":1.7},svg);
-    });
+    }
     detail("compare-"+side+"-label",catalog[graph]);
     detail("compare-"+side+"-count",edges.length+" edges");
     counts.push(edges.length);
   }
-  detail("compare-details",points.length+
-    " identical sites. Left: "+counts[0]+" edges; right: "+counts[1]+
-    " edges. Their difference comes from the neighborhood rule, not different coordinates.");
+  const descriptor=state.comparePointSet==="sensors"?
+    "synthetic sensor sites":
+    state.comparePointSet==="poisson"?
+      "sites from a homogeneous Poisson point process":
+      "sites from a binomial point process";
+  detail("compare-details",points.length+" identical "+descriptor+
+    ". Left: "+counts[0]+" edges; right: "+counts[1]+
+    " edges. Both panels use the exact same coordinates; only the graph rule changes.");
+  if(state.comparePointSet!=="sensors")
+    detail("compare-realized","Realized N = "+points.length);
+  detail("compare-source",authoritative?
+    "Original sensor geometry and comparison graphs exported by the pinned ProximityGraphs Python library.":
+    state.comparePointSet==="sensors"?
+      "Edited sensor coordinates are hypothetical; graph geometry recomputed independently in JavaScript.":
+      "Seeded synthetic "+(state.comparePointSet==="poisson"?"Poisson":"binomial")+
+      " point-process realization. Both graphs recomputed independently in browser JavaScript, not the Python library.");
 }
 function setPreset(scene,preset){
   const presets={
@@ -834,7 +911,7 @@ function setPreset(scene,preset){
       construction:{"alpha-hull":false,"alpha-shape":true,"alpha-triangulation":true,"alpha-kept":true,
         "alpha-circle":true,"alpha-all-circles":true,"alpha-centers":true},
       both:{"alpha-hull":true,"alpha-shape":true,"alpha-triangulation":false,"alpha-kept":true,
-        "alpha-circle":true,"alpha-all-circles":false,"alpha-centers":false}
+        "alpha-circle":false,"alpha-all-circles":true,"alpha-centers":false}
     },
     sensors:{
       final:{"beta-edges":true,"beta-invalid":false,"beta-lune":false,
@@ -974,10 +1051,25 @@ async function start(){
     const a=document.getElementById("compare-left"),b=document.getElementById("compare-right");
     const v=a.value;a.value=b.value;b.value=v;drawCompare();
   });
-  document.getElementById("compare-reset").addEventListener("click",function(){
-    document.getElementById("compare-left").value="gabriel";
-    document.getElementById("compare-right").value="rng";
-    drawCompare();
+  document.getElementById("compare-reset").addEventListener("click",
+    resetComparison);
+  document.getElementById("compare-point-set").addEventListener("change",
+    e=>setComparisonPointSet(e.target.value));
+  const compareSlider=document.getElementById("compare-process-slider");
+  let compareTimer=null;
+  function applyCompareParameter(){
+    if(compareTimer!==null)clearTimeout(compareTimer);
+    compareTimer=null;
+    setComparisonParameter(Number(compareSlider.value));
+  }
+  compareSlider.addEventListener("input",function(){
+    detail("compare-parameter-count",compareSlider.value);
+    if(compareTimer!==null)clearTimeout(compareTimer);
+    compareTimer=setTimeout(applyCompareParameter,100);
+  });
+  compareSlider.addEventListener("change",applyCompareParameter);
+  document.getElementById("compare-reshuffle").addEventListener("click",function(){
+    setComparisonParameter(state.compareParameter,(state.compareSeed+1)>>>0);
   });
   attachExports();
   try{
@@ -997,7 +1089,8 @@ async function start(){
   document.getElementById("alpha-point-set").value=state.alphaPreset;
   document.getElementById("alpha-slider").value=String(state.alphaValue);
   syncPgDensityControls();
-  drawWater();drawHabitat();drawSensors();drawCompare();
+  syncComparisonControls();
+  drawWater();replaceHabitatRealization();drawSensors();drawCompare();
 }
 if(typeof document!=="undefined")document.addEventListener("DOMContentLoaded",start);
 if(typeof module!=="undefined" && module.exports){
@@ -1005,5 +1098,6 @@ if(typeof module!=="undefined" && module.exports){
     fallbackAlpha,arcCircle,alphaValues,smileyAlphaValues,betaValues,
     waterPoints,betaPoints,habitatPoints,smileyPoints,pgWordmarkPoints,PG_MAX_INTERIOR,
     switchAlphaPreset,setPgInteriorCount,setSmileyInteriorCount,
-    setProcessParameter};
+    setProcessParameter,compareSourcePoints,setComparisonPointSet,
+    setComparisonParameter,resetComparison};
 }
