@@ -79,6 +79,21 @@ function testAlpha(){
     for(let j=0;j<2;j++)
       assert.ok(Math.abs(fallback[i][j]-scene.alpha.points[i][j])<1e-8,
         "Browser Pg generator must match the Python reference coordinates");
+  // Interior counts are arbitrary integers; exact original 298 contour sites
+  // are never changed, including after reshuffling.
+  for(const n of [0,1,82,83,150,302,450,600]){
+    const sampled=context.pgWordmarkPoints(n);
+    assert.equal(sampled.length,298+n);
+    for(let i=0;i<298;i++)
+      assert.deepEqual(sampled[i],fallback[i],
+        "All traced glyph contours must remain fixed");
+  }
+  assert.deepEqual(context.pgWordmarkPoints(302),
+    context.pgWordmarkPoints(302),"Same seeded density is reproducible");
+  assert.notDeepEqual(context.pgWordmarkPoints(302,32572).slice(380,385),
+    fallback.slice(380,385),"Reshuffle changes the new pseudorandom interior sites");
+  assert.deepEqual(context.pgWordmarkPoints(82),fallback.slice(0,380),
+    "Reducing density to 82 returns exactly the original image-derived cloud");
   assert.equal(context.fallbackAlpha(scene.alpha.points.slice(0,2),-28.57142857142857).arcs.length,0);
 }
 function testBeta(){
@@ -186,6 +201,12 @@ function testUI(){
   }
   assert.ok(html.includes('src="data/pg_reference_points.js"'));
   assert.ok(html.includes("serif Pg traced from the supplied image"));
+  assert.match(html,/id="pg-interior-slider"[^>]*max="600"[^>]*value="302"/);
+  assert.match(html,/id="pg-interior-count"/);
+  assert.match(html,/id="pg-reshuffle"/);
+  assert.match(html,/id="pg-density-controls"/);
+  assert.match(fs.readFileSync(path.join(root,"site/app.js"),"utf8"), /pgInteriorCount/);
+  assert.match(css,/\.pg-density-controls\[hidden\]/);
   assert.match(html, /id="alpha-slider"[^>]*max="8"[^>]*value="5"/);
   assert.match(fs.readFileSync(path.join(root,"site/editor.js"),"utf8"), /habitat:800/);
   const encoded=fs.readFileSync(path.join(root,"data/typography/pg_reference.u16.b64"),"ascii").trim();
