@@ -1,3 +1,7 @@
+# CURRENT SUBMISSION STATUS — experiment015 (November 9, 2026)
+
+The user superseded earlier Markdown-only authoring and three-author assumptions. **Current canonical article is [LaTeX](../article/main.tex), not article/feature.md.** Only **Heriberto Espino-Montelongo** (first) and **Héctor Maravillo** (second) are article authors. The current PDF is compiled directly from LaTeX as a *review proof*, not automatically sent. Previous audit results for the older 3-author PDF/Markdown are historical, **not the current submission packet**. The official SIAM News style guide permits submission as PDF/Word and welcomes LaTeX when mathematical notation is present. Re-run `scripts/check_article.py` and review the new PDF, proof figures and two biographies. Publication approval and source-image rights remain open.
+
 # SIAM News submission audit — experiment011
 
 **Date:** November 8, 2026. **Venue:** SIAM News, Software and Programming. **Status:** author draft, not submitted.
