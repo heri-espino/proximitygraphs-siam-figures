@@ -400,6 +400,10 @@ input[type="range"] {
   line-height: 1.45;
 }
 .utility:hover { border-color: var(--ink); }
+.pg-density-controls { margin: 22px 0 19px; }
+.pg-density-controls[hidden] { display: none; }
+.pg-density-controls .density-hint { margin: 4px 0 10px; font-size: 0.75rem; color: var(--muted); line-height: 1.4; }
+.pg-density-controls .utility { margin-top: 8px; }
 .panel-divider { height: 1px; background: var(--line); margin: 31px 0 24px; }
 .point-toolbar { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 7px; }
 .point-toolbar-label { flex-basis: 100%; margin: 0 0 8px; }
