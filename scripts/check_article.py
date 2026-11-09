@@ -54,7 +54,44 @@ for url in ["https://github.com/ProximityGraphs/ProximityGraphs",
         failures.append(f"Missing CTA: {url}")
 if "not submitted" not in source.lower():
     failures.append("The draft's editorial submission status must be explicit")
+# Official SIAM News style guide: reference list alphabetized by first author,
+# one or two sentences per author biography, and image/data creator credits.
+import unicodedata
+
+def first_author_key(entry):
+    surname = entry.partition(",")[0].lower()
+    return "".join(c for c in unicodedata.normalize("NFKD", surname)
+                   if not unicodedata.combining(c))
+
+ref_entries = [p.strip() for p in re.split(r"\n\s*\n", refs_block.strip())
+               if re.search(r"\(\d{4}\)", p)]
+surname_keys = [first_author_key(entry) for entry in ref_entries]
+if surname_keys != sorted(surname_keys):
+    failures.append("APA references must be alphabetized by first-author surname")
+
+captions = re.findall(r"(?m)^\*\*Figure ([123])\.\*\*\s+([^\n]+)$", body)
+for number, caption in captions:
+    if not re.search(r"(?:data:|illustration:|graphic:|credit:|courtesy)",
+                     caption, flags=re.IGNORECASE):
+        failures.append(f"Figure {number} lacks source/illustration credit")
+    if "https://heri-espino.github.io/proximitygraphs-siam-figures/#" not in caption:
+        failures.append(f"Figure {number} lacks its interactive link")
+
+bios = source.split("## About the authors", 1)[1].split("*Editorial note:", 1)[0]
+bio_entries = [v.strip() for v in re.split(r"\n\s*\n", bios.strip()) if v.strip()]
+if len(bio_entries) != 3:
+    failures.append("Three author biographies required")
+for i, bio in enumerate(bio_entries, 1):
+    if not 1 <= len(re.findall(r"[.!?](?:\s|$)", bio)) <= 2:
+        failures.append(f"Author biography {i} should contain 1–2 sentences")
+
+for index, name in enumerate(("water", "habitat", "sensors"), 1):
+    for ext in ("png", "svg"):
+        path = ROOT / f"site/assets/figure0{index}-{name}.{ext}"
+        if not path.is_file():
+            failures.append(f"Missing standalone figure: {path}")
+
 if failures:
     print("\nEditorial preflight failed:\n- " + "\n- ".join(failures))
     sys.exit(1)
-print("Editorial preflight passed (human review and author approval still required).")
+print("Editorial preflight passed (manual figure rights, coauthor consent and editor guidance still outstanding).")
