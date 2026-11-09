@@ -535,22 +535,41 @@ function drawWater(){
 }
 function drawHabitat(){
   const svg=document.getElementById("habitat-plot"),source=currentAlphaSource();
-  const points=editablePoints("habitat",source?source.points:
-    (state.alphaPreset==="pg"?habitatPoints:smileyPoints));
-  const values=activeAlphaValues();
-  const alpha=values[state.alphaIndex],a=-alpha;
-  const original=source&&!edited("habitat");
-  const triangles=original&&source.triangles?source.triangles:delaunayTriangles(points);
-  const shape=original?source.options[String(alpha)]:fallbackAlpha(points,a,triangles);
-  const arcs=shape?.arcs || [];
-  const filtered=alphaSimplices(points,a,triangles);
+  const points=editablePoints("habitat",presetPointSet());
+  const alpha=state.alphaValue;
+  // Use original Python constructions *only* for the exact precomputed
+  // negative-alpha parameter and the unmodified matching reference set.
+  const sourceShape=alpha<0?source?.options?.[String(-alpha)]:null;
+  const original=!!sourceShape&&!edited("habitat");
+  const triangles=alpha>0?furthestDelaunayTriangles(points):
+    (source&&!edited("habitat")&&source.triangles?
+      source.triangles:delaunayTriangles(points));
+  const filtered=alphaSimplices(points,alpha,triangles);
+  const shape=original?sourceShape:fallbackAlpha(points,alpha,triangles);
+  const arcs=shape?.arcs||[];
   const boundary=original&&shape.shape_edges?shape.shape_edges:filtered.boundary;
   const kept=original&&shape.kept_triangles?
-    shape.kept_triangles:filtered.kept.map(x=>x.vertices);
+    shape.kept_triangles:filtered.kept.map(t=>t.vertices);
+  const radius=alpha===0?Infinity:1/Math.abs(alpha);
+  const alphaText=Number.isInteger(alpha)?String(alpha):
+    String(Number(alpha.toFixed(5)));
+  const radiusText=Number.isFinite(radius)?radius.toFixed(3):"∞";
   background(svg,"02 / alpha boundary and circular construction");
-  detail("alpha-value","α = −"+alpha+" · R = "+(1/alpha).toFixed(3));
-  detail("alpha-preset-title",state.alphaPreset==="pg"?"Pg · two closed counters":
-    "Smiling-face point cloud");
+  detail("alpha-value","α = "+alphaText+" · R = "+radiusText);
+  detail("alpha-preset-title",({
+    pg:"Pg · image-traced letterforms",
+    smiley:"Smiling face · randomized interior",
+    poisson:"Homogeneous Poisson point process",
+    binomial:"Binomial point process"
+  })[state.alphaPreset]);
+  const provenance=document.getElementById("habitat-edit-source");
+  if(provenance){
+    if(original && dataset)recomputeNotice("habitat");
+    else provenance.textContent=(state.alphaPreset==="poisson"||
+      state.alphaPreset==="binomial"?
+      "Stochastic realization sampled in JavaScript; all geometry recomputed locally.":
+      "Interactive point/alpha configuration · geometry recomputed independently in JavaScript (not a new Python export).");
+  }
   if(hasLayer("alpha-triangulation")){
     for(const t of triangles){
       const poly=t.vertices.map(i=>points[i]);
@@ -595,6 +614,8 @@ function drawHabitat(){
     }
   }
   if(hasLayer("alpha-hull")){
+    if(alpha===0)for(const [i,j] of boundary)
+      segment(svg,points[i],points[j],"#7f7b84",2.8,.9);
     arcs.forEach(function(arc,index){
       const selected=index===state.alphaArc;
       const line=el("polyline",{points:pointsAttr(arc),fill:"none",
@@ -610,8 +631,10 @@ function drawHabitat(){
       el("title",{},line,"Arc "+(index+1)+" · click for its circle");
     });
   }
-  const roles=state.alphaPreset==="pg"
-    ?points.map((_,i)=>i<298?"outline":"stroke"):null;
+  const roles=state.alphaPreset==="pg"?
+    points.map((_,i)=>i<298?"outline":"stroke"):
+    state.alphaPreset==="smiley"?
+      points.map((_,i)=>i<53?"outline":"stroke"):null;
   points.forEach(function(p,i){
     site(svg,p,i,false,undefined,undefined,roles?roles[i]:undefined);
   });
@@ -621,16 +644,21 @@ function drawHabitat(){
     " shape edges · "+topology.holes+" hole"+(topology.holes===1?"":"s")+
     " · "+arcs.length+" arcs");
   const c=chosenCircle;
-  detail("habitat-details",(state.alphaPreset==="pg"?"Pg":"Smiley")+
-    ": α = −"+alpha+" gives radius R = "+(1/alpha).toFixed(3)+
-    ". The retained complex has "+topology.holes+" enclosed hole"+
-    (topology.holes===1?"":"s")+" in "+topology.components+
-    " component"+(topology.components===1?"":"s")+". "+
-    kept.length+" of "+triangles.length+" Delaunay triangles satisfy the radius cutoff. "+
-    boundary.length+" straight boundary edges, "+arcs.length+" sampled circular arcs."+
+  const family=({
+    pg:"Pg",smiley:"Smiley",poisson:"Poisson",binomial:"Binomial"
+  })[state.alphaPreset];
+  detail("habitat-details",family+": α = "+alphaText+"; "+
+    (alpha===0?"the exact convex-hull limit has straight edges.":
+     "radius R = "+radiusText+" with "+(alpha>0?"furthest-site":"ordinary")+
+     " Delaunay triangulation.")+
+    " Retained triangles: "+kept.length+" / "+triangles.length+
+    "; components: "+topology.components+"; enclosed holes: "+topology.holes+
+    "; boundary edges: "+boundary.length+"; circular arcs: "+arcs.length+"."+
     (c?" Arc "+(state.alphaArc+1)+" center: ("+
       c.center[0].toFixed(3)+", "+c.center[1].toFixed(3)+").":""));
-  detail("habitat-note","A retained triangle has circumradius ≤ R. A straight alpha-shape edge belongs to exactly one retained triangle; its curved alpha-hull counterpart lies on a circle of radius R.");
+  detail("habitat-note",alpha===0?
+    "At α = 0, ProximityGraphs uses the convex hull with straight edges; R tends to infinity. There are no finite supporting circles.":
+    "A retained triangle satisfies circumradius ≤ 1/|α|. Negative α uses ordinary Delaunay; positive α uses furthest-site Delaunay and inward circular arcs. Browser edits are independent JS constructions.");
 }
 function selectBetaPair(pair) {
   state.betaPair=pair?pair.slice():null;
