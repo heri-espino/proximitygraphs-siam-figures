@@ -18,7 +18,7 @@ Increase the number of points **inside the existing serif Pg glyphs**, while pre
 
 ## Preliminary geometric results
 
-An initial in-memory JavaScript incremental triangulation without the additional 0.025 contour clearance reported the following **exploratory, superseded** values; the pinned Python test subsequently rejected that initial sample (components=1, holes=3 at the default). The current contour-safe sample must be checked against pinned Python before any values below are used as current results:
+An initial in-memory JavaScript incremental triangulation (before the additional 0.025 contour clearance) gave these exploratory values. The first Python CI mistakenly selected ALPHAS[2] = 18 instead of the new default ALPHAS[5] = 28.57142857142857; its 1-component/3-hole failure was a stale-test-index error, not a confirmed default-topology defect. Updated pinned-library results must be validated before interpreting these as current values:
 
 | Magnitude | Retained triangles | Components | Holes |
 | ---: | ---: | ---: | ---: |
@@ -32,7 +32,7 @@ An initial in-memory JavaScript incremental triangulation without the additional
 | 38 | 928 | 2 | 3 |
 | 44 | 914 | 2 | 3 |
 
-For the initial prototype, no boundary vertex had degree other than two. Hole count follows the planar Euler characteristic `b1 = E - V - F + b0` for the retained triangle complex. These values are retained to document the rejected configuration, not to represent the current contour-safe output. The failed initial PR CI runs were 42547749087 and 42547749124; both identified the topology mismatch. A contour clearance was added and CI must be rerun.
+For the initial prototype, no boundary vertex had degree other than two. Hole count follows the planar Euler characteristic `b1 = E - V - F + b0` for the retained triangle complex. These values document the initial sample and need not match the subsequently contour-cleared version. The initial PR CI runs 42547749087 and 42547749124 failed because the test selected the former index2 after the slider was extended; this error was corrected to index5. The source was also made more conservative with an additional 0.025 contour clearance. Re-run CI for the actual current design.
 
 ## Reproduction
 
