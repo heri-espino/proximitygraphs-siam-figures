@@ -51,3 +51,12 @@ python tests/visual_smoke.py --output docs/visual-qa
 
 ## Limits / next
 Changing either graph does not change the underlying sample, but the independent JS graph constructors still have geometric/numerical limitations (especially with many sites). When the Poisson count is zero the panels should display no sites, not fabricate edges. A Poisson count cannot be forced equal to lambda without changing its distribution. The site should be released only after CI, relevant screenshots and the pull request are inspected. Preserve and document passing job links, and do not merge without authorization.
+
+## Validated PR run evidence (November 8, 2026)
+
+- [PR #9](https://github.com/heri-espino/proximitygraphs-siam-figures/pull/9) is a reviewable, mergeable branch; no merge authorization has been given. The branch reconciles the concurrent editorial experiment011 without modifying its manuscript, PDF or research records.
+- [Pinned ProximityGraphs/Node regression workflow #42557835940](https://github.com/heri-espino/proximitygraphs-siam-figures/actions/runs/42557835940): **success**, including mathematical scene export, pinned Python tests and Node source/UI invariants.
+- [Desktop/mobile Playwright interactive visual workflow #42557835921](https://github.com/heri-espino/proximitygraphs-siam-figures/actions/runs/42557835921): **success**, including screenshot defaults, 645-site Pg; original pinned 600-site shape, signed alpha endpoints and 0; Smiley/Poisson/binomial habitat controls; sensor edits; exact 37-site binomial graph comparison; Poisson count zero and nonzero; equal left/right SVG source coordinates; swap, resample and reset. This workflow stores new comparative screenshots as 11-comparison-binomial.png and 12-comparison-poisson.png in its visual QA artifact.
+- The successful runs checked merge commit `b3b4f1a4bb56396916b5b3c0ff9025347a4ae7e3` before this documentation-only addition.
+
+No Page deployment is claimed: PR checks skip the GitHub Pages job. Publication still depends on explicit approval to merge to main and successful post-merge deployment.
