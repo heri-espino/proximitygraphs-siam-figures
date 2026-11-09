@@ -127,72 +127,72 @@
       <div class="section-kicker">02 / Geometric morphology</div>
       <div class="section-heading">
         <div><h2 id="habitat-title">Alpha-Hull &amp; Alpha-Shape</h2>
-          <p class="intro">Choose the traced <strong>Pg</strong>, a smiling face with random interior dots, or two classical spatial point processes. Explore alpha-shapes and circular alpha-hulls from <strong>−100 to 100</strong> on a common normalized square.</p></div>
+          <p class="intro">How does a cloud of points become a recognizable shape? Compare the <strong>straight boundary of an alpha-shape</strong> with the <strong>circular arcs of an alpha-hull</strong>. Change the points and the scale to see gaps, contours, and holes emerge.</p></div>
         <a class="section-next" href="#sensors">Next: Empty regions →</a>
       </div>
       <div class="studio">
         <aside class="studio-panel" aria-label="Alpha-shape and alpha-hull controls">
-          <h3>Layers &amp; scale</h3>
-          <label class="control-label" for="alpha-point-set">Point-cloud preset</label>
+          <h3>Shape and scale</h3>
+          <label class="control-label" for="alpha-point-set">Point set</label>
           <select id="alpha-point-set" class="control-select">
-            <optgroup label="Illustrated point clouds">
-              <option value="pg" selected>Pg · serif image sampling</option>
-              <option value="smiley">Smiling face · random interior</option>
+            <optgroup label="Shapes">
+              <option value="pg" selected>Pg letterform</option>
+              <option value="smiley">Smiling face</option>
             </optgroup>
-            <optgroup label="Stochastic point processes">
-              <option value="poisson">Poisson point process</option>
-              <option value="binomial">Binomial point process</option>
+            <optgroup label="Random point patterns">
+              <option value="poisson">Poisson process</option>
+              <option value="binomial">Binomial process</option>
             </optgroup>
           </select>
           <label class="control-label" for="alpha-view">Construction view</label>
           <select id="alpha-view" class="control-select"><option value="final">Final comparison</option><option value="construction">Construction</option><option value="both" selected>Both</option></select>
-          <label class="control-label" for="alpha-slider">Signed alpha parameter <strong id="alpha-value">α = -48.65245 · R = 0.021</strong></label>
+          <label class="control-label" for="alpha-slider">Boundary scale <strong id="alpha-value">α = -48.65245 · R = 0.021</strong></label>
           <input id="alpha-slider" type="range" min="-100" max="100" step="any"
                  value="-48.65245" aria-label="Alpha parameter from minus 100 to plus 100, including zero">
-          <p class="density-hint">Negative: ordinary Delaunay · Zero: convex hull · Positive: furthest-site Delaunay</p>
+          <p class="density-hint">Negative α: ordinary Delaunay · Zero: convex hull · Positive α: furthest-site Delaunay</p>
           <div id="pg-density-controls" class="pg-density-controls">
             <label class="control-label" for="pg-interior-slider">Random interior points <strong id="pg-interior-count" aria-live="polite">347</strong></label>
             <input id="pg-interior-slider" type="range" min="0" max="600" step="1" value="347"
                    aria-label="Number of randomly placed interior points in the Pg glyphs">
-            <p class="density-hint">0–600 inside the letters · outlines always preserved</p>
-            <button type="button" class="utility" id="pg-reshuffle">Reshuffle random points</button>
+            <p class="density-hint">The letter outlines remain fixed.</p>
+            <button type="button" class="utility" id="pg-reshuffle">Generate new points</button>
           </div>
           <div id="smiley-density-controls" class="pg-density-controls" hidden>
-            <label class="control-label" for="smiley-interior-slider">Smiling-face interior points <strong id="smiley-interior-count" aria-live="polite">120</strong></label>
+            <label class="control-label" for="smiley-interior-slider">Points inside the face <strong id="smiley-interior-count" aria-live="polite">120</strong></label>
             <input id="smiley-interior-slider" type="range" min="0" max="600" step="1" value="120"
                    aria-label="Number of random points inside the smiling face">
-            <p class="density-hint">0–600 · keeps the face outline, eyes, and smile unobstructed</p>
-            <button type="button" class="utility" id="smiley-reshuffle">Reshuffle face points</button>
+            <p class="density-hint">The outline, eyes, and smile remain visible.</p>
+            <button type="button" class="utility" id="smiley-reshuffle">Generate new points</button>
           </div>
           <div id="process-controls" class="pg-density-controls" hidden>
-            <h4 class="process-heading">Stochastic point processes</h4>
-            <label class="control-label" for="process-slider"><span id="process-parameter-title">Intensity λ (mean number of points)</span> <strong id="process-parameter-count" aria-live="polite">120</strong></label>
+            <h4 class="process-heading">Random point patterns</h4>
+            <label class="control-label" for="process-slider"><span id="process-parameter-title">Expected number of points (λ)</span> <strong id="process-parameter-count" aria-live="polite">120</strong></label>
             <input id="process-slider" type="range" min="0" max="600" step="1" value="120"
                    aria-label="Poisson intensity or binomial fixed number of points">
-            <p class="density-hint" id="process-definition">Homogeneous Poisson process: N ~ Poisson(λ); positions uniform in the unit square.</p>
-            <p class="density-hint" id="process-realized" aria-live="polite">Realized N = 0</p>
-            <button type="button" class="utility" id="process-reshuffle">Generate new realization</button>
+            <p class="density-hint" id="process-definition">The number of points varies randomly, with mean λ.</p>
+            <p class="density-hint" id="process-realized" aria-live="polite">Points in this sample: 0</p>
+            <button type="button" class="utility" id="process-reshuffle">Generate new sample</button>
           </div>
-          <label class="toggle"><input id="alpha-hull" type="checkbox" checked> Alpha-hull · circular arcs</label>
-          <label class="toggle"><input id="alpha-shape" type="checkbox" checked> Alpha-shape · straight edges</label>
+          <label class="toggle"><input id="alpha-hull" type="checkbox" checked> Alpha-hull (circular arcs)</label>
+          <label class="toggle"><input id="alpha-shape" type="checkbox" checked> Alpha-shape (straight edges)</label>
           <label class="toggle"><input id="alpha-triangulation" type="checkbox"> Delaunay triangulation</label>
-          <label class="toggle"><input id="alpha-kept" type="checkbox" checked> Retained simplices · reveal holes</label>
-          <label class="toggle"><input id="alpha-circle" type="checkbox"> Selected arc circle</label>
+          <label class="toggle"><input id="alpha-kept" type="checkbox" checked> Triangles passing the radius test</label>
+          <label class="toggle"><input id="alpha-circle" type="checkbox"> Circle of the selected arc</label>
           <label class="toggle"><input id="alpha-all-circles" type="checkbox" checked> All supporting circles</label>
           <label class="toggle"><input id="alpha-centers" type="checkbox"> Circle centers</label>
           <div class="panel-divider"></div>
-          <div class="point-toolbar" role="group" aria-label="Edit habitat points">
+          <div class="point-toolbar" role="group" aria-label="Edit shape points">
             <span class="point-toolbar-label">Edit points</span>
             <button type="button" class="tool-mode" data-editor-scene="habitat" data-mode="move" aria-pressed="true">Move</button>
             <button type="button" class="tool-mode" data-editor-scene="habitat" data-mode="add" aria-pressed="false">+ Add</button>
             <button type="button" class="tool-mode" data-editor-scene="habitat" data-mode="delete" aria-pressed="false">− Delete</button>
             <button type="button" class="reset-points" data-editor-reset="habitat">Reset points</button>
-            <span id="habitat-edit-help" class="point-help" aria-live="polite">Drag an observation to change the boundary.</span>
+            <span id="habitat-edit-help" class="point-help" aria-live="polite">Drag a point to change the boundary.</span>
           </div>
         </aside>
         <div class="studio-main">
           <div class="chart-frame">
-            <div class="chart-top"><span id="alpha-preset-title">Pg · image-traced serif and swash</span><span>SYNTHETIC · SIGNED α</span></div>
+            <div class="chart-top"><span id="alpha-preset-title">Pg letterform</span><span>BOUNDARIES · α</span></div>
             <svg id="habitat-plot" role="img" aria-label="Interactive circular alpha-hull, straight alpha-shape, Delaunay simplices and supporting circles" viewBox="0 0 640 600"></svg>
           </div>
           <p id="habitat-edit-source" class="geometry-source">Loading points…</p>
@@ -200,13 +200,13 @@
         </div>
         <aside class="studio-panel insight" aria-label="Alpha construction details">
           <h3>Geometry explained</h3>
-          <p class="insight-label">Selected circular arc</p>
-          <p id="habitat-details" class="insight-result" aria-live="polite">Select an arc to inspect its radius and supporting circle.</p>
+          <p class="insight-label">Boundary details</p>
+          <p id="habitat-details" class="insight-result" aria-live="polite">Select a curved boundary segment to see its supporting circle.</p>
           <p class="formula">R = 1 / |α|</p>
-          <p class="insight-note" id="habitat-note">Triangles with circumradius at most R form the displayed alpha-shape construction.</p>
+          <p class="insight-note" id="habitat-note">Only triangles whose circumradii do not exceed R contribute to the boundary.</p>
         </aside>
       </div>
-      <p class="context">The original 298 Pg outline sites and 53 smiling-face feature sites are preserved. Both letterform presets permit 0–600 additional/interior random points and deterministic reshuffling. The interactive Pg view starts with 347 interior points (645 total) at α = −48.65245, matching the reference screenshot; the preserved pinned Python export has 302 interior sites at α ≈ −28.57 with two components and two enclosed counters. The <strong>binomial point process</strong> fixes N = n uniformly sampled sites, whereas the <strong>homogeneous Poisson point process</strong> draws N ~ Poisson(λ) before sampling coordinates uniformly over [0,1]². Both are independent stochastic-geometry examples, not observations of a real habitat. Only exact original precomputed configurations are sourced from the pinned Python library; all other realizations and signed-alpha calculations are independently computed in the browser.</p>
+      <p class="context">An <strong>alpha-shape</strong> follows the outer edges of triangles that satisfy a radius cutoff; an <strong>alpha-hull</strong> traces related boundaries with circular arcs. Changing the scale can join regions, separate them, or reveal holes. Try a fixed number of independently scattered points with the <strong>binomial process</strong>, or let the number itself vary with the <strong>Poisson process</strong>.</p>
     </section>
 
     <section id="sensors" class="exhibit" aria-labelledby="sensors-title">
@@ -268,8 +268,8 @@
         <label for="compare-point-set">Shared point-set generator
           <select id="compare-point-set" class="control-select">
             <option value="sensors" selected>Synthetic sensors · original</option>
-            <option value="binomial">Binomial point process</option>
-            <option value="poisson">Poisson point process</option>
+            <option value="binomial">Binomial process</option>
+            <option value="poisson">Poisson process</option>
           </select>
         </label>
         <label for="compare-left">Left graph
