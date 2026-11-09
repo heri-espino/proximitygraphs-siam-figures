@@ -3,7 +3,7 @@
 \documentclass[10pt,letterpaper]{article}
 \usepackage[T1]{fontenc}
 \usepackage[utf8]{inputenc}
-\usepackage[margin=20mm]{geometry}
+\usepackage[margin=18mm]{geometry}
 \usepackage{lmodern,microtype,graphicx,amsmath,amssymb,xcolor,parskip,hyperref,caption,float}
 \definecolor{ProxTeal}{HTML}{166B75}
 \definecolor{ProxInk}{HTML}{253C49}
@@ -15,7 +15,7 @@
  justification=raggedright,singlelinecheck=false}
 \renewcommand{\familydefault}{\sfdefault}
 \setlength{\parindent}{0pt}
-\setlength{\parskip}{0.30em}
+\setlength{\parskip}{0.22em}
 \raggedbottom
 \newcommand{\featurefigure}[3]{%
 \begin{figure}[H]\centering
@@ -80,7 +80,11 @@ The \href{https://heri-espino.github.io/proximitygraphs-siam-figures/}{interacti
 \textbf{Try the library:} \href{https://github.com/ProximityGraphs/ProximityGraphs}{Source and examples} · \href{https://pypi.org/project/proximitygraphs/}{PyPI} · \texttt{pip install proximitygraphs}. The Python release is currently a pre-release; selected algorithms and models are planar.
 
 \renewcommand{\refname}{References}
+\begingroup
+\footnotesize
 \begin{thebibliography}{10}
+\setlength{\itemsep}{1pt}
+\setlength{\parsep}{0pt}
 \bibitem{source1} Aldous, D. J., \& Shun, J. (2010). Connected spatial networks over random points and a route-length statistic. \emph{Statistical Science, 25}(3), 275--288. \url{https://doi.org/10.1214/10-STS335}
 \bibitem{source2} Costa, J. A., \& Hero, A. O. (2004). Geodesic entropic graphs for dimension and entropy estimation in manifold learning. \emph{IEEE Transactions on Signal Processing, 52}(8), 2210--2221. \url{https://doi.org/10.1109/TSP.2004.831130}
 \bibitem{source3} Devroye, L. (1988). The expected size of some graphs in computational geometry. \emph{Computers \& Mathematics with Applications, 15}(1), 53--64.
@@ -92,6 +96,7 @@ The \href{https://heri-espino.github.io/proximitygraphs-siam-figures/}{interacti
 \bibitem{source9} Niyogi, P., Smale, S., \& Weinberger, S. (2008). Finding the homology of submanifolds with high confidence from random samples. \emph{Discrete \& Computational Geometry, 39}, 419--441. \url{https://doi.org/10.1007/s00454-008-9053-2}
 \bibitem{source10} Penrose, M. D., \& Yukich, J. E. (2013). Limit theory for point processes in manifolds. \emph{Annals of Applied Probability, 23}(6), 2161--2211. \url{https://doi.org/10.1214/12-AAP897}
 \end{thebibliography}
+\endgroup
 
 \section*{About the authors}
 Héctor Maravillo works on computational geometry and proximity graphs at Universidad Autónoma Metropolitana (UAM), Mexico.
