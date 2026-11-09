@@ -29,6 +29,8 @@ class GeometryTests(unittest.TestCase):
         g_outer, g_counter = PG_REFERENCE_POINTS[:147].tolist(), PG_REFERENCE_POINTS[147:176].tolist()
         p_outer, p_counter = PG_REFERENCE_POINTS[176:257].tolist(), PG_REFERENCE_POINTS[257:298].tolist()
         for x,y in PG_POINTS[380:]:
+            self.assertGreaterEqual(np.min(np.hypot(PG_REFERENCE_POINTS[:298,0]-x,
+                                                      PG_REFERENCE_POINTS[:298,1]-y)), .025-1e-12)
             self.assertTrue(
                 (point_in_polygon(x,y,g_outer) and not point_in_polygon(x,y,g_counter)) or
                 (point_in_polygon(x,y,p_outer) and not point_in_polygon(x,y,p_counter))
