@@ -275,6 +275,54 @@ def main():
         after=page.locator("#compare-details").inner_text()
         assert before!=after,(before,after)
         checks.append("Same-site graph comparison reacts to selections and edits")
+        assert page.locator("#compare-point-set").input_value()=="sensors"
+        assert page.locator("#compare-process-controls").is_hidden()
+        page.locator("#compare-point-set").select_option("binomial")
+        assert page.locator("#compare-process-controls").is_visible()
+        assert "Binomial count" in page.locator("#compare-parameter-title").inner_text()
+        param=page.locator("#compare-process-slider")
+        param.fill("37")
+        assert page.locator("#compare-realized").inner_text()=="Realized N = 37"
+        assert page.locator("#compare-left-plot circle").count()==37
+        assert page.locator("#compare-right-plot circle").count()==37
+        def both_panels_identical():
+            return page.evaluate("""() => {
+              const xy=side=>Array.from(
+                document.querySelectorAll('#compare-'+side+'-plot circle'),
+                p=>[p.getAttribute('cx'),p.getAttribute('cy')]);
+              return JSON.stringify(xy('left'))===JSON.stringify(xy('right'));
+            }""")
+        assert both_panels_identical(), "Two graph panels must use identical binomial sites"
+        first=page.locator("#compare-left-plot circle").first.get_attribute("cx")
+        page.locator("#compare-swap").click()
+        assert first==page.locator("#compare-left-plot circle").first.get_attribute("cx")
+        assert both_panels_identical(), "Swapping graph definitions cannot resample points"
+        page.locator("#compare-reshuffle").click()
+        assert first!=page.locator("#compare-left-plot circle").first.get_attribute("cx")
+        assert both_panels_identical()
+        page.locator("#compare").screenshot(path=str(output/"11-comparison-binomial.png"))
+        page.locator("#compare-point-set").select_option("poisson")
+        assert "Poisson intensity" in page.locator("#compare-parameter-title").inner_text()
+        param.fill("0")
+        assert page.locator("#compare-realized").inner_text()=="Realized N = 0"
+        assert page.locator("#compare-left-plot circle").count()==0
+        assert page.locator("#compare-right-plot circle").count()==0
+        param.fill("30")
+        n=int(page.locator("#compare-realized").inner_text().split("=")[-1].strip())
+        assert 10<=n<=50,n
+        assert page.locator("#compare-left-plot circle").count()==n
+        assert page.locator("#compare-right-plot circle").count()==n
+        assert both_panels_identical()
+        page.locator("#compare").screenshot(path=str(output/"12-comparison-poisson.png"))
+        assert "JavaScript" in page.locator("#compare-source").inner_text()
+        page.locator("#compare-reset").click()
+        assert page.locator("#compare-point-set").input_value()=="sensors"
+        assert page.locator("#compare-process-controls").is_hidden()
+        assert page.locator("#compare-left").input_value()=="gabriel"
+        assert page.locator("#compare-right").input_value()=="rng"
+        assert page.locator("#compare-left-plot circle").count()==25
+        assert both_panels_identical()
+        checks.append("Binomial exact site count, Poisson random site count and synchronized comparison panels")
         # Deliberate control changes show a short diagram transition. Dragging
         # remains unanimated, and the site must honor OS reduced-motion.
         animated=page.evaluate("""() => {
