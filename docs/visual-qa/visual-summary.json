@@ -9,7 +9,7 @@
     "Scrolling is static; navigation clicks animate only the chosen section",
     "Voronoi bisectors, circumcircle and Delaunay triangulation render",
     "Pg alpha-hull and alpha-shape render two enclosed holes with circles",
-    "Switching Pg ↔ smiley preserves separate alpha grids and clean editor baselines",
+    "Random interior slider, reshuffle and reset preserve originals; Pg ↔ smiley switches alpha grids",
     "Rejected beta candidate exposes blocking points and both disks",
     "Pair inspection and pointer dragging update source provenance",
     "Same-site graph comparison reacts to selections and edits",
