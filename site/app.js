@@ -11,7 +11,10 @@ const smileyAlphaValues = [4, 8, 10, 12];
 const betaValues = [1, 1.25, 1.5, 1.75, 2];
 const state = {
   waterSite:6, waterTriangleIndex:0,
-  alphaPreset:"pg",alphaIndex:5,alphaArc:0,pgInteriorCount:302,pgSeed:32571,
+  alphaPreset:"pg",alphaValue:-28.57142857142857,alphaArc:0,
+  pgInteriorCount:302,pgSeed:32571,
+  smileyInteriorCount:SMILEY_DEFAULT_INTERIOR,smileySeed:SMILEY_DEFAULT_SEED,
+  processParameter:PROCESS_DEFAULT_PARAMETER,processSeed:PROCESS_DEFAULT_SEED,pgInteriorCount:302,pgSeed:32571,
   betaIndex:2,betaPair:null,betaInspectFirst:null
 };
 let dataset = null;
@@ -112,60 +115,116 @@ const habitatPoints=pgWordmarkPoints();
 
 function currentAlphaSource(){
   const alpha=dataset?.alpha;
-  if(!alpha)return null;
+  if(!alpha || !["pg","smiley"].includes(state.alphaPreset))return null;
   return alpha.presets?.[state.alphaPreset] ||
     (state.alphaPreset==="pg"?alpha:null);
 }
-function activeAlphaValues(){
-  return currentAlphaSource()?.alpha_values ||
-    (state.alphaPreset==="smiley"?smileyAlphaValues:alphaValues);
+
+function presetPointSet(){
+  if(state.alphaPreset==="pg"){
+    const source=currentAlphaSource();
+    const clean=state.pgInteriorCount===PG_DEFAULT_INTERIOR &&
+      state.pgSeed===PG_RANDOM_SEED;
+    return clean?(source?.points||habitatPoints.map(p=>p.slice())):
+      pgWordmarkPoints(state.pgInteriorCount,state.pgSeed);
+  }
+  if(state.alphaPreset==="smiley")
+    return smileyWithInteriorPoints(smileyPoints,state.smileyInteriorCount,
+      state.smileySeed);
+  return stochasticPointSet(state.alphaPreset,state.processParameter,
+    state.processSeed);
 }
+
 function syncPgDensityControls(){
-  const group=document.getElementById("pg-density-controls");
-  if(!group)return;
-  group.hidden=state.alphaPreset!=="pg";
-  const slider=document.getElementById("pg-interior-slider");
-  slider.value=String(state.pgInteriorCount);
+  const pg=state.alphaPreset==="pg",smiley=state.alphaPreset==="smiley";
+  const pgPanel=document.getElementById("pg-density-controls");
+  if(!pgPanel)return;
+  pgPanel.hidden=!pg;
+  document.getElementById("smiley-density-controls").hidden=!smiley;
+  document.getElementById("process-controls").hidden=pg||smiley;
+  document.getElementById("pg-interior-slider").value=String(state.pgInteriorCount);
   detail("pg-interior-count",String(state.pgInteriorCount));
+  document.getElementById("smiley-interior-slider").value=
+    String(state.smileyInteriorCount);
+  detail("smiley-interior-count",String(state.smileyInteriorCount));
+  document.getElementById("process-slider").value=String(state.processParameter);
+  const poisson=state.alphaPreset==="poisson";
+  detail("process-parameter-title",poisson?"Intensity λ (mean number of points)":
+    "Fixed number of points n");
+  detail("process-parameter-count",String(state.processParameter));
+  detail("process-definition",poisson?
+    "Homogeneous Poisson process: N ~ Poisson(λ), locations iid uniform in [0,1]². The realized N may differ from λ.":
+    "Binomial point process: exactly N = n iid uniform points in [0,1]².");
 }
-function setPgInteriorCount(count,seed=state.pgSeed){
-  if(state.alphaPreset!=="pg")return;
-  state.pgInteriorCount=Math.max(0,Math.min(PG_MAX_INTERIOR,Math.round(count)));
-  state.pgSeed=seed>>>0;
-  syncPgDensityControls();
+
+function replaceHabitatRealization(){
+  const points=presetPointSet();
+  const source=currentAlphaSource();
+  const authoritative=(state.alphaPreset==="pg" &&
+    state.pgInteriorCount===PG_DEFAULT_INTERIOR &&
+    state.pgSeed===PG_RANDOM_SEED) ||
+    (state.alphaPreset==="smiley" && state.smileyInteriorCount===0);
   const editor=pointEditors.habitat;
-  const original=currentAlphaSource()?.points || habitatPoints;
-  const isReference=state.pgInteriorCount===PG_DEFAULT_INTERIOR &&
-    state.pgSeed===PG_RANDOM_SEED;
   if(editor){
-    editor.original=original.map(p=>p.slice());
-    editor.points=(isReference?original:pgWordmarkPoints(state.pgInteriorCount,state.pgSeed))
-      .map(p=>p.slice());
-    editor.dirty=!isReference;
-    editor.active=null;
-    editor.pending=false;
+    // The generated realization becomes a resettable baseline for Move/Add/
+    // Delete. A new realization always invalidates cached Python geometry.
+    editor.original=points.map(p=>p.slice());
+    editor.points=points.map(p=>p.slice());
+    editor.active=null;editor.pending=false;
+    editor.dirty=!authoritative;
     editor.generation=(editor.generation||0)+1;
     recomputeNotice("habitat");
   }
   state.alphaArc=0;
+  syncPgDensityControls();
+  if(state.alphaPreset==="poisson"||state.alphaPreset==="binomial")
+    detail("process-realized","Realized N = "+points.length);
   drawHabitat();
 }
 
+function setPgInteriorCount(count,seed=state.pgSeed){
+  if(state.alphaPreset!=="pg")return;
+  state.pgInteriorCount=Math.max(0,Math.min(PG_MAX_INTERIOR,Math.round(count)));
+  state.pgSeed=seed>>>0;
+  replaceHabitatRealization();
+}
+
+function setSmileyInteriorCount(count,seed=state.smileySeed){
+  if(state.alphaPreset!=="smiley")return;
+  state.smileyInteriorCount=Math.max(0,Math.min(PROCESS_MAX_PARAMETER,Math.round(count)));
+  state.smileySeed=seed>>>0;
+  replaceHabitatRealization();
+}
+
+function setProcessParameter(count,seed=state.processSeed){
+  if(state.alphaPreset!=="poisson"&&state.alphaPreset!=="binomial")return;
+  state.processParameter=Math.max(0,Math.min(PROCESS_MAX_PARAMETER,Math.round(count)));
+  state.processSeed=seed>>>0;
+  replaceHabitatRealization();
+}
+
+function resetHabitatPointSet(){
+  if(state.alphaPreset==="pg"){
+    state.pgInteriorCount=PG_DEFAULT_INTERIOR;
+    state.pgSeed=PG_RANDOM_SEED;
+  }else if(state.alphaPreset==="smiley"){
+    state.smileyInteriorCount=SMILEY_DEFAULT_INTERIOR;
+    state.smileySeed=SMILEY_DEFAULT_SEED;
+  }else{
+    state.processParameter=PROCESS_DEFAULT_PARAMETER;
+    state.processSeed=PROCESS_DEFAULT_SEED;
+  }
+  // Resetting sites does not change the user's selected alpha value.
+  replaceHabitatRealization();
+}
+
 function switchAlphaPreset(key){
-  if(key!=="pg"&&key!=="smiley")return;
+  if(!["pg","smiley","poisson","binomial"].includes(key))return;
   state.alphaPreset=key;
-  state.pgInteriorCount=PG_DEFAULT_INTERIOR;
-  state.pgSeed=PG_RANDOM_SEED;
-  syncPgDensityControls();
-  const source=currentAlphaSource();
-  state.alphaIndex=source?.default_alpha_index ??
-    (key==="pg"?5:1);
-  state.alphaArc=0;
-  document.getElementById("alpha-slider").max=String(activeAlphaValues().length-1);
-  document.getElementById("alpha-slider").value=state.alphaIndex;
-  const points=source?.points || (key==="pg"?habitatPoints:smileyPoints);
-  if(pointEditors.habitat)replaceEditorPointSet("habitat",points);
-  else drawHabitat();
+  state.alphaValue=key==="pg"?-28.57142857142857:
+    key==="smiley"?-8:-10;
+  document.getElementById("alpha-slider").value=String(state.alphaValue);
+  resetHabitatPointSet();
 }
 
 
