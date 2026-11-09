@@ -9,7 +9,7 @@
  * represented as a new library-generated output.
  */
 const EDIT_MAX = 80;
-const EDIT_CAPS = Object.freeze({water:80,habitat:480,sensors:80});
+const EDIT_CAPS = Object.freeze({water:80,habitat:800,sensors:80});
 const EDIT_SEPARATION = 0.008;
 const EDIT_SCENES = Object.freeze({
   water: {plot:"water-plot",draw:"drawWater",name:"water stations"},
