@@ -404,6 +404,9 @@ input[type="range"] {
 .pg-density-controls[hidden] { display: none; }
 .pg-density-controls .density-hint { margin: 4px 0 10px; font-size: 0.75rem; color: var(--muted); line-height: 1.4; }
 .pg-density-controls .utility { margin-top: 8px; }
+.studio-panel > .density-hint { margin: -9px 0 12px; color: var(--muted); font-size: .75rem; line-height: 1.5; }
+.process-heading { font-family: inherit; font-size: 12px; font-weight: 620; letter-spacing: .04em; margin: 21px 0 -6px; color: var(--ink-soft); }
+
 .panel-divider { height: 1px; background: var(--line); margin: 31px 0 24px; }
 .point-toolbar { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 7px; }
 .point-toolbar-label { flex-basis: 100%; margin: 0 0 8px; }

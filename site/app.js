@@ -11,7 +11,10 @@ const smileyAlphaValues = [4, 8, 10, 12];
 const betaValues = [1, 1.25, 1.5, 1.75, 2];
 const state = {
   waterSite:6, waterTriangleIndex:0,
-  alphaPreset:"pg",alphaIndex:5,alphaArc:0,pgInteriorCount:302,pgSeed:32571,
+  alphaPreset:"pg",alphaValue:-28.57142857142857,alphaArc:0,
+  pgInteriorCount:302,pgSeed:32571,
+  smileyInteriorCount:SMILEY_DEFAULT_INTERIOR,smileySeed:SMILEY_DEFAULT_SEED,
+  processParameter:PROCESS_DEFAULT_PARAMETER,processSeed:PROCESS_DEFAULT_SEED,
   betaIndex:2,betaPair:null,betaInspectFirst:null
 };
 let dataset = null;
@@ -112,60 +115,116 @@ const habitatPoints=pgWordmarkPoints();
 
 function currentAlphaSource(){
   const alpha=dataset?.alpha;
-  if(!alpha)return null;
+  if(!alpha || !["pg","smiley"].includes(state.alphaPreset))return null;
   return alpha.presets?.[state.alphaPreset] ||
     (state.alphaPreset==="pg"?alpha:null);
 }
-function activeAlphaValues(){
-  return currentAlphaSource()?.alpha_values ||
-    (state.alphaPreset==="smiley"?smileyAlphaValues:alphaValues);
+
+function presetPointSet(){
+  if(state.alphaPreset==="pg"){
+    const source=currentAlphaSource();
+    const clean=state.pgInteriorCount===PG_DEFAULT_INTERIOR &&
+      state.pgSeed===PG_RANDOM_SEED;
+    return clean?(source?.points||habitatPoints.map(p=>p.slice())):
+      pgWordmarkPoints(state.pgInteriorCount,state.pgSeed);
+  }
+  if(state.alphaPreset==="smiley")
+    return smileyWithInteriorPoints(currentAlphaSource()?.points||smileyPoints,
+      state.smileyInteriorCount,state.smileySeed);
+  return stochasticPointSet(state.alphaPreset,state.processParameter,
+    state.processSeed);
 }
+
 function syncPgDensityControls(){
-  const group=document.getElementById("pg-density-controls");
-  if(!group)return;
-  group.hidden=state.alphaPreset!=="pg";
-  const slider=document.getElementById("pg-interior-slider");
-  slider.value=String(state.pgInteriorCount);
+  const pg=state.alphaPreset==="pg",smiley=state.alphaPreset==="smiley";
+  const pgPanel=document.getElementById("pg-density-controls");
+  if(!pgPanel)return;
+  pgPanel.hidden=!pg;
+  document.getElementById("smiley-density-controls").hidden=!smiley;
+  document.getElementById("process-controls").hidden=pg||smiley;
+  document.getElementById("pg-interior-slider").value=String(state.pgInteriorCount);
   detail("pg-interior-count",String(state.pgInteriorCount));
+  document.getElementById("smiley-interior-slider").value=
+    String(state.smileyInteriorCount);
+  detail("smiley-interior-count",String(state.smileyInteriorCount));
+  document.getElementById("process-slider").value=String(state.processParameter);
+  const poisson=state.alphaPreset==="poisson";
+  detail("process-parameter-title",poisson?"Intensity λ (mean number of points)":
+    "Fixed number of points n");
+  detail("process-parameter-count",String(state.processParameter));
+  detail("process-definition",poisson?
+    "Homogeneous Poisson process: N ~ Poisson(λ), locations iid uniform in [0,1]². The realized N may differ from λ.":
+    "Binomial point process: exactly N = n iid uniform points in [0,1]².");
 }
-function setPgInteriorCount(count,seed=state.pgSeed){
-  if(state.alphaPreset!=="pg")return;
-  state.pgInteriorCount=Math.max(0,Math.min(PG_MAX_INTERIOR,Math.round(count)));
-  state.pgSeed=seed>>>0;
-  syncPgDensityControls();
+
+function replaceHabitatRealization(){
+  const points=presetPointSet();
+  const source=currentAlphaSource();
+  const authoritative=(state.alphaPreset==="pg" &&
+    state.pgInteriorCount===PG_DEFAULT_INTERIOR &&
+    state.pgSeed===PG_RANDOM_SEED) ||
+    (state.alphaPreset==="smiley" && state.smileyInteriorCount===0);
   const editor=pointEditors.habitat;
-  const original=currentAlphaSource()?.points || habitatPoints;
-  const isReference=state.pgInteriorCount===PG_DEFAULT_INTERIOR &&
-    state.pgSeed===PG_RANDOM_SEED;
   if(editor){
-    editor.original=original.map(p=>p.slice());
-    editor.points=(isReference?original:pgWordmarkPoints(state.pgInteriorCount,state.pgSeed))
-      .map(p=>p.slice());
-    editor.dirty=!isReference;
-    editor.active=null;
-    editor.pending=false;
+    // The generated realization becomes a resettable baseline for Move/Add/
+    // Delete. A new realization always invalidates cached Python geometry.
+    editor.original=points.map(p=>p.slice());
+    editor.points=points.map(p=>p.slice());
+    editor.active=null;editor.pending=false;
+    editor.dirty=!authoritative;
     editor.generation=(editor.generation||0)+1;
     recomputeNotice("habitat");
   }
   state.alphaArc=0;
+  syncPgDensityControls();
+  if(state.alphaPreset==="poisson"||state.alphaPreset==="binomial")
+    detail("process-realized","Realized N = "+points.length);
   drawHabitat();
 }
 
+function setPgInteriorCount(count,seed=state.pgSeed){
+  if(state.alphaPreset!=="pg")return;
+  state.pgInteriorCount=Math.max(0,Math.min(PG_MAX_INTERIOR,Math.round(count)));
+  state.pgSeed=seed>>>0;
+  replaceHabitatRealization();
+}
+
+function setSmileyInteriorCount(count,seed=state.smileySeed){
+  if(state.alphaPreset!=="smiley")return;
+  state.smileyInteriorCount=Math.max(0,Math.min(PROCESS_MAX_PARAMETER,Math.round(count)));
+  state.smileySeed=seed>>>0;
+  replaceHabitatRealization();
+}
+
+function setProcessParameter(count,seed=state.processSeed){
+  if(state.alphaPreset!=="poisson"&&state.alphaPreset!=="binomial")return;
+  state.processParameter=Math.max(0,Math.min(PROCESS_MAX_PARAMETER,Math.round(count)));
+  state.processSeed=seed>>>0;
+  replaceHabitatRealization();
+}
+
+function resetHabitatPointSet(){
+  if(state.alphaPreset==="pg"){
+    state.pgInteriorCount=PG_DEFAULT_INTERIOR;
+    state.pgSeed=PG_RANDOM_SEED;
+  }else if(state.alphaPreset==="smiley"){
+    state.smileyInteriorCount=SMILEY_DEFAULT_INTERIOR;
+    state.smileySeed=SMILEY_DEFAULT_SEED;
+  }else{
+    state.processParameter=PROCESS_DEFAULT_PARAMETER;
+    state.processSeed=PROCESS_DEFAULT_SEED;
+  }
+  // Resetting sites does not change the user's selected alpha value.
+  replaceHabitatRealization();
+}
+
 function switchAlphaPreset(key){
-  if(key!=="pg"&&key!=="smiley")return;
+  if(!["pg","smiley","poisson","binomial"].includes(key))return;
   state.alphaPreset=key;
-  state.pgInteriorCount=PG_DEFAULT_INTERIOR;
-  state.pgSeed=PG_RANDOM_SEED;
-  syncPgDensityControls();
-  const source=currentAlphaSource();
-  state.alphaIndex=source?.default_alpha_index ??
-    (key==="pg"?5:1);
-  state.alphaArc=0;
-  document.getElementById("alpha-slider").max=String(activeAlphaValues().length-1);
-  document.getElementById("alpha-slider").value=state.alphaIndex;
-  const points=source?.points || (key==="pg"?habitatPoints:smileyPoints);
-  if(pointEditors.habitat)replaceEditorPointSet("habitat",points);
-  else drawHabitat();
+  state.alphaValue=key==="pg"?-28.57142857142857:
+    key==="smiley"?-8:-10;
+  document.getElementById("alpha-slider").value=String(state.alphaValue);
+  resetHabitatPointSet();
 }
 
 
@@ -287,49 +346,57 @@ function betaEdges(points,beta){
 function signedArea(pts){
   return pts.reduce(function(s,p,i){const q=pts[(i+1)%pts.length];return s+p[0]*q[1]-p[1]*q[0];},0)/2;
 }
-function curveBetween(p,q,r,orientation){
+function curveBetween(p,q,r,orientation,alpha){
   const d=dist(p,q);if(d>2*r||d===0)return [p,q];
-  const m=[(p[0]+q[0])/2,(p[1]+q[1])/2],h=Math.sqrt(Math.max(0,r*r-d*d/4));
+  const m=[(p[0]+q[0])/2,(p[1]+q[1])/2];
+  const h=Math.sqrt(Math.max(0,r*r-d*d/4));
   const normal=[-(q[1]-p[1])/d,(q[0]-p[0])/d];
-  // Library chooses the exterior center with smaller side for positive cycle orientation.
-  const c=[m[0]-(orientation>0?1:-1)*h*normal[0],m[1]-(orientation>0?1:-1)*h*normal[1]];
-  let a=Math.atan2(p[1]-c[1],p[0]-c[0]);
+  // Pinned library: negative alpha chooses exterior circle centers;
+  // positive alpha chooses interior centers based on boundary orientation.
+  const side=(orientation>0?1:-1)*(alpha>0?1:-1);
+  const c=[m[0]+side*h*normal[0],m[1]+side*h*normal[1]];
+  const a=Math.atan2(p[1]-c[1],p[0]-c[0]);
   let delta=Math.atan2(q[1]-c[1],q[0]-c[0])-a;
-  while(delta>Math.PI)delta-=2*Math.PI;while(delta< -Math.PI)delta+=2*Math.PI;
-  return Array.from({length:32},function(_,k){const t=a+delta*k/31;return [c[0]+r*Math.cos(t),c[1]+r*Math.sin(t)];});
+  while(delta>Math.PI)delta-=2*Math.PI;
+  while(delta< -Math.PI)delta+=2*Math.PI;
+  return Array.from({length:32},(_,k)=>{
+    const t=a+delta*k/31;
+    return [c[0]+r*Math.cos(t),c[1]+r*Math.sin(t)];
+  });
 }
 function fallbackAlpha(points,alpha,triangles){
-  const tris=(triangles||delaunayTriangles(points)).filter(function(t){return t.r<=1/Math.abs(alpha)+1e-9;});
-  const counts=new Map(), pairs=new Map();
-  tris.forEach(function(t){
-    [[0,1],[1,2],[2,0]].forEach(function(ab){
-      const i=t.vertices[ab[0]],j=t.vertices[ab[1]],key=edgeKey(i,j);
-      counts.set(key,(counts.get(key)||0)+1);
-      pairs.set(key,[Math.min(i,j),Math.max(i,j)]);
-    });
-  });
-  const boundaries=Array.from(counts.keys()).filter(function(k){return counts.get(k)===1;}).map(function(k){return pairs.get(k);});
-  if(!boundaries.length)return {arcs:[],segments:[]};
+  const filtered=alphaSimplices(points,alpha,triangles);
+  const boundaries=filtered.boundary;
+  // The exact alpha=0 limit is the convex hull with straight edges,
+  // not a circle of infinite radius.
+  if(alpha===0||!boundaries.length)return {arcs:[],segments:boundaries};
   const neighbors=new Map();
-  boundaries.forEach(function(edge){edge.forEach(function(i,t){if(!neighbors.has(i))neighbors.set(i,[]);neighbors.get(i).push(edge[1-t]);});});
+  for(const [i,j] of boundaries){
+    if(!neighbors.has(i))neighbors.set(i,[]);
+    if(!neighbors.has(j))neighbors.set(j,[]);
+    neighbors.get(i).push(j);neighbors.get(j).push(i);
+  }
   const visited=new Set(),arcs=[];
-  boundaries.forEach(function(edge){
-    if(visited.has(edgeKey(edge[0],edge[1])))return;
-    const cycle=[edge[0]],start=edge[0];let previous=-1,current=start;
+  for(const edge of boundaries){
+    if(visited.has(edgeKey(edge[0],edge[1])))continue;
+    const cycle=[edge[0]],start=edge[0];
+    let previous=-1,current=start;
     for(let tries=0;tries<=boundaries.length+1;tries++){
-      const next=(neighbors.get(current)||[]).find(function(q){return q!==previous&&!visited.has(edgeKey(current,q));});
+      const next=(neighbors.get(current)||[]).find(q=>
+        q!==previous&&!visited.has(edgeKey(current,q)));
       if(next==null)break;
       visited.add(edgeKey(current,next));previous=current;current=next;
-      if(current===start)break;cycle.push(current);
+      if(current===start)break;
+      cycle.push(current);
     }
-    if(cycle.length<3||current!==start)return;
-    const area=signedArea(cycle.map(function(i){return points[i];}));
+    if(cycle.length<3||current!==start)continue;
+    const area=signedArea(cycle.map(i=>points[i]));
     for(let k=0;k<cycle.length;k++){
       const i=cycle[k],j=cycle[(k+1)%cycle.length];
-      arcs.push(curveBetween(points[i],points[j],1/Math.abs(alpha),area));
+      arcs.push(curveBetween(points[i],points[j],1/Math.abs(alpha),area,alpha));
     }
-  });
-  return {arcs:arcs,segments:boundaries};
+  }
+  return {arcs,segments:boundaries};
 }
 function arcCircle(arc){
   if(!arc||arc.length<3)return null;
@@ -468,22 +535,42 @@ function drawWater(){
 }
 function drawHabitat(){
   const svg=document.getElementById("habitat-plot"),source=currentAlphaSource();
-  const points=editablePoints("habitat",source?source.points:
-    (state.alphaPreset==="pg"?habitatPoints:smileyPoints));
-  const values=activeAlphaValues();
-  const alpha=values[state.alphaIndex],a=-alpha;
-  const original=source&&!edited("habitat");
-  const triangles=original&&source.triangles?source.triangles:delaunayTriangles(points);
-  const shape=original?source.options[String(alpha)]:fallbackAlpha(points,a,triangles);
-  const arcs=shape?.arcs || [];
-  const filtered=alphaSimplices(points,a,triangles);
+  const points=pointEditors.habitat?
+    pointEditors.habitat.points:presetPointSet();
+  const alpha=state.alphaValue;
+  // Use original Python constructions *only* for the exact precomputed
+  // negative-alpha parameter and the unmodified matching reference set.
+  const sourceShape=alpha<0?source?.options?.[String(-alpha)]:null;
+  const original=!!sourceShape&&!edited("habitat");
+  const triangles=alpha>0?furthestDelaunayTriangles(points):
+    (source&&!edited("habitat")&&source.triangles?
+      source.triangles:delaunayTriangles(points));
+  const filtered=alphaSimplices(points,alpha,triangles);
+  const shape=original?sourceShape:fallbackAlpha(points,alpha,triangles);
+  const arcs=shape?.arcs||[];
   const boundary=original&&shape.shape_edges?shape.shape_edges:filtered.boundary;
   const kept=original&&shape.kept_triangles?
-    shape.kept_triangles:filtered.kept.map(x=>x.vertices);
+    shape.kept_triangles:filtered.kept.map(t=>t.vertices);
+  const radius=alpha===0?Infinity:1/Math.abs(alpha);
+  const alphaText=Number.isInteger(alpha)?String(alpha):
+    String(Number(alpha.toFixed(5)));
+  const radiusText=Number.isFinite(radius)?radius.toFixed(3):"∞";
   background(svg,"02 / alpha boundary and circular construction");
-  detail("alpha-value","α = −"+alpha+" · R = "+(1/alpha).toFixed(3));
-  detail("alpha-preset-title",state.alphaPreset==="pg"?"Pg · two closed counters":
-    "Smiling-face point cloud");
+  detail("alpha-value","α = "+alphaText+" · R = "+radiusText);
+  detail("alpha-preset-title",({
+    pg:"Pg · image-traced letterforms",
+    smiley:"Smiling face · randomized interior",
+    poisson:"Homogeneous Poisson point process",
+    binomial:"Binomial point process"
+  })[state.alphaPreset]);
+  const provenance=document.getElementById("habitat-edit-source");
+  if(provenance){
+    if(original && dataset)recomputeNotice("habitat");
+    else provenance.textContent=(state.alphaPreset==="poisson"||
+      state.alphaPreset==="binomial"?
+      "Stochastic realization sampled in JavaScript; all geometry recomputed locally.":
+      "Interactive point/alpha configuration · geometry recomputed independently in JavaScript (not a new Python export).");
+  }
   if(hasLayer("alpha-triangulation")){
     for(const t of triangles){
       const poly=t.vertices.map(i=>points[i]);
@@ -528,6 +615,8 @@ function drawHabitat(){
     }
   }
   if(hasLayer("alpha-hull")){
+    if(alpha===0)for(const [i,j] of boundary)
+      segment(svg,points[i],points[j],"#7f7b84",2.8,.9);
     arcs.forEach(function(arc,index){
       const selected=index===state.alphaArc;
       const line=el("polyline",{points:pointsAttr(arc),fill:"none",
@@ -543,8 +632,10 @@ function drawHabitat(){
       el("title",{},line,"Arc "+(index+1)+" · click for its circle");
     });
   }
-  const roles=state.alphaPreset==="pg"
-    ?points.map((_,i)=>i<298?"outline":"stroke"):null;
+  const roles=state.alphaPreset==="pg"?
+    points.map((_,i)=>i<298?"outline":"stroke"):
+    state.alphaPreset==="smiley"?
+      points.map((_,i)=>i<53?"outline":"stroke"):null;
   points.forEach(function(p,i){
     site(svg,p,i,false,undefined,undefined,roles?roles[i]:undefined);
   });
@@ -554,16 +645,21 @@ function drawHabitat(){
     " shape edges · "+topology.holes+" hole"+(topology.holes===1?"":"s")+
     " · "+arcs.length+" arcs");
   const c=chosenCircle;
-  detail("habitat-details",(state.alphaPreset==="pg"?"Pg":"Smiley")+
-    ": α = −"+alpha+" gives radius R = "+(1/alpha).toFixed(3)+
-    ". The retained complex has "+topology.holes+" enclosed hole"+
-    (topology.holes===1?"":"s")+" in "+topology.components+
-    " component"+(topology.components===1?"":"s")+". "+
-    kept.length+" of "+triangles.length+" Delaunay triangles satisfy the radius cutoff. "+
-    boundary.length+" straight boundary edges, "+arcs.length+" sampled circular arcs."+
+  const family=({
+    pg:"Pg",smiley:"Smiley",poisson:"Poisson",binomial:"Binomial"
+  })[state.alphaPreset];
+  detail("habitat-details",family+": α = "+alphaText+"; "+
+    (alpha===0?"the exact convex-hull limit has straight edges.":
+     "radius R = "+radiusText+" with "+(alpha>0?"furthest-site":"ordinary")+
+     " Delaunay triangulation.")+
+    " Retained triangles: "+kept.length+" / "+triangles.length+
+    "; components: "+topology.components+"; enclosed holes: "+topology.holes+
+    "; boundary edges: "+boundary.length+"; circular arcs: "+arcs.length+"."+
     (c?" Arc "+(state.alphaArc+1)+" center: ("+
       c.center[0].toFixed(3)+", "+c.center[1].toFixed(3)+").":""));
-  detail("habitat-note","A retained triangle has circumradius ≤ R. A straight alpha-shape edge belongs to exactly one retained triangle; its curved alpha-hull counterpart lies on a circle of radius R.");
+  detail("habitat-note",alpha===0?
+    "At α = 0, ProximityGraphs uses the convex hull with straight edges; R tends to infinity. There are no finite supporting circles.":
+    "A retained triangle satisfies circumradius ≤ 1/|α|. Negative α uses ordinary Delaunay; positive α uses furthest-site Delaunay and inward circular arcs. Browser edits are independent JS constructions.");
 }
 function selectBetaPair(pair) {
   state.betaPair=pair?pair.slice():null;
@@ -800,26 +896,59 @@ async function start(){
   document.getElementById("alpha-point-set").addEventListener("change",function(e){
     switchAlphaPreset(e.target.value);
   });
-  document.getElementById("alpha-slider").addEventListener("input",function(e){
-    state.alphaIndex=Number(e.target.value);state.alphaArc=0;drawHabitat();
-  });
-  const density=document.getElementById("pg-interior-slider");
-  let densityTimer=null;
-  const applyDensity=function(){
-    if(densityTimer!==null)clearTimeout(densityTimer);
-    densityTimer=null;
-    setPgInteriorCount(Number(density.value));
+  const alphaSlider=document.getElementById("alpha-slider");
+  let alphaTimer=null;
+  const commitAlpha=function(){
+    if(alphaTimer!==null)clearTimeout(alphaTimer);
+    alphaTimer=null;
+    drawHabitat();
   };
-  density.addEventListener("input",function(){
-    state.pgInteriorCount=Number(density.value);
-    detail("pg-interior-count",String(state.pgInteriorCount));
-    if(densityTimer!==null)clearTimeout(densityTimer);
-    // Debounce costly Delaunay reconstruction during pointer drags.
-    densityTimer=setTimeout(applyDensity,130);
+  alphaSlider.addEventListener("input",function(e){
+    state.alphaValue=Number(e.target.value);
+    state.alphaArc=0;
+    const a=state.alphaValue;
+    detail("alpha-value","α = "+Number(a.toFixed(3))+
+      " · R = "+(a===0?"∞":(1/Math.abs(a)).toFixed(3)));
+    if(alphaTimer!==null)clearTimeout(alphaTimer);
+    // Recompute once pointer motion settles; signed alpha requires fresh
+    // triangulation and geometry for non-precomputed parameter values.
+    alphaTimer=setTimeout(commitAlpha,110);
   });
-  density.addEventListener("change",applyDensity);
+  alphaSlider.addEventListener("change",commitAlpha);
+
+  function bindDensitySlider(sliderId,preset,previewId,apply){
+    const slider=document.getElementById(sliderId);
+    let timer=null;
+    const commit=function(){
+      if(timer!==null)clearTimeout(timer);
+      timer=null;
+      if(state.alphaPreset===preset)apply(Number(slider.value));
+    };
+    slider.addEventListener("input",function(){
+      detail(previewId,slider.value);
+      if(timer!==null)clearTimeout(timer);
+      timer=setTimeout(commit,130);
+    });
+    slider.addEventListener("change",commit);
+  }
+  bindDensitySlider("pg-interior-slider","pg","pg-interior-count",
+    n=>setPgInteriorCount(n));
+  bindDensitySlider("smiley-interior-slider","smiley","smiley-interior-count",
+    n=>setSmileyInteriorCount(n));
+  bindDensitySlider("process-slider","poisson","process-parameter-count",
+    n=>setProcessParameter(n));
+  // Binomial shares the same parameter slider; its separate listener
+  // is no-op while the Poisson preset is active.
+  bindDensitySlider("process-slider","binomial","process-parameter-count",
+    n=>setProcessParameter(n));
   document.getElementById("pg-reshuffle").addEventListener("click",function(){
     setPgInteriorCount(state.pgInteriorCount,(state.pgSeed+1)>>>0);
+  });
+  document.getElementById("smiley-reshuffle").addEventListener("click",function(){
+    setSmileyInteriorCount(state.smileyInteriorCount,(state.smileySeed+1)>>>0);
+  });
+  document.getElementById("process-reshuffle").addEventListener("click",function(){
+    setProcessParameter(state.processParameter,(state.processSeed+1)>>>0);
   });
   document.getElementById("beta-slider").addEventListener("input",function(e){
     state.betaIndex=Number(e.target.value);drawSensors();
@@ -866,8 +995,7 @@ async function start(){
   }
   setupPointEditors(dataset);
   document.getElementById("alpha-point-set").value=state.alphaPreset;
-  document.getElementById("alpha-slider").max=String(activeAlphaValues().length-1);
-  document.getElementById("alpha-slider").value=state.alphaIndex;
+  document.getElementById("alpha-slider").value=String(state.alphaValue);
   syncPgDensityControls();
   drawWater();drawHabitat();drawSensors();drawCompare();
 }
@@ -875,5 +1003,7 @@ if(typeof document!=="undefined")document.addEventListener("DOMContentLoaded",st
 if(typeof module!=="undefined" && module.exports){
   module.exports={circumcircle,delaunayTriangles,trianglesEdges,betaEdges,cells,
     fallbackAlpha,arcCircle,alphaValues,smileyAlphaValues,betaValues,
-    waterPoints,betaPoints,habitatPoints,smileyPoints,pgWordmarkPoints,PG_MAX_INTERIOR};
+    waterPoints,betaPoints,habitatPoints,smileyPoints,pgWordmarkPoints,PG_MAX_INTERIOR,
+    switchAlphaPreset,setPgInteriorCount,setSmileyInteriorCount,
+    setProcessParameter};
 }
