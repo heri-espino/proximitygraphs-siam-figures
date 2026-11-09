@@ -54,3 +54,6 @@ The reader requested that transitions occur **only when selecting a section**, n
 - `prefers-reduced-motion: reduce` disables every animation. `site/motion.js` handles click/hashchange only; the CSS `.is-section-entering` class is transient.
 
 Regression checks in `tests/test_editor.js` and `tests/visual_smoke.py` verify that scrolling alone never adds an animation class, that internal navigation animates the correct target, that the animation cleans itself up, and that reduced-motion navigation remains static. See `experiments/experiment004/README.md`.
+
+## experiment006 — Typeface-aware scientific stippling
+The current alpha default is no longer the block-letter experiment005 preview. It is a **sample of the user's image**: 298 dark small points along the actual serif/swash contours, 82 smaller and more transparent interior ink points. Retained triangles use a soft stone wash. Preserve the warm-white/graphite identity and do not rasterize a literal logo behind the graph; the point cloud and alpha construction themselves must form the letter. The original smiley remains a dropdown alternate. The number of independently movable alpha sites is 380 by default (cap 480); treat their source trace roles as visual metadata, not as new mathematical graph vertices. Keep scroll motion disabled and section navigation transitions accessible.
