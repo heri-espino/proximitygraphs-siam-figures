@@ -74,7 +74,17 @@ def main():
         assert len(scenes["alpha"]["presets"]["smiley"]["points"])==53
         assert scenes["alpha"]["options"]["28.57142857142857"]["topology"]=={"components":2,"holes":2}
         assert page.locator("#alpha-point-set").input_value()=="pg"
-        assert "2 holes" in page.locator("#habitat-stat").inner_text()
+        assert page.locator("#alpha-slider").input_value()=="-48.65245"
+        assert page.locator("#pg-interior-slider").input_value()=="347"
+        assert page.locator("#alpha-view").input_value()=="both"
+        assert page.locator("#alpha-hull").is_checked()
+        assert page.locator("#alpha-shape").is_checked()
+        assert page.locator("#alpha-kept").is_checked()
+        assert page.locator("#alpha-all-circles").is_checked()
+        assert not page.locator("#alpha-circle").is_checked()
+        assert not page.locator("#alpha-centers").is_checked()
+        assert not page.locator("#alpha-triangulation").is_checked()
+        assert "645 sites" in page.locator("#habitat-stat").inner_text()
         assert len(scenes["beta"]["points"])==25
         assert page.locator("#water-plot g[aria-hidden='true'] circle").count()==578
         assert "Broad St" in page.locator("#water-details").inner_text()
@@ -141,9 +151,9 @@ def main():
         arcs=page.locator("#habitat-plot polyline").count()
         assert arcs>0
         assert page.locator("#habitat-plot circle").count()>2*arcs
-        assert page.locator("#habitat-plot circle.editable-site").count()==1200
-        assert page.locator("#habitat-plot circle.editable-site[opacity]").count()==600
-        assert "2 holes" in page.locator("#habitat-stat").inner_text()
+        assert page.locator("#habitat-plot circle.editable-site").count()==1290
+        assert page.locator("#habitat-plot circle.editable-site[opacity]").count()==645
+        assert "645 sites" in page.locator("#habitat-stat").inner_text()
         slider=page.locator("#alpha-slider")
         assert slider.get_attribute("min")=="-100"
         assert slider.get_attribute("max")=="100"
@@ -161,8 +171,10 @@ def main():
           slider.dispatchEvent(new Event("input",{bubbles:true}));
           slider.dispatchEvent(new Event("change",{bubbles:true}));
         }""")
-        assert "2 holes" in page.locator("#habitat-stat").inner_text()
         density=page.locator("#pg-interior-slider")
+        density.fill("302")
+        assert "600 sites" in page.locator("#habitat-stat").inner_text()
+        assert "2 holes" in page.locator("#habitat-stat").inner_text()
         assert density.get_attribute("min")=="0"
         assert density.get_attribute("max")=="600"
         assert density.input_value()=="302"
@@ -177,12 +189,12 @@ def main():
         after=page.locator("#habitat-plot .editable-site[data-point-index='400']").last.get_attribute("cx")
         assert before!=after,"Reshuffle must produce a different random point cloud"
         page.locator('button[data-editor-reset="habitat"]').click()
-        assert density.input_value()=="302"
-        assert "600 sites" in page.locator("#habitat-stat").inner_text()
+        assert density.input_value()=="347"
+        assert "645 sites" in page.locator("#habitat-stat").inner_text()
         source_label=page.locator("#habitat-edit-source").inner_text()
         assert "Original points" in source_label or "JavaScript" in source_label,source_label
         page.locator("#habitat").screenshot(path=str(output/"03-alpha-construction.png"))
-        checks.append("Pg alpha-hull and alpha-shape render two enclosed holes with circles")
+        checks.append("Screenshot Pg defaults render 645 sites at alpha -48.65245; source reference still yields two holes")
         page.locator("#alpha-point-set").select_option("smiley")
         assert page.locator("#alpha-point-set").input_value()=="smiley"
         assert "173 sites" in page.locator("#habitat-stat").inner_text()
@@ -226,13 +238,14 @@ def main():
         assert "Realized N = 27" in page.locator("#process-realized").inner_text()
         page.locator("#habitat").screenshot(path=str(output/"10-binomial.png"))
         page.locator("#alpha-point-set").select_option("pg")
-        assert "600 sites" in page.locator("#habitat-stat").inner_text()
+        assert "645 sites" in page.locator("#habitat-stat").inner_text()
+        assert page.locator("#alpha-slider").input_value()=="-48.65245"
         assert slider.get_attribute("max")=="100"
         assert page.locator("#pg-density-controls").is_visible()
         assert page.locator("#smiley-density-controls").is_hidden()
         assert page.locator("#process-controls").is_hidden()
-        assert density.input_value()=="302"
-        assert "2 holes" in page.locator("#habitat-stat").inner_text()
+        assert density.input_value()=="347"
+        assert page.locator("#alpha-all-circles").is_checked()
         checks.append("Signed alpha −100..100 including convex hull at zero and furthest-site positive alpha")
         checks.append("Pg/Smiley interior point sliders preserve contours, and PPP/BPP sampling updates observed counts")
 
