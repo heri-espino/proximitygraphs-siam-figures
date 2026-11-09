@@ -206,7 +206,7 @@
           <p class="insight-note" id="habitat-note">Only triangles whose circumradii do not exceed R contribute to the boundary.</p>
         </aside>
       </div>
-      <p class="context">An <strong>alpha-shape</strong> follows the outer edges of triangles that satisfy a radius cutoff; an <strong>alpha-hull</strong> traces related boundaries with circular arcs. Changing the scale can join regions, separate them, or reveal holes. Try a fixed number of independently scattered points with the <strong>binomial process</strong>, or let the number itself vary with the <strong>Poisson process</strong>.</p>
+      <p class="context">A triangle passes the construction test when its circumradius is at most <strong>R = 1 / |α|</strong>. The threshold can join regions, separate them, or reveal holes. To see how sampling affects those features, compare a <strong>binomial process</strong> with a fixed number of sites against a <strong>Poisson process</strong> whose number of sites varies randomly.</p>
     </section>
 
     <section id="sensors" class="exhibit" aria-labelledby="sensors-title">
