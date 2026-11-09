@@ -225,6 +225,10 @@ def densify_pg_strokes(base, additional=220):
         if not inside_ink or math.hypot(x - .595, y - .27) < .047:
             continue
         candidate = np.array([x, y])
+        # A contour-only clearance keeps newly sampled interior sites from
+        # altering the narrow gap between P and g or closing the g flourish.
+        if np.any(np.sum((base[:298]-candidate)**2, axis=1) < .025**2):
+            continue
         if np.any(np.sum((base-candidate)**2, axis=1) < .012**2):
             continue
         if additions and np.any(np.sum((np.asarray(additions)-candidate)**2, axis=1) < .012**2):
