@@ -1,7 +1,7 @@
 # experiment006 — Image-traced serif Pg as a dotted alpha-shape
 
 **Date:** 2026-11-08  
-**Status:** Implementation ready for CI; completion evidence pending.
+**Status:** Complete — PR #6 merged, pinned-library CI passed, Pages, PDF and browser QA deployed/archived.
 
 ## Objective
 
@@ -53,4 +53,17 @@ Preserve all generated scene JSON, Python PNG/SVG figures, manuscript PDF, scree
 
 This is a sampled raster letterform, not an editable vector font or a claim about typeface licensing. Outside a designated alpha value, counters may fill, fragment, or reconnect. Browser edits use independent JavaScript geometry rather than the pinned Python library.
 
-Verify PR CI for both presets and the exact two-counter topology, merge on user authorization, confirm Pages, and record actual run IDs/merge SHA and screenshot evidence here. The next experiment must be experiment007.
+## Verified release and quantitative findings
+
+- [PR #6](https://github.com/heri-espino/proximitygraphs-siam-figures/pull/6) **merged** at commit `02e63e6e7e7e86cc00f95713e1d78cbc0d99ee2e`.
+- [PR pinned-library geometry + Node run #42539022022](https://github.com/heri-espino/proximitygraphs-siam-figures/actions/runs/42539022022): **success**, including two counters, distinct glyph components and four closed boundary cycles, plus original smiley parity.
+- [PR desktop/mobile Playwright run #42539022006](https://github.com/heri-espino/proximitygraphs-siam-figures/actions/runs/42539022006): **success**, including original smiley switching, pointer editing and image-derived default.
+- [Production figure export and GitHub Pages #42539173588](https://github.com/heri-espino/proximitygraphs-siam-figures/actions/runs/42539173588): **success**. Live alpha section: https://heri-espino.github.io/proximitygraphs-siam-figures/#habitat .
+- [Postmerge browser QA #42539173559](https://github.com/heri-espino/proximitygraphs-siam-figures/actions/runs/42539173559): **success**, **13 checks passed**, eight archived desktop/mobile PNG screenshots at `docs/visual-qa/`, including `03-alpha-construction.png`, `07-mobile-alpha.png` and `08-smiley-preset.png`. [Machine-readable QA summary](../../docs/visual-qa/visual-summary.json).
+- [Editorial LaTeX/PDF proof run #42539173490](https://github.com/heri-espino/proximitygraphs-siam-figures/actions/runs/42539173490): **success**; new figure and article proof are stored in `site/assets` and `article/output`.
+
+Independent image-to-point sampling evaluation on the supplied 806×616 PNG (threshold 200): **100%** of 380 emitted points fall on dark thresholded source pixels; **95%** of original contour pixels are within **8.8 input-image pixels** of a sampled outline point (median **4.35 px**). The contour samples preserve the tiny g terminal, serif tips and g descender as genuine sites, not an overlaid raster logo.
+
+This evaluation is for the user's specific source screenshot and sampling algorithm. The alpha topological result is for the designated scale only; it does not establish typeface equivalence, universal topology preservation or measured human preference.
+
+Next sequential experiment: **experiment007**.
