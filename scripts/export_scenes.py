@@ -175,14 +175,9 @@ def pg_image_points():
     return points
 
 
-def halton(index, base):
-    """Van der Corput radical inverse; reproducible without RNG state."""
-    fraction, value = 1.0, 0.0
-    while index:
-        fraction /= base
-        value += fraction * (index % base)
-        index //= base
-    return value
+PG_RANDOM_SEED = 32571
+PG_DEFAULT_INTERIOR = 302   # 82 image-derived interior + 220 seeded additions.
+PG_MAX_INTERIOR = 600
 
 
 def point_in_polygon(x, y, vertices):
@@ -196,51 +191,65 @@ def point_in_polygon(x, y, vertices):
     return inside
 
 
-def densify_pg_strokes(base, additional=220):
-    """Add ink-interior sites without touching the 298 traced contour sites.
+def densify_pg_strokes(base, additional=220, seed=PG_RANDOM_SEED):
+    """Seeded pseudorandom ink-interior samples; never modify source contours.
 
-    The four source contours occupy indices [0:147], [147:176],
-    [176:257], [257:298]: g exterior/counter and P exterior/counter.
-    This uses their point-order geometry, not the unavailable source image.
-    Interior sites are accepted only inside the corresponding glyph stroke.
-    The deliberate open slit in the lower g stays clear.
+    A 32-bit linear congruential generator is used instead of the prior
+    low-discrepancy sequence. The same arithmetic is implemented in browser JS.
+    The four image-traced contour blocks are ordered
+    [0:147] g exterior; [147:176] g counter;
+    [176:257] P exterior; [257:298] P counter.
     """
     if base.shape != (380, 2):
-        raise ValueError("Dense sampling requires the unchanged 380-site reference")
+        raise ValueError("Sampling requires the unchanged 380-site reference")
+    if not 0 <= additional <= PG_MAX_INTERIOR - 82:
+        raise ValueError("Requested interior count is outside supported range")
     g_outer, g_hole = base[:147].tolist(), base[147:176].tolist()
     p_outer, p_hole = base[176:257].tolist(), base[257:298].tolist()
+    state = int(seed) & 0xffffffff
+
+    def random_fraction():
+        nonlocal state
+        state = (1664525 * state + 1013904223) & 0xffffffff
+        return state / 4294967296
+
     additions = []
-    for index in range(1, 100001):
+    for _ in range(150000):
         if len(additions) == additional:
             break
-        x = .07 + .86 * halton(index, 2)
-        y = .16 + .69 * halton(index, 3)
-        inside_ink = (
+        x = .07 + .86 * random_fraction()
+        y = .16 + .69 * random_fraction()
+        inside_stroke = (
             point_in_polygon(x, y, g_outer) and
             not point_in_polygon(x, y, g_hole)
         ) or (
             point_in_polygon(x, y, p_outer) and
             not point_in_polygon(x, y, p_hole)
         )
-        if not inside_ink or math.hypot(x - .595, y - .27) < .047:
+        if not inside_stroke or math.hypot(x - .595, y - .27) < .047:
             continue
         candidate = np.array([x, y])
-        # A contour-only clearance keeps newly sampled interior sites from
-        # altering the narrow gap between P and g or closing the g flourish.
+        # A contour buffer preserves the original font outline and g slit.
         if np.any(np.sum((base[:298]-candidate)**2, axis=1) < .025**2):
             continue
-        if np.any(np.sum((base-candidate)**2, axis=1) < .012**2):
+        if np.any(np.sum((base-candidate)**2, axis=1) < .008**2):
             continue
-        if additions and np.any(np.sum((np.asarray(additions)-candidate)**2, axis=1) < .012**2):
+        if additions and np.any(
+            np.sum((np.asarray(additions)-candidate)**2, axis=1) < .008**2
+        ):
             continue
         additions.append([x, y])
     if len(additions) != additional:
-        raise AssertionError(f"Expected {additional} interior sites, got {len(additions)}")
+        raise AssertionError(
+            f"Requested {additional} new interior sites, accepted {len(additions)}"
+        )
+    if not additional:
+        return base.copy()
     return np.vstack([base, np.asarray(additions, dtype=float)])
 
 
 PG_REFERENCE_POINTS = pg_image_points()   # Immutable 380 original sites.
-PG_POINTS = densify_pg_strokes(PG_REFERENCE_POINTS)  # 600 sites total.
+PG_POINTS = densify_pg_strokes(PG_REFERENCE_POINTS)  # 600 default sites; slider can vary browser count.
 HABITAT = PG_POINTS  # Backwards-compatible default for figures and older tools.
 
 
@@ -567,7 +576,7 @@ def main():
     DATA.mkdir(parents=True,exist_ok=True)
     (DATA/"scenes.json").write_text(json.dumps(scene,indent=2)+"\n",encoding="utf-8")
     render_water(scene);render_habitat(scene);render_sensors(scene)
-    print("Exported densely stippled serif Pg (600 sites), original smiley, historical Snow and sensor geometry.")
+    print("Exported seeded-random serif Pg (600 default sites), original smiley, historical Snow and sensor geometry.")
 
 
 if __name__=="__main__":
