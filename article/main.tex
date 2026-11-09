@@ -3,7 +3,7 @@
 \documentclass[10pt,letterpaper]{article}
 \usepackage[T1]{fontenc}
 \usepackage[utf8]{inputenc}
-\usepackage[margin=20mm]{geometry}
+\usepackage[margin=18mm]{geometry}
 \usepackage{lmodern,microtype,graphicx,amsmath,amssymb,xcolor,parskip,hyperref,caption,float}
 \definecolor{ProxTeal}{HTML}{166B75}
 \definecolor{ProxInk}{HTML}{253C49}
@@ -15,15 +15,14 @@
  justification=raggedright,singlelinecheck=false}
 \renewcommand{\familydefault}{\sfdefault}
 \setlength{\parindent}{0pt}
-\setlength{\parskip}{0.30em}
+\setlength{\parskip}{0.22em}
 \raggedbottom
 \newcommand{\featurefigure}[3]{%
 \begin{figure}[H]\centering
 \IfFileExists{../site/assets/#1.png}
  {\includegraphics[width=.57\linewidth]{../site/assets/#1.png}}
  {\fbox{\parbox[c][28mm][c]{.65\linewidth}{\centering #1.png}}}
-\caption{#2 \href{#3}{Explore the interactive figure}. All sites are synthetic.
- Original static artwork generated with ProximityGraphs.}
+\caption{#2 \href{#3}{Explore the interactive figure}.}
 \end{figure}%
 }
 \begin{document}
@@ -42,9 +41,9 @@ A cloud of points has no edges until someone defines what \emph{neighbor} means.
 
 \section*{From locations to structure}
 
-Voronoi diagrams divide space by the nearest site; their Delaunay dual connects sites with adjacent cells. The same construction can organize emergency-water stations, emergency-response territories, facility allocation, spatial interpolation, and adaptive meshes for partial differential equations. John Snow's 1854 cholera investigation provides a historical case: our figure uses digitized pump and death locations from the \href{https://vincentarelbundock.github.io/Rdatasets/doc/HistData/Snow.pumps.html}{HistData Snow collection}. We construct a modern Euclidean diagram on those coordinates; Snow did not construct this Voronoi model, and straight-line distance is not street-network access.
+Voronoi diagrams divide space by the nearest site; their Delaunay dual connects sites with adjacent cells. The same construction can organize emergency-response territories, facility allocation, spatial interpolation, and adaptive meshes for partial differential equations. John Snow's 1854 cholera investigation provides a historical setting: the \href{https://rdrr.io/cran/HistData/man/Snow.html}{HistData digitization} supplies pump positions and individual death-location marks. We construct a \textbf{modern Euclidean overlay} on those coordinates, using pumps as sites and deaths only as contextual observations. Snow did not compute this diagram; straight-line proximity is not measured travel or evidence of causation.
 
-\featurefigure{figure01-water}{\emph{John Snow's pumps and a modern geometric overlay.} Thirteen digitized historical Soho pumps define Euclidean Voronoi cells and Delaunay edges; 578 historical death marks form a separate background layer. Dragging a pump creates a hypothetical alternative, not a change to the historical data}{https://heri-espino.github.io/proximitygraphs-siam-figures/\#water}
+\featurefigure{figure01-water}{\emph{Historical observations, modern geometric partition.} Thirteen digitized Soho water pumps---including Broad Street---define Voronoi cells and Delaunay edges; 578 cholera death-location marks remain a separate, fixed layer. Readers can reveal pump labels, nearest-site bisectors, and empty Delaunay circumcircles. Moving a pump produces a hypothetical configuration. Data: HistData's digitization of John Snow's 1854 map; visualization: the authors using ProximityGraphs}{https://heri-espino.github.io/proximitygraphs-siam-figures/\#water}
 
 The same tension governs road networks. Aldous and Shun (2010) quantify the conflict between construction length and travel efficiency, while Maravillo Gómez and collaborators (2023) show how \(\beta\)-skeletons recover idealized cyclic street tilings and approximate real urban patterns. Sparse adjacency thus encodes more than appearance: it determines whether useful routes require costly detours.
 
@@ -54,9 +53,9 @@ The general mathematical setting is \textbf{\(\mathbb R^d\), for any \(d\geq1\)}
 
 \section*{Shape, holes, and scale}
 
-A convex hull covers a point cloud but hides indentations. Alpha-shapes and circular-arc \textbf{alpha-hulls} recover scale-dependent envelopes: tightening the underlying geometric radius can expose bays, separated clusters, and gaps. That scale choice matters when delineating observed habitats, outlining archaeological sites, reconstructing scanned objects, analyzing porous materials, or approximating regions in microscopy. The boundary is a geometric summary---not automatically a confidence region or a physical surface.
+A convex hull covers a point cloud but hides indentations. Alpha-shapes and circular-arc \textbf{alpha-hulls} recover scale-dependent envelopes: a radius threshold can expose bays, disconnected pieces, and holes. Here a Delaunay triangle survives when its circumradius is at most \(R=1/|\alpha|\). The resulting straight alpha-shape boundary contrasts with the circular arcs of the related alpha-hull. Such summaries inform shape reconstruction, microscopy, porous-material analysis, and spatial delineation---but are not automatically confidence regions or physical surfaces.
 
-\featurefigure{figure02-habitat}{\emph{An envelope made from circles.} The \textbf{Pg} default samples a supplied serif-letter image with 380 points, tracing delicate outer contours and lightly stippling the bold strokes. At \(\alpha\approx-28.57\), its alpha-shape has two enclosed counters---one per letter; the alpha-hull traces curved arcs around its straight boundary. The original smiley remains selectable. Choosing an arc reveals its supporting circle}{https://heri-espino.github.io/proximitygraphs-siam-figures/\#habitat}
+\featurefigure{figure02-habitat}{\emph{Letters, holes, and circles.} A synthetic 380-point cloud traced from a supplied serif \textbf{Pg} image resolves two letter components and two enclosed counters at \(\alpha\approx-28.57\). Compare the straight alpha-shape boundary with the curved alpha-hull; reveal retained triangles, every displayed supporting circle, or a selected arc's circle and center. A 53-point smiley is an alternative preset. Point sampling and graphic: the authors}{https://heri-espino.github.io/proximitygraphs-siam-figures/\#habitat}
 
 Topology makes the scale question more consequential. \textbf{Alpha complexes}, related to but distinct from the displayed alpha-hulls, form filtrations in which persistent homology tracks connected components, loops, and higher-dimensional voids. Niyogi, Smale, and Weinberger (2008) establish conditions under which homology of an unknown manifold can be recovered reliably from random samples. Such ideas connect molecular cavities, porous materials, brain imaging, and the topology of learned representations. Graph geodesics similarly underpin nonlinear dimensionality reduction, where one misplaced edge can create a false shortcut between manifold folds. \textbf{The inferred structure is conditional on the neighborhood model.} ProximityGraphs provides graph constructions for investigating that choice, not a built-in persistent-homology engine.
 
@@ -64,7 +63,7 @@ Topology makes the scale question more consequential. \textbf{Alpha complexes}, 
 
 In a \textbf{beta-skeleton}, two points are joined when a prescribed region between them contains no competing point. The empty lune for \(\beta=2\) yields the relative neighborhood graph; at \(\beta=1\), the Gabriel graph arises. For planar point sets in general position, a familiar hierarchy is \[ \mathrm{MST}\subseteq\mathrm{RNG}\subseteq\mathrm{GG}\subseteq\mathrm{Delaunay}. \] The inclusions expose different degrees of geometric sparsity, which matters for sensor-network candidates, decentralized communication, geometric routing, spatial anomaly detection, image morphology, and the skeleton of an observed shape. They do \textbf{not} guarantee that a wireless edge is physically viable or that a graph is an optimal routing network.
 
-\featurefigure{figure03-sensors}{\emph{An edge justified by emptiness.} Two synthetic sensor clusters connected by a relay corridor, with a beta-skeleton and its defining lens. Adding a point inside that lens may eliminate the selected edge}{https://heri-espino.github.io/proximitygraphs-siam-figures/\#sensors}
+\featurefigure{figure03-sensors}{\emph{An edge justified---or rejected---by emptiness.} Twenty-five synthetic sensor sites form two clusters joined by three relays. Select any candidate pair to display its two disks and their intersecting lune: an accepted edge has no blocker, whereas a rejected pair is dashed red and its blocking site is highlighted. Move or add a site to change the test. Synthetic layout and graphic: the authors using ProximityGraphs}{https://heri-espino.github.io/proximitygraphs-siam-figures/\#sensors}
 
 This selective adjacency reaches AI systems through \textbf{inductive bias}: in a graph neural network, the edges define which objects exchange messages. In transformer-based search, neighborhood structures support approximate retrieval of relevant text, images, and other embeddings; Iff and collaborators (2026) benchmark filtered nearest-neighbor methods on embeddings from more than 2.7 million research papers, a setting relevant to retrieval-augmented generation and recommendation. The underlying question is shared---\textbf{which neighbors preserve useful information without making every pair adjacent?}---but ProximityGraphs is a geometric-graph toolkit, not a transformer index or a vector database.
 
@@ -76,12 +75,16 @@ What happens when the sites themselves are random? Devroye (1988) studied empty-
 
 ProximityGraphs combines point generators (including random spatial processes), graph constructors, visualization, graph summaries, and repeated-experiment helpers. For instance, \texttt{pg.GG(points)}, \texttt{pg.RNG(points)}, and \texttt{pg.DelaunayG(points)} let researchers compare adjacency on unchanged coordinates; the resulting graphs can inform, rather than replace, downstream learning or topological analysis. Its source is MIT-licensed, and optional GIS utilities connect the workflow with geospatial data.
 
-The \href{https://heri-espino.github.io/proximitygraphs-siam-figures/}{interactive companion} makes three examples editable without installation: the default geometries are exported by the Python library, while user-edited points are recomputed separately in the browser. The scientific contribution is not a claim that one graph is always best. It is the ability to \textbf{make geometric assumptions explicit, change them reproducibly, and study their consequences}.
+The \href{https://heri-espino.github.io/proximitygraphs-siam-figures/}{interactive companion} turns these illustrations into inspectable computations: move, add, or delete points; expose bisectors, circumcircles, retained simplices, and rejected edges; or \href{https://heri-espino.github.io/proximitygraphs-siam-figures/\#compare}{compare graph families} on identical sensor coordinates. Unedited geometry is exported from the Python library; edited configurations are recomputed independently in the browser. The point is not that one graph always wins, but that \textbf{neighbor definitions become assumptions we can see, modify, and test}.
 
 \textbf{Try the library:} \href{https://github.com/ProximityGraphs/ProximityGraphs}{Source and examples} · \href{https://pypi.org/project/proximitygraphs/}{PyPI} · \texttt{pip install proximitygraphs}. The Python release is currently a pre-release; selected algorithms and models are planar.
 
 \renewcommand{\refname}{References}
+\begingroup
+\footnotesize
 \begin{thebibliography}{10}
+\setlength{\itemsep}{1pt}
+\setlength{\parsep}{0pt}
 \bibitem{source1} Aldous, D. J., \& Shun, J. (2010). Connected spatial networks over random points and a route-length statistic. \emph{Statistical Science, 25}(3), 275--288. \url{https://doi.org/10.1214/10-STS335}
 \bibitem{source2} Costa, J. A., \& Hero, A. O. (2004). Geodesic entropic graphs for dimension and entropy estimation in manifold learning. \emph{IEEE Transactions on Signal Processing, 52}(8), 2210--2221. \url{https://doi.org/10.1109/TSP.2004.831130}
 \bibitem{source3} Devroye, L. (1988). The expected size of some graphs in computational geometry. \emph{Computers \& Mathematics with Applications, 15}(1), 53--64.
@@ -93,6 +96,7 @@ The \href{https://heri-espino.github.io/proximitygraphs-siam-figures/}{interacti
 \bibitem{source9} Niyogi, P., Smale, S., \& Weinberger, S. (2008). Finding the homology of submanifolds with high confidence from random samples. \emph{Discrete \& Computational Geometry, 39}, 419--441. \url{https://doi.org/10.1007/s00454-008-9053-2}
 \bibitem{source10} Penrose, M. D., \& Yukich, J. E. (2013). Limit theory for point processes in manifolds. \emph{Annals of Applied Probability, 23}(6), 2161--2211. \url{https://doi.org/10.1214/12-AAP897}
 \end{thebibliography}
+\endgroup
 
 \section*{About the authors}
 Héctor Maravillo works on computational geometry and proximity graphs at Universidad Autónoma Metropolitana (UAM), Mexico.

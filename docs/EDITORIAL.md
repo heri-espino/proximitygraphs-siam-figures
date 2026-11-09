@@ -12,16 +12,16 @@ SIAM News is the *newsjournal*, not a peer-reviewed SIAM research journal. Artic
 SIAM permits videos in online articles and links in the web version. The guides do **not** promise arbitrary interactive HTML embedding. Each submitted static figure should link to a hosted external GitHub Pages visualization. Ask the editors for permission before assuming they will embed a dynamic visualization.
 
 ## Historical and application guardrails
-- John Snow mapped cholera deaths around the Broad Street pump in Soho, London, 1854. Modern researchers have reconstructed nearest-pump service areas using *network* (walking-distance) Voronoi regions. The introductory interactive here instead uses **invented** water-service sites and **Euclidean** distance. Cite [Walford (2020)](https://pmc.ncbi.nlm.nih.gov/articles/PMC7431402/) and [John Snow Society contextual material](https://johnsnowsociety.org/files/2023/07/Cholera-Epidemic-London-1854-JSS-Short-Version.pdf).
-- An alpha-hull describes a spatial envelope of observed points, not a probability distribution or proven habitat boundary. Circular arcs shown come from \`pg.Alpha_Hull\`.
-- A beta-skeleton graph gives **geometric candidate connections**, not validated radio links, costs, routing, or ecological corridors.
+- John Snow mapped cholera deaths around Broad Street in 1854. The interactive now uses **13 historical pump locations** and **578 digitized death-location records** from the [HistData Snow dataset](https://rdrr.io/cran/HistData/man/Snow.html), normalized with a common scale. The cells and triangles are a **modern Euclidean Voronoi/Delaunay overlay**, not Snow's method. Death marks are not graph vertices; moving a pump produces a hypothetical scenario. See [raw data and processing](../data/historical/README.md).
+- The alpha figure defaults to a **synthetic 380-point image-traced serif Pg**, with two letter components and two counters at alpha approximately -28.57; a 53-point smiley is selectable. Straight boundaries come from pg.Alpha_Shape and circular arcs from pg.Alpha_Hull. The circles and centers are construction witnesses, not a confidence boundary or documented habitat area.
+- The **25-point synthetic relay-sensor example** has two clusters and three relay sites. A blocked candidate with a highlighted point in its lune is *not* a graph edge. Neither physical connectivity, routing, nor radio efficiency is validated.
 - Library's \`pg.Voronoi\` computes ridge-derived **site adjacency**. Polygonal regions are computed separately; \`pg.DelaunayG\` is its dual in generic configurations.
 - Do not claim these scenarios are documented field applications of this library.
 
 ## Editorial release checklist
 - [ ] Authors approve byline, affiliations, and biographies
 - [ ] Mathematical methods and numerical plots checked against installed ProximityGraphs
-- [ ] Every printed caption credits its creators and indicates synthetic data
+- [ ] Every printed caption credits the visualization; the historical layer credits HistData, and synthetic examples are labeled accurately
 - [ ] 800–1,400 words (editor dependent); bibliography <=10 and properly sorted
 - [ ] Links and QR codes resolve to real deployed Pages URLs
 - [ ] PNG/SVG visuals tested at publication resolution
@@ -36,3 +36,7 @@ SIAM permits videos in online articles and links in the web version. The guides 
 - Separate [outreach kit](../article/marketing-kit.md) with optional marketing copy; no external posts or editorial emails have been sent.
 - Prioritize truthful scientific communication over hard product advertising. The manuscript explains geometric choices, demonstrates synthetic use cases, and offers verified GitHub/PyPI calls to action.
 - Pending: in-person visual proof, consent/affiliations, final caption permissions, SIAM editor pitch approval and confirmation of editorial policy on publicly accessible drafts.
+
+## Current figure provenance (November 8, 2026)
+
+The PDF renderer must use per-figure attribution from the Markdown captions. The historical John Snow pump/death marks are digitized evidence, so never append a universal claim that *all* sites are synthetic. The image-traced Pg/smiley and relay-sensor configurations are synthetic instructional data. Both the paper's three chapter links and the new graph-comparison link must resolve. Inspect the rebuilt PDF for credits, equations, legibility, and link behavior before submission.
