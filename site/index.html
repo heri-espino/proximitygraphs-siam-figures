@@ -14,6 +14,7 @@
   <script src="editor.js" defer></script>
   <script src="geometry-details.js" defer></script>
   <script src="data/pg_reference_points.js" defer></script>
+  <script src="point-processes.js" defer></script>
   <script src="app.js" defer></script>
   <script src="motion.js" defer></script>
 </head>
@@ -126,7 +127,7 @@
       <div class="section-kicker">02 / Geometric morphology</div>
       <div class="section-heading">
         <div><h2 id="habitat-title">Alpha-Hull &amp; Alpha-Shape</h2>
-          <p class="intro">A <strong>serif Pg traced from the supplied image</strong> becomes a stippled point cloud. Contour sites preserve the font’s outer edges, tapered strokes and descending flourish; lighter interior dots suggest its weight. The alpha-shape retains two enclosed counters, and the original smiley remains selectable.</p></div>
+          <p class="intro">Choose the traced <strong>Pg</strong>, a smiling face with random interior dots, or two classical spatial point processes. Explore alpha-shapes and circular alpha-hulls from <strong>−100 to 100</strong> on a common normalized square.</p></div>
         <a class="section-next" href="#sensors">Next: Empty regions →</a>
       </div>
       <div class="studio">
@@ -134,19 +135,43 @@
           <h3>Layers &amp; scale</h3>
           <label class="control-label" for="alpha-point-set">Point-cloud preset</label>
           <select id="alpha-point-set" class="control-select">
-            <option value="pg" selected>Pg · serif image sampling</option>
-            <option value="smiley">Smiling face · original</option>
+            <optgroup label="Illustrated point clouds">
+              <option value="pg" selected>Pg · serif image sampling</option>
+              <option value="smiley">Smiling face · random interior</option>
+            </optgroup>
+            <optgroup label="Stochastic point processes">
+              <option value="poisson">Poisson point process</option>
+              <option value="binomial">Binomial point process</option>
+            </optgroup>
           </select>
           <label class="control-label" for="alpha-view">Construction view</label>
           <select id="alpha-view" class="control-select"><option value="final">Final comparison</option><option value="construction">Construction</option><option value="both" selected>Both</option></select>
-          <label class="control-label" for="alpha-slider">Curvature scale <strong id="alpha-value">α = −28.571</strong></label>
-          <input id="alpha-slider" type="range" min="0" max="8" step="1" value="5" aria-label="Alpha curvature scale from −10 to −44">
+          <label class="control-label" for="alpha-slider">Signed alpha parameter <strong id="alpha-value">α = −28.57143 · R = 0.035</strong></label>
+          <input id="alpha-slider" type="range" min="-100" max="100" step="any"
+                 value="-28.57142857142857" aria-label="Alpha parameter from minus 100 to plus 100, including zero">
+          <p class="density-hint">Negative: ordinary Delaunay · Zero: convex hull · Positive: furthest-site Delaunay</p>
           <div id="pg-density-controls" class="pg-density-controls">
             <label class="control-label" for="pg-interior-slider">Random interior points <strong id="pg-interior-count" aria-live="polite">302</strong></label>
             <input id="pg-interior-slider" type="range" min="0" max="600" step="1" value="302"
                    aria-label="Number of randomly placed interior points in the Pg glyphs">
             <p class="density-hint">0–600 inside the letters · outlines always preserved</p>
             <button type="button" class="utility" id="pg-reshuffle">Reshuffle random points</button>
+          </div>
+          <div id="smiley-density-controls" class="pg-density-controls" hidden>
+            <label class="control-label" for="smiley-interior-slider">Smiling-face interior points <strong id="smiley-interior-count" aria-live="polite">120</strong></label>
+            <input id="smiley-interior-slider" type="range" min="0" max="600" step="1" value="120"
+                   aria-label="Number of random points inside the smiling face">
+            <p class="density-hint">0–600 · keeps the face outline, eyes, and smile unobstructed</p>
+            <button type="button" class="utility" id="smiley-reshuffle">Reshuffle face points</button>
+          </div>
+          <div id="process-controls" class="pg-density-controls" hidden>
+            <h4 class="process-heading">Stochastic point processes</h4>
+            <label class="control-label" for="process-slider"><span id="process-parameter-title">Intensity λ (mean number of points)</span> <strong id="process-parameter-count" aria-live="polite">120</strong></label>
+            <input id="process-slider" type="range" min="0" max="600" step="1" value="120"
+                   aria-label="Poisson intensity or binomial fixed number of points">
+            <p class="density-hint" id="process-definition">Homogeneous Poisson process: N ~ Poisson(λ); positions uniform in the unit square.</p>
+            <p class="density-hint" id="process-realized" aria-live="polite">Realized N = 0</p>
+            <button type="button" class="utility" id="process-reshuffle">Generate new realization</button>
           </div>
           <label class="toggle"><input id="alpha-hull" type="checkbox" checked> Alpha-hull · circular arcs</label>
           <label class="toggle"><input id="alpha-shape" type="checkbox" checked> Alpha-shape · straight edges</label>
@@ -167,7 +192,7 @@
         </aside>
         <div class="studio-main">
           <div class="chart-frame">
-            <div class="chart-top"><span id="alpha-preset-title">Pg · image-traced serif and swash</span><span>SYNTHETIC · NEGATIVE α</span></div>
+            <div class="chart-top"><span id="alpha-preset-title">Pg · image-traced serif and swash</span><span>SYNTHETIC · SIGNED α</span></div>
             <svg id="habitat-plot" role="img" aria-label="Interactive circular alpha-hull, straight alpha-shape, Delaunay simplices and supporting circles" viewBox="0 0 640 600"></svg>
           </div>
           <p id="habitat-edit-source" class="geometry-source">Loading original point set.</p>
@@ -181,7 +206,7 @@
           <p class="insight-note" id="habitat-note">Triangles with circumradius at most R form the displayed alpha-shape construction.</p>
         </aside>
       </div>
-      <p class="context">Both point sets are deterministic synthetic illustrations. The default <strong>Pg</strong> follows the actual supplied letterform: a high-contrast serif P and a flourished lowercase g. At α ≈ −28.57 the retained Delaunay complex has exactly two enclosed counters, one per letter. Contours stay fixed. Use <strong>Random interior points</strong> to choose 0–600 randomly distributed points within the letter strokes, and <strong>Reshuffle</strong> for another reproducible arrangement. At the default setting, 302 interior sites include the 82 original samples and 220 additional randomized sites. Move the scale to see them fill or separate, or select <strong>Smiling face</strong> to restore the original 53-point demonstration. The alpha-shape is the boundary of a retained simplicial complex, not the alpha-complex itself; the circular alpha-hull is a different geometric representation.</p>
+      <p class="context">The original 298 Pg outline sites and 53 smiling-face feature sites are preserved. Both letterform presets permit 0–600 additional/interior random points and deterministic reshuffling. Pg defaults to 302 interior points (82 source sites plus 220 seeded samples); at α ≈ −28.57 it has two distinct components and two enclosed counters. The <strong>binomial point process</strong> fixes N = n uniformly sampled sites, whereas the <strong>homogeneous Poisson point process</strong> draws N ~ Poisson(λ) before sampling coordinates uniformly over [0,1]². Both are independent stochastic-geometry examples, not observations of a real habitat. Only exact original precomputed configurations are sourced from the pinned Python library; all other realizations and signed-alpha calculations are independently computed in the browser.</p>
     </section>
 
     <section id="sensors" class="exhibit" aria-labelledby="sensors-title">
