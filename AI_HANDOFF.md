@@ -176,3 +176,6 @@ User requested more interior points in the `#habitat` panel and a wider alpha sl
 - An independent in-memory JS Delaunay prototype over the constructed coordinates found **b0=2, b1=2** at default R=.035, with zero boundary vertices of non-two degree. This is a preliminary diagnostic; verify against pinned Python/CI and browser QA before release.
 - Python, Node and Playwright assertions updated. Regenerate `site/data/scenes.json`, static figures, screenshots and article PDF through main workflows after a validated merge. Preserve experiment006 source data and historical outputs.
 - See `experiments/experiment007/README.md`. Record PR, CI, merge and deployment URLs once verified.
+
+
+**experiment007 CI diagnostic:** PR #7 first failed on a stale Python assertion that selected `ALPHAS[2]` (now alpha magnitude 18), while the new default is `ALPHAS[5]` (28.57142857142857). This explains the reported `components=1, holes=3`: it was an intentional alternate slider state, not evidence that the default failed. Fixed the assertion. Added additional 0.025 contour-site clearance as a conservative refinement; regenerate and verify all exact topology values.
