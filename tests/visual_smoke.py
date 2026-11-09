@@ -63,7 +63,7 @@ def main():
         page.set_content(html,wait_until="load",timeout=60000)
         page.locator("#source-status").wait_for()
         source=page.locator("#source-status").inner_text()
-        assert "Authoritative default geometries" in source,source
+        assert "interactive figures are ready" in source,source
         checks.append("Pinned Python ProximityGraphs source loaded")
 
         assert len(scenes["voronoi"]["points"])==13
@@ -138,10 +138,10 @@ def main():
         sx=bounds["width"]/640
         sy=bounds["height"]/600
         water.click(position={"x":sx*(65+510*.96),"y":sy*(43+510*.96)})
-        assert "hypothetical" in page.locator("#water-edit-source").inner_text()
+        assert "Pump locations adjusted" in page.locator("#water-edit-source").inner_text()
         assert page.locator("#water-plot g[aria-hidden='true'] circle").count()==578
         page.locator('button[data-editor-reset="water"]').click()
-        assert "Digitized historical" in page.locator("#water-edit-source").inner_text()
+        assert "Historical Soho pump locations" in page.locator("#water-edit-source").inner_text()
         checks.append("Voronoi bisectors, circumcircle and Delaunay triangulation render")
 
         page.locator("#alpha-all-circles").check()
@@ -181,7 +181,7 @@ def main():
         assert page.locator("#pg-interior-count").inner_text()=="302"
         density.fill("0")
         assert "298 sites" in page.locator("#habitat-stat").inner_text()
-        assert "JavaScript" in page.locator("#habitat-edit-source").inner_text()
+        assert "Letterform point set" in page.locator("#habitat-edit-source").inner_text()
         density.fill("420")
         assert "718 sites" in page.locator("#habitat-stat").inner_text()
         before=page.locator("#habitat-plot .editable-site[data-point-index='400']").last.get_attribute("cx")
@@ -192,7 +192,7 @@ def main():
         assert density.input_value()=="347"
         assert "645 sites" in page.locator("#habitat-stat").inner_text()
         source_label=page.locator("#habitat-edit-source").inner_text()
-        assert "Original points" in source_label or "JavaScript" in source_label,source_label
+        assert "Letterform point set" in source_label,source_label
         page.locator("#habitat").screenshot(path=str(output/"03-alpha-construction.png"))
         checks.append("Screenshot Pg defaults render 645 sites at alpha -48.65245; source reference still yields two holes")
         page.locator("#alpha-point-set").select_option("smiley")
@@ -217,13 +217,13 @@ def main():
         page.locator("#habitat").screenshot(path=str(output/"08-smiley-preset.png"))
         page.locator("#alpha-point-set").select_option("poisson")
         assert page.locator("#process-controls").is_visible()
-        assert "Poisson" in page.locator("#process-definition").inner_text()
+        assert "varies randomly" in page.locator("#process-definition").inner_text()
         process_slider=page.locator("#process-slider")
         process_slider.fill("0")
         assert "0 sites" in page.locator("#habitat-stat").inner_text()
-        assert "Realized N = 0" in page.locator("#process-realized").inner_text()
+        assert "Points in this sample: 0" in page.locator("#process-realized").inner_text()
         process_slider.fill("80")
-        realized=int(page.locator("#process-realized").inner_text().split("=")[-1].strip())
+        realized=int(page.locator("#process-realized").inner_text().split(":")[-1].strip())
         assert 40<=realized<=120,realized
         assert f"{realized} sites" in page.locator("#habitat-stat").inner_text()
         x=page.locator('#habitat-plot .editable-site[data-point-index="0"]').last.get_attribute("cx")
@@ -231,11 +231,11 @@ def main():
         assert x!=page.locator('#habitat-plot .editable-site[data-point-index="0"]').last.get_attribute("cx")
         page.locator("#habitat").screenshot(path=str(output/"09-poisson.png"))
         page.locator("#alpha-point-set").select_option("binomial")
-        assert "Fixed number" in page.locator("#process-parameter-title").inner_text()
+        assert "Number of points (n)" in page.locator("#process-parameter-title").inner_text()
         assert "120 sites" in page.locator("#habitat-stat").inner_text()
         process_slider.fill("27")
         assert "27 sites" in page.locator("#habitat-stat").inner_text()
-        assert "Realized N = 27" in page.locator("#process-realized").inner_text()
+        assert "Points in this sample: 27" in page.locator("#process-realized").inner_text()
         page.locator("#habitat").screenshot(path=str(output/"10-binomial.png"))
         page.locator("#alpha-point-set").select_option("pg")
         assert "645 sites" in page.locator("#habitat-stat").inner_text()
@@ -266,7 +266,7 @@ def main():
         y=bounds["y"]+bounds["height"]/2
         page.mouse.move(x,y);page.mouse.down()
         page.mouse.move(x+15,y+4,steps=6);page.mouse.up()
-        assert "Edited points" in page.locator("#sensors-edit-source").inner_text()
+        assert "Points adjusted" in page.locator("#sensors-edit-source").inner_text()
         checks.append("Pair inspection and pointer dragging update source provenance")
 
         page.locator("#compare").screenshot(path=str(output/"05-comparison.png"))
@@ -279,10 +279,10 @@ def main():
         assert page.locator("#compare-process-controls").is_hidden()
         page.locator("#compare-point-set").select_option("binomial")
         assert page.locator("#compare-process-controls").is_visible()
-        assert "Binomial count" in page.locator("#compare-parameter-title").inner_text()
+        assert "Number of points (n)" in page.locator("#compare-parameter-title").inner_text()
         param=page.locator("#compare-process-slider")
         param.fill("37")
-        assert page.locator("#compare-realized").inner_text()=="Realized N = 37"
+        assert page.locator("#compare-realized").inner_text()=="Points in this sample: 37"
         assert page.locator("#compare-left-plot circle").count()==37
         assert page.locator("#compare-right-plot circle").count()==37
         def both_panels_identical():
@@ -302,19 +302,19 @@ def main():
         assert both_panels_identical()
         page.locator("#compare").screenshot(path=str(output/"11-comparison-binomial.png"))
         page.locator("#compare-point-set").select_option("poisson")
-        assert "Poisson intensity" in page.locator("#compare-parameter-title").inner_text()
+        assert "Expected number of points (λ)" in page.locator("#compare-parameter-title").inner_text()
         param.fill("0")
-        assert page.locator("#compare-realized").inner_text()=="Realized N = 0"
+        assert page.locator("#compare-realized").inner_text()=="Points in this sample: 0"
         assert page.locator("#compare-left-plot circle").count()==0
         assert page.locator("#compare-right-plot circle").count()==0
         param.fill("30")
-        n=int(page.locator("#compare-realized").inner_text().split("=")[-1].strip())
+        n=int(page.locator("#compare-realized").inner_text().split(":")[-1].strip())
         assert 10<=n<=50,n
         assert page.locator("#compare-left-plot circle").count()==n
         assert page.locator("#compare-right-plot circle").count()==n
         assert both_panels_identical()
         page.locator("#compare").screenshot(path=str(output/"12-comparison-poisson.png"))
-        assert "JavaScript" in page.locator("#compare-source").inner_text()
+        assert "Both diagrams use one Poisson sample" in page.locator("#compare-source").inner_text()
         page.locator("#compare-reset").click()
         assert page.locator("#compare-point-set").input_value()=="sensors"
         assert page.locator("#compare-process-controls").is_hidden()
