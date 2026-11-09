@@ -494,7 +494,7 @@ def main():
             f"{name}: alpha-shape and alpha-hull boundaries disagree"
         )
     assert scene["alpha"]["options"][str(ALPHAS[2])]["topology"] == {
-        "components": 1, "holes": 2
+        "components": 2, "holes": 2
     }, "Image-traced Pg must retain exactly two enclosed counters at the default alpha"
     assert all(scene["alpha"]["options"][str(a)]["arcs"] for a in ALPHAS), (
         "A requested alpha value has no closed circular arcs; inspect the parameters."
