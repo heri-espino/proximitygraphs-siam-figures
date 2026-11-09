@@ -1,7 +1,7 @@
 # experiment008 — Randomized Pg interior-density slider and wider alpha filtration
 
 **Date:** 2026-11-08
-**Status:** Source and tests implemented on PR #7; current PR CI results pending after reconciliation with editorial experiment007.
+**Status:** Complete — PR #7 merged; pinned-library, Node, browser QA, Pages and editorial PDF builds succeeded.
 
 ## Objective
 
@@ -60,7 +60,18 @@ After a successful merge, the existing GitHub Actions workflows regenerate and c
 
 The added interior points are **seeded, pseudorandom synthetic polygon-interior samples** inferred from the existing source contour points, not independently digitized pixels. The source contours and reference file remain untouched. At extreme scales, smaller holes can appear or disappear deliberately. After editing points in the browser, independent JavaScript geometry replaces authoritative default library results and is labeled accordingly.
 
-Next: verify the Python/Node/Playwright workflows, inspect new default and extreme-slider screenshots, record exact PR and deployment URLs, and merge only with explicit authorization.
+Next: optionally assess performance at the maximum 898-site interactive setting on slower mobile devices and review the final editorial figure screenshot before journal submission. The source paper remains unsubmitted.
 
 
 This experiment was renumbered from a provisional `experiment007` because concurrent editorial work was independently committed to `main` under that identifier. The editorial experiment and its manuscript/PDF artifacts must be preserved; this experiment is independently reproducible as `experiment008`.
+
+## Verified implementation and release (2026-11-08 local / 2026-11-09 UTC)
+
+- [PR #7](https://github.com/heri-espino/proximitygraphs-siam-figures/pull/7) **merged** as `2d65f57ff88871a48fda81503113e3f44086daf6` after the final user-adjustable random-density implementation.
+- [Final PR Python/pinned ProximityGraphs and Node run #42550467815](https://github.com/heri-espino/proximitygraphs-siam-figures/actions/runs/42550467815): **success**, including deterministic source parity, 298 immutable contour sites, 0/82/302/600 interior-count tests, default two counters, random reshuffle and alpha filtration.
+- [Final PR desktop/mobile Playwright #42550467851](https://github.com/heri-espino/proximitygraphs-siam-figures/actions/runs/42550467851): **success**.
+- [Postmerge pinned-library figure regeneration and GitHub Pages #42550718693](https://github.com/heri-espino/proximitygraphs-siam-figures/actions/runs/42550718693): **success**. Live section: https://heri-espino.github.io/proximitygraphs-siam-figures/#habitat .
+- [Postmerge visual QA #42550718656](https://github.com/heri-espino/proximitygraphs-siam-figures/actions/runs/42550718656): **success**, with desktop/mobile screenshots archived by the workflow.
+- [Postmerge editorial PDF proof #42550718601](https://github.com/heri-espino/proximitygraphs-siam-figures/actions/runs/42550718601): **success**. The article remains a draft, not a submitted or accepted SIAM publication.
+
+The originally image-traced 380-point source data are untouched. The default 600-site rendering consists of 298 fixed contour points and 302 interior points (82 source points plus 220 seeded random samples). The independent browser slider spans 0–600 interior points and supports reshuffle/reset; the original smiley is unchanged. Pseudorandom samples are deterministic at fixed seed, not a new digitization of source pixels.
