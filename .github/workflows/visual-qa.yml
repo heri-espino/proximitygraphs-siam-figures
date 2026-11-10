@@ -65,6 +65,10 @@ jobs:
             # discard ONLY these uncommitted working-tree copies so rebase
             # cannot fail with a dirty checkout during concurrent CI pushes.
             git restore --worktree site/data/scenes.json site/assets/
+            # The fourth SVG was not tracked in the initial checkout, so the
+            # renderer can leave it untracked before the exporter commits it.
+            # Clean ONLY this generated file to unblock concurrent rebase.
+            git clean -f -- site/assets/figure04-compare.svg
             for attempt in 1 2 3 4 5 6 7 8; do
               git fetch origin main
               git rebase origin/main
