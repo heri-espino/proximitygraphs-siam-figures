@@ -659,3 +659,44 @@ footer a { color: var(--ink-soft); }
   *, *::before, *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
   .is-section-entering { animation: none !important; }
 }
+
+
+/* Embeddable demos: same controls and graph logic as the full lab, only a
+   selected exhibit is displayed inside an external article iframe. */
+html[data-embed] { scroll-padding-top: 0; }
+html[data-embed] .masthead,
+html[data-embed] .hero,
+html[data-embed] .directory,
+html[data-embed] .about-section,
+html[data-embed] footer,
+html[data-embed] .section-next,
+html[data-embed] .section-kicker,
+html[data-embed] .context { display: none !important; }
+html[data-embed="water"] main > section:not(#water),
+html[data-embed="habitat"] main > section:not(#habitat),
+html[data-embed="sensors"] main > section:not(#sensors),
+html[data-embed="compare"] main > section:not(#compare) { display: none !important; }
+html[data-embed] .wrap { width: calc(100% - 36px); max-width: 1380px; }
+html[data-embed] .exhibit { padding: 20px 0 35px; border-top: 0; scroll-margin-top: 0; }
+html[data-embed] .section-heading { margin: 0 0 16px; }
+html[data-embed] .section-heading h2 { font-size: clamp(29px, 3vw, 43px); margin: 0 0 5px; }
+html[data-embed] .intro { font-size: 13px; line-height: 1.55; margin: 0; }
+html[data-embed] .studio { gap: 16px; }
+html[data-embed] .studio-panel h3 { margin-bottom: 10px; padding-bottom: 9px; }
+html[data-embed] .studio-panel .control-label { margin-top: 11px; }
+html[data-embed] .studio-panel .panel-divider { margin: 16px 0; }
+html[data-embed] .studio-panel.insight { font-size: 12px; }
+html[data-embed] .compare-grid { gap: 16px; }
+html[data-embed] .compare-controls { margin-bottom: 13px; }
+html[data-embed] svg { touch-action: none; }
+@media (max-width: 900px) {
+  html[data-embed] .studio { grid-template-columns: minmax(0, 1fr); }
+  html[data-embed] .studio-panel:not(.insight) { display: block; }
+  html[data-embed] .studio-panel.insight { display: block; }
+  html[data-embed] .studio-panel .toggle { display: inline-flex; margin: 3px 14px 3px 0; }
+  html[data-embed] .compare-grid { grid-template-columns: repeat(2,minmax(0,1fr)); }
+}
+@media (max-width: 550px) {
+  html[data-embed] .wrap { width: calc(100% - 24px); }
+  html[data-embed] .compare-grid { grid-template-columns: 1fr; }
+}
