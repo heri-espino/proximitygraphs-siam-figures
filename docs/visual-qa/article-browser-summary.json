@@ -27,7 +27,7 @@
       "figure": 4,
       "scene": "compare",
       "visible_original_app_sections": 1,
-      "plot_child_elements": 82,
+      "plot_child_elements": 97,
       "source": "./?embed=compare"
     }
   ],
@@ -37,6 +37,7 @@
     "15-article-figure2.png",
     "16-article-figure3.png",
     "17-article-figure4.png",
-    "18-article-mobile.png"
+    "18-article-mobile.png",
+    "19-article-comparison-parameters.png"
   ]
 }
