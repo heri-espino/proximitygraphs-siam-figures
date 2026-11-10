@@ -6,6 +6,7 @@ on:
     paths:
       - 'site/**'
       - 'tests/visual_smoke.py'
+      - 'tests/article_browser_smoke.py'
       - '.github/workflows/visual-qa.yml'
   pull_request:
     paths:
@@ -44,6 +45,8 @@ jobs:
           python -m playwright install --with-deps chromium
       - name: Render and test all mathematical interactive sections
         run: python tests/visual_smoke.py --output docs/visual-qa
+      - name: Test four live embedded article views at desktop and mobile sizes
+        run: python tests/article_browser_smoke.py --output docs/visual-qa
       - name: Preserve QA screenshots and summary as workflow artifacts
         uses: actions/upload-artifact@v4
         with:

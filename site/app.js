@@ -1088,7 +1088,13 @@ async function start(){
   document.getElementById("alpha-slider").value=String(state.alphaValue);
   syncPgDensityControls();
   syncComparisonControls();
-  drawWater();replaceHabitatRealization();drawSensors();drawCompare();
+  // Each article iframe loads the common application but renders only the
+  // relevant experiment, avoiding four unnecessary 600-site alpha reflows.
+  const embedded=document.documentElement.getAttribute("data-embed");
+  if(!embedded || embedded==="water")drawWater();
+  if(!embedded || embedded==="habitat")replaceHabitatRealization();
+  if(!embedded || embedded==="sensors")drawSensors();
+  if(!embedded || embedded==="compare")drawCompare();
 }
 if(typeof document!=="undefined")document.addEventListener("DOMContentLoaded",start);
 if(typeof module!=="undefined" && module.exports){

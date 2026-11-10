@@ -1,3 +1,15 @@
+# ACTIVE AUDIT — experiment016, November 9, 2026
+
+The currently editable SIAM News feature is `article/main.tex`, with **Heriberto Espino-Montelongo first** and **Héctor Maravillo second**, and **no third author**. The manuscript discusses **only geometric proximity graphs**, not the software's separate biological heuristics. It contains **four** numbered static figures with corresponding live interactive figures on the author's [online article](https://heri-espino.github.io/proximitygraphs-siam-figures/article.html), two numbered equations, ten alphabetized references and credited source data. `scripts/check_article.py` enforces this current state.
+
+**Editorial approval is NOT automatic.** The [SIAM News style guide](https://www.siam.org/media/gfbjvzck/siam-news-info-and-style-guide.pdf) normally suggests one to three images; the [2026 VisualPDE online feature](https://www.siam.org/publications/siam-news/articles/visualpde-interactive-spatiotemporal-modeling-via-web-browsers-on-any-device/) illustrates four numbered interactive animations. We therefore **propose four author-hosted interactive figures** and will ask the editors whether they prefer four online embeds, four links, or a 1–3 image print selection. Our four iframes are not on SIAM's servers and are not yet an approved publication format.
+
+**Evidence and preparation:** Canonical TeX is compiled by `.github/workflows/article-pdf.yml`. `scripts/export_scenes.py` creates four original Python-backed PNG/SVG scientific figures, including a controlled same-site Gabriel-versus-RNG comparison. `site/article.html` uses four *live* embedded original lab sections; `site/article.js` fits their height. See `site/EMBEDDING.md` and `experiments/experiment016/README.md`. No external editorial submission/email has been made. Complete Héctor's sign-off and source-artwork/historical-record rights review first.
+
+---
+
+*Earlier audits below are retained as a historical record and may describe superseded three-author, three-figure, Markdown-first or bio-inspired drafts.*
+
 # CURRENT SUBMISSION STATUS — experiment015 (November 9, 2026)
 
 The user superseded earlier Markdown-only authoring and three-author assumptions. **Current canonical article is [LaTeX](../article/main.tex), not article/feature.md.** Only **Heriberto Espino-Montelongo** (first) and **Héctor Maravillo** (second) are article authors. The current PDF is compiled directly from LaTeX as a *review proof*, not automatically sent. Previous audit results for the older 3-author PDF/Markdown are historical, **not the current submission packet**. The official SIAM News style guide permits submission as PDF/Word and welcomes LaTeX when mathematical notation is present. Re-run `scripts/check_article.py` and review the new PDF, proof figures and two biographies. Publication approval and source-image rights remain open.

@@ -554,6 +554,44 @@ def render_sensors(s):
     save(fig,"figure03-sensors")
 
 
+
+def render_comparison(scene):
+    """Fourth reproducible print figure: the exact same 25 sites, two rules.
+
+    Use the pinned Python library exports already recorded in scene["compare"],
+    rather than rendering independent JS geometry or screenshotting the UI.
+    """
+    points = np.asarray(scene["compare"]["points"], dtype=float)
+    graph_options = scene["compare"]["options"]
+    fig, axes = plt.subplots(1, 2, figsize=(11.6, 5.55),
+                            constrained_layout=True)
+    fig.patch.set_facecolor("white")
+    for ax, (key, title, tone) in zip(axes, [
+        ("gabriel", "Gabriel graph", "#333944"),
+        ("rng", "Relative neighborhood graph", "#777382"),
+    ]):
+        ax.set_facecolor("#fdfcfa")
+        for v in np.linspace(0, 1, 11):
+            ax.axvline(v, color="#eeece8", lw=.55, zorder=0)
+            ax.axhline(v, color="#eeece8", lw=.55, zorder=0)
+        for i, j in graph_options[key]:
+            p, q = points[[i, j]]
+            ax.plot([p[0], q[0]], [p[1], q[1]],
+                    lw=1.9, c=tone, alpha=.84, zorder=2)
+        sites(ax, points)
+        ax.set_xlim(0, 1);ax.set_ylim(0, 1)
+        ax.set_aspect("equal")
+        ax.set_xticks([]);ax.set_yticks([])
+        ax.set_title(f"{title} · {len(graph_options[key])} edges",
+                     loc="left", fontsize=12, pad=12,
+                     weight="bold", color="#30302e")
+        for spine in ax.spines.values():
+            spine.set_color("#e4e2dc")
+    fig.suptitle("Figure 4 · One point cloud, two definitions of neighbor",
+                 fontsize=13, weight="bold", x=.04, ha="left", color="#30302e")
+    save(fig, "figure04-compare")
+
+
 def main():
     scene=build()
     assert all(
@@ -575,7 +613,7 @@ def main():
     )
     DATA.mkdir(parents=True,exist_ok=True)
     (DATA/"scenes.json").write_text(json.dumps(scene,indent=2)+"\n",encoding="utf-8")
-    render_water(scene);render_habitat(scene);render_sensors(scene)
+    render_water(scene);render_habitat(scene);render_sensors(scene);render_comparison(scene)
     print("Exported seeded-random serif Pg (600 default sites), original smiley, historical Snow and sensor geometry.")
 
 

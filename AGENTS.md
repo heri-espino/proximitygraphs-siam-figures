@@ -1,3 +1,18 @@
+# LATEST ACTIVE OVERRIDE — experiment016 (November 9, 2026)
+# Two SIAM News authors: Heriberto Espino-Montelongo first, Héctor Maravillo second. No Diego.
+# Canonical human-editable text: article/main.tex; published output is an unsubmitted author PDF proof.
+# The feature is ONLY about geometric proximity graph families and their applications. Do NOT
+# reinsert Physarum, FungalGraph, fungal networks, slime molds or bio-inspired paragraphs.
+# Four numbered static Python-source figures and four corresponding LIVE hosted iframe views:
+# water, habitat, sensors, compare. The latter must use IDENTICAL point sets for both graphs.
+# The independent article.html contains headings, equation numbers, captions and links.
+# The same original app is exposed via allow-listed '?embed=' query. Preserve full lab interactions.
+# The official SIAM guide normally recommends 1-3 graphics; VisualPDE shows 4 live animations.
+# DO NOT claim SIAM approved four demos or arbitrary custom iframe embedding.
+# Reproduce: export_scenes.py, unittest discover, node tests, check_article.py,
+# Playwright on actual site/article.html, pdflatex twice, PDF visual inspection.
+# Work remains unsubmitted; retain all prior research, figures and agent handoffs.
+# Implementation record: experiments/experiment016/README.md; embeds: site/EMBEDDING.md.
 # CURRENT EDITORIAL OVERRIDE — experiment015, November 9, 2026
 # The SIAM News feature has exactly TWO authors:
 #   1. Heriberto Espino-Montelongo — first/lead, UDLAP

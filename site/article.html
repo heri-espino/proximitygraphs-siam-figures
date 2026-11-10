@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#faf9f7">
+  <meta name="description" content="Four live proximity graph experiments: historical Voronoi regions, alpha shape reconstruction, beta skeletons and controlled graph comparisons.">
+  <meta property="og:title" content="Who Counts as a Neighbor? — Interactive ProximityGraphs Article">
+  <meta property="og:description" content="The mathematics, history, applications, and four interactive geometric graph demonstrations.">
+  <title>Who Counts as a Neighbor? | Interactive Article</title>
+  <link rel="stylesheet" href="article.css">
+  <script src="article.js" defer></script>
+</head>
+<body>
+  <header class="article-nav">
+    <a class="article-brand" href="./"><span class="brand-mark">Pg.</span> ProximityGraphs</a>
+    <nav aria-label="Article navigation">
+      <a href="#history">Origins</a>
+      <a href="#applications">Applications</a>
+      <a href="#figure1">Interactive figures</a>
+      <a href="#software">Software</a>
+      <a href="./">Full laboratory</a>
+    </nav>
+  </header>
+  <main class="article-content" id="top">
+    <header class="article-heading">
+      <p class="eyebrow">SOFTWARE AND PROGRAMMING · PROPOSED SIAM NEWS FEATURE</p>
+      <h1>Who Counts as a Neighbor?</h1>
+      <p class="subtitle">From geographic maps to a Python laboratory of proximity graphs</p>
+      <p class="article-authors"><strong>Heriberto Espino-Montelongo</strong> <span>· UDLAP</span> &nbsp; <strong>Héctor Maravillo</strong> <span>· UAM, Mexico</span></p>
+      <p class="draft-note">Interactive author preview — not published or endorsed by SIAM News. The original software and diagrams are open for inspection.</p>
+    </header>
+    <p class="article-lead">A set of points contains no instructions about how its members should be connected. A water pump, a pixel, a sensor and a learned embedding each suggest different notions of a <em>neighbor</em>. Proximity graphs turn these decisions into mathematical rules that can be examined, compared and changed.</p>
+    <section id="history" class="article-section">
+      <h2>How Did Proximity Graphs Emerge?</h2>
+      <p>Voronoi regions formalize nearest-site partitions, while Delaunay triangulations connect sites with adjacent regions. The historical Soho cholera map of John Snow provides a compelling setting for these constructions: our <em>modern</em> overlay partitions digitized pump locations, while deaths remain independent observations. Snow did not construct the diagram, and Euclidean distance is not equivalent to walking distance or water use.</p>
+      <p>Gabriel and Sokal introduced empty-disk adjacency for geographic variation analysis in 1969. Toussaint's 1980 relative neighborhood graph replaced the disk with a lens, while alpha-shapes, β-skeletons and γ-neighborhood graphs later expanded the questions researchers could ask of spatial data. Today these alternative definitions of locality are useful in geometry, spatial planning, image analysis, and computational networks.</p>
+    </section>
+    <section id="applications" class="article-section">
+      <h2>What Can You Explore?</h2>
+      <p>All four demonstrations below are <strong>live</strong>: you can move, add or delete points, change geometric parameters and inspect why specific edges or boundaries appear. Each has an independent full-screen link. Static screenshots in the PDF preserve the construction for readers without an interactive browser.</p>
+    </section>
+    <figure class="interactive-figure" id="figure1">
+      <div class="figure-top"><h3>Spatial allocation and historical maps</h3><a href="./?embed=water" target="_blank" rel="noopener noreferrer">Open Figure 1 in a new tab</a></div>
+      <p>Move a historical pump to explore a hypothetical facility arrangement. The resulting Euclidean Voronoi cells answer a nearest-site question, not a causal question about disease transmission.</p>
+      <div class="embed-shell">
+        <iframe src="./?embed=water" title="Interactive Figure 1: John Snow water pumps, Voronoi cells and Delaunay edges" loading="lazy"></iframe>
+      </div>
+      <figcaption><strong>Interactive Figure 1.</strong> Thirteen digitized Soho water pumps determine modern Voronoi cells and Delaunay adjacencies; 578 cholera death-location marks provide historical context only. Data: HistData; interactive diagram: the authors. <a href="#history">Historical context</a>.</figcaption>
+    </figure>
+    <figure class="interactive-figure" id="figure2">
+      <div class="figure-top"><h3>Shape reconstruction, holes and scale</h3><a href="./?embed=habitat" target="_blank" rel="noopener noreferrer">Open Figure 2 in a new tab</a></div>
+      <p>Alpha-shapes retain scale-selected simplices with straight boundaries, whereas the related alpha-hull includes circular arcs. Adjust the radius or point density to see when the two letter counters, gaps, and connected pieces change.</p>
+      <div class="embed-shell">
+        <iframe src="./?embed=habitat" title="Interactive Figure 2: serif Pg alpha shape, circular alpha hull, and supporting circles" loading="lazy"></iframe>
+      </div>
+      <figcaption><strong>Interactive Figure 2.</strong> A synthetic letterform point set demonstrates straight alpha-shape edges, circular alpha-hull arcs, and supporting circles; a smiley is an optional preset. Data and interactive diagram: the authors.</figcaption>
+    </figure>
+    <section class="article-section" id="empty-regions">
+      <h2>How Does a Graph Decide Which Edges Exist?</h2>
+      <p>An empty-region graph joins two sampled points only if their corresponding exclusion region contains no competing sample. For a finite point set <em>P</em> and region <em>K(p,q)</em>, the basic criterion is</p>
+      <div class="equation" role="math" aria-label="An edge p q exists if and only if K of p q intersection P without p and q is empty. Equation one.">
+        <span>{p,q} ∈ E<sub>K</sub>(P) ⇔ K(p,q) ∩ (P ∖ {p,q}) = ∅</span><span class="equation-number">(1)</span>
+      </div>
+      <p>Changing the exclusion region changes the graph: the Gabriel criterion uses a disk, the relative neighborhood rule uses a lens, and β-skeletons vary the construction with a parameter. These are useful candidates for spatial-network design, but geometry alone cannot prove that a wireless link is feasible.</p>
+    </section>
+    <figure class="interactive-figure" id="figure3">
+      <div class="figure-top"><h3>Sensor-network candidates and empty lenses</h3><a href="./?embed=sensors" target="_blank" rel="noopener noreferrer">Open Figure 3 in a new tab</a></div>
+      <p>Select a sensor pair to expose its defining disks, the overlap between them and the blocking points that explain a rejected connection. Moving one point can alter several edges at once.</p>
+      <div class="embed-shell">
+        <iframe src="./?embed=sensors" title="Interactive Figure 3: beta-skeleton sensor edges and empty-lune witnesses" loading="lazy"></iframe>
+      </div>
+      <figcaption><strong>Interactive Figure 3.</strong> Twenty-five synthetic sensor sites and relay points demonstrate empty-region edge acceptance and rejection. Layout and interactive diagram: the authors.</figcaption>
+    </figure>
+    <figure class="interactive-figure" id="figure4">
+      <div class="figure-top"><h3>Controlled network comparison and random samples</h3><a href="./?embed=compare" target="_blank" rel="noopener noreferrer">Open Figure 4 in a new tab</a></div>
+      <p>Compare Gabriel, relative-neighborhood, Delaunay, β-skeleton and alpha-shape connections under a shared coordinate set. You can replace the original 25 synthetic sites with a fixed-size binomial sample or a homogeneous Poisson realization.</p>
+      <div class="embed-shell">
+        <iframe src="./?embed=compare" title="Interactive Figure 4: two geometric graphs constructed on the exact same points" loading="lazy"></iframe>
+      </div>
+      <figcaption><strong>Interactive Figure 4.</strong> The same sites support different graphs, densities and edge counts. Original coordinates, experiments and interactive comparison: the authors.</figcaption>
+    </figure>
+    <section class="article-section" id="probability">
+      <h2>A Probabilistic Prediction</h2>
+      <p>Suppose points form a stationary Poisson process with density ρ in <em>d</em>-dimensional space, and the empty-region volume for two sites at separation <em>r</em> is <em>a<sub>K</sub>r<sup>d</sup></em>. Then the absence of other points has probability <em>exp(−ρa<sub>K</sub>r<sup>d</sup>)</em>. In the idealized model, the mean degree becomes</p>
+      <div class="equation" role="math" aria-label="Expected degree equals v sub d divided by a sub K. Equation two.">
+        <span>E[deg] = v<sub>d</sub> / a<sub>K</sub></span><span class="equation-number">(2)</span>
+      </div>
+      <p>Here <em>v<sub>d</sub></em> is the unit-ball volume. The intensity cancels: the geometric exclusion rule controls mean degree. This is a theoretical baseline, not a claim that every real-world sample follows a Poisson process. The Python package is presently strongest for planar calculations even where the underlying mathematics extends to higher dimensions.</p>
+    </section>
+    <section class="article-section" id="software">
+      <h2>How Can You Use ProximityGraphs?</h2>
+      <p><a href="https://github.com/ProximityGraphs/ProximityGraphs" target="_blank" rel="noopener noreferrer"><strong>ProximityGraphs</strong></a> implements classical Voronoi, Delaunay, Gabriel, relative-neighborhood and minimum-spanning graphs, together with alpha constructions, β-skeletons, γ-neighborhoods, stepping-stone graphs and related variants. <code>SetPoints</code> creates structured and stochastic point sets, while <code>Experiment</code> supports seeded comparisons and graph statistics. The original reference diagrams come from the pinned Python package; point edits in the live demonstrations use separate JavaScript geometry.</p>
+      <p>Install the MIT-licensed library with <code>pip install proximitygraphs</code>, inspect the <a href="https://github.com/ProximityGraphs/ProximityGraphs" target="_blank" rel="noopener noreferrer">source code</a>, consult the <a href="https://proximitygraphs.github.io/ProximityGraphs/" target="_blank" rel="noopener noreferrer">documentation</a>, or <a href="./">open the complete geometry laboratory</a>. Changing the neighborhood model is not a cosmetic option: it changes the mathematical assumptions behind the network.</p>
+      <div class="article-cta"><a href="./">Explore all graph constructions</a><a href="https://pypi.org/project/proximitygraphs/" target="_blank" rel="noopener noreferrer">Python package</a><a href="https://github.com/heri-espino/proximitygraphs-siam-figures/blob/main/article/main.tex" target="_blank" rel="noopener noreferrer">LaTeX article source</a></div>
+    </section>
+    <footer class="article-footer"><p>Heriberto Espino-Montelongo · Héctor Maravillo</p><p>Interactive author preview, not a SIAM News publication. Historical sites are digitized map observations; the typographic shapes, sensor positions and random samples are illustrative.</p><a href="#top">Back to top</a></footer>
+  </main>
+</body>
+</html>

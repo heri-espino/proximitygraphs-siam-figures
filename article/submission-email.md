@@ -1,25 +1,25 @@
 # SIAM News cover email — DRAFT, NOT SENT
 
-**To:** sinews@siam.org
-**Subject:** Software and Programming submission — Who Counts as a Neighbor?
+**To:** sinews@siam.org  
+**Subject:** Software and Programming: Interactive ProximityGraphs feature
 
 Dear SIAM News Editors,
 
-We would like to submit **“Who Counts as a Neighbor? From Geographic Maps to a Python Laboratory of Proximity Graphs”** for consideration in the *Software and Programming* section of SIAM News.
+We are preparing “Who Counts as a Neighbor? From Geographic Maps to a Python Laboratory of Proximity Graphs” for your Software and Programming section.
 
-The article introduces ProximityGraphs, an open-source Python library for constructing and comparing geometric graph families on common point sets. Three credited illustrations demonstrate a modern Voronoi overlay on digitized historical John Snow pump locations, shape reconstruction through alpha-shapes and circular alpha-hulls, and empty-region connections in a synthetic relay network. We also discuss gamma-neighborhood and stepping-stone families, stochastic graph statistics, and two bio-inspired network models.
+The article introduces an open-source Python library for geometric proximity graphs, explains how neighborhood definitions emerged and why they matter, and connects their mathematics to shape reconstruction, spatial allocation, sensor-network candidates and stochastic-network comparisons. It includes numbered equations, references and credited illustrations.
 
-An [interactive companion](https://heri-espino.github.io/proximitygraphs-siam-figures/) allows readers to move and add points, inspect the mathematical constructions behind the graphics, and compare graphs on identical coordinates.
+In the spirit of your recent VisualPDE feature, we have built [four live interactive illustrations](https://heri-espino.github.io/proximitygraphs-siam-figures/article.html) with numbered captions: historical Voronoi/Delaunay geography, alpha-shape and alpha-hull reconstruction, beta-skeleton empty-region witnesses, and side-by-side comparisons on identical points. Each can also be opened in a standalone interactive view.
 
-We can provide the manuscript as a PDF, with three figures as separate files and the LaTeX source, which is our canonical manuscript. Could you advise whether the topic is suitable for print or online coverage and whether external links to the interactive diagrams may be included in the online version?
+We understand that your style guide normally recommends one to three images. Would four interactive figures be appropriate for an online article, either embedded or linked? We can provide fewer static figures for print if that is preferable. Our manuscript is prepared in LaTeX, with a compiled PDF available for editorial review.
 
-The two proposed authors are Heriberto Espino-Montelongo (Universidad de las Américas Puebla) and Héctor Maravillo (Universidad Autónoma Metropolitana, Mexico), in that order.
+The proposed authors are Heriberto Espino-Montelongo (Universidad de las Américas Puebla) and Héctor Maravillo (Universidad Autónoma Metropolitana), in that order.
 
-Thank you for considering the contribution.
+Thank you for considering the topic.
 
-Sincerely,
-The ProximityGraphs authors
+Sincerely,  
+The ProximityGraphs article authors
 
 ---
 
-**Before sending:** Obtain all three authors' approval, verify correspondence details, confirm rights to historic and derived graphics, and attach the final PDF and 3 separate figures. This note has not been emailed or submitted.
+Before sending: Obtain Héctor's approval, verify rights for all illustrated data/artwork, attach the final PDF and original figures, and confirm correspondence information. No email has been sent.

@@ -11,6 +11,13 @@
   <meta property="og:url" content="https://heri-espino.github.io/proximitygraphs-siam-figures/">
   <title>ProximityGraphs Lab | Who Counts as a Neighbor?</title>
   <link rel="stylesheet" href="styles.css">
+  <script>
+    // Self-contained framed view for each SIAM-style online demonstration.
+    const embed = new URLSearchParams(location.search).get("embed");
+    if (["water","habitat","sensors","compare"].includes(embed))
+      document.documentElement.setAttribute("data-embed", embed);
+  </script>
+
   <script src="editor.js" defer></script>
   <script src="geometry-details.js" defer></script>
   <script src="data/pg_reference_points.js" defer></script>
@@ -24,7 +31,7 @@
       <a class="brand" href="#top"><span class="mark" aria-hidden="true">Pg.</span><span>ProximityGraphs <span class="muted">/ interactive geometry</span></span></a>
       <nav aria-label="Sections">
         <a href="#top">Home</a><a href="#water">Voronoi</a><a href="#habitat">Alpha</a>
-        <a href="#sensors">β-skeleton</a><a href="#compare">Compare</a><a href="#about">About</a>
+        <a href="#sensors">β-skeleton</a><a href="#compare">Compare</a><a href="article.html">Article</a><a href="#about">About</a>
       </nav>
     </div>
   </header>
@@ -38,6 +45,7 @@
           <a class="button primary" href="#explore">Explore the geometry</a>
           <a class="button" href="https://github.com/ProximityGraphs/ProximityGraphs" target="_blank" rel="noopener noreferrer">Source code</a>
           <a class="button" href="https://pypi.org/project/proximitygraphs/" target="_blank" rel="noopener noreferrer">Python package</a>
+          <a class="button" href="article.html">Interactive article</a>
         </div>
         <p class="install-hint">Install: <code>pip install proximitygraphs</code><span>Open-source computational geometry</span></p>
         <p class="source" id="source-status" role="status">Preparing the interactive figures…</p>
@@ -49,9 +57,9 @@
     </section>
 
     <section id="explore" class="directory" aria-labelledby="explore-title">
-      <div class="section-kicker">EXPLORE / THREE IDEAS</div>
+      <div class="section-kicker">EXPLORE / FOUR IDEAS</div>
       <h2 id="explore-title">The geometry of connection.</h2>
-      <p class="section-intro">Begin with historical water-pump locations, reconstruct a shape from scattered points, and test which sensors become neighbors. Each example lets you explore the rule behind the result.</p>
+      <p class="section-intro">Begin with historical water-pump locations, reconstruct shapes, test sensor links, and compare networks on shared point sets. Each example lets you explore the rule behind the result.</p>
       <div class="chapter-grid">
         <a class="chapter-card" href="#water">
           <img loading="lazy" src="assets/figure01-water.png" alt="Historical Soho water-pump locations and cholera death marks overlaid with Voronoi regions">
@@ -70,6 +78,12 @@
           <span class="chapter-meta">03 · EMPTY-REGION GRAPHS</span>
           <strong>β-Skeleton</strong>
           <span>Discover why nearby sensors connect—or fail the empty-region test.</span>
+        </a>
+        <a class="chapter-card" href="#compare">
+          <img loading="lazy" src="assets/figure04-compare.png" alt="Same point coordinates as a Gabriel graph and relative neighborhood graph side by side">
+          <span class="chapter-meta">04 · NETWORK COMPARISON</span>
+          <strong>Competing graph rules</strong>
+          <span>Compare different definitions of neighbors on identical sites.</span>
         </a>
       </div>
     </section>
@@ -331,7 +345,8 @@
         <h3>Further reading</h3>
         <a href="https://pypi.org/project/proximitygraphs/" target="_blank" rel="noopener noreferrer">Get the Python package</a>
         <a href="https://github.com/ProximityGraphs/ProximityGraphs" target="_blank" rel="noopener noreferrer">Source code and documentation</a>
-        <a href="https://github.com/heri-espino/proximitygraphs-siam-figures/blob/main/article/feature.md" target="_blank" rel="noopener noreferrer">Read the companion manuscript</a>
+        <a href="article.html">Read the interactive article</a>
+        <a href="https://github.com/heri-espino/proximitygraphs-siam-figures/blob/main/article/main.tex" target="_blank" rel="noopener noreferrer">LaTeX manuscript source</a>
         <a href="https://github.com/heri-espino/proximitygraphs-siam-figures" target="_blank" rel="noopener noreferrer">Explore the project repository</a>
       </div>
     </section>
