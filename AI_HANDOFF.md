@@ -336,3 +336,16 @@ Files changed: site/index.html (side-specific hidden slider/labels); site/styles
 Important: the general alpha lab uses signed -100…+100; Figure 4 deliberately restricts to negative alpha so that alpha-shape/hull share the ordinary Delaunay reference and vary R=1/|α|. The default unedited sensor settings use pinned Python graph lists; nondefault β/α and new point realizations are computed by the browser's independently tested geometry. Do not claim this is real-world communications feasibility.
 
 Next: check PR #14 CI, fix any failed geometry/browser assertions, merge after verification, confirm GitHub Pages and visual QA, preserve updated screenshots and exact run URLs. No paper submission or author changes.
+
+## experiment017 final engineering QA
+
+
+## Validation and merged release — November 10, 2026
+
+- [PR #14](https://github.com/heri-espino/proximitygraphs-siam-figures/pull/14) was **squash-merged** into `main` at commit `cc94d454b603c07e1ceb30e53de22c57abc95ec8` following three green checks on the exact PR head `9f0f84983ab93af2a6ca886904bec5755d91fc06`.
+- [Python source/Node geometry regression #42838003920](https://github.com/heri-espino/proximitygraphs-siam-figures/actions/runs/42838003920): **success**, including all β/α parameter comparisons.
+- [Actual Chromium browser visual QA #42838003820](https://github.com/heri-espino/proximitygraphs-siam-figures/actions/runs/42838003820): **success**, including live embedded Figure 4 interactions, independent sliders, true hull polyline arcs, contextual hide/show, swap/reset, and unchanged left/right coordinates.
+- [Unchanged LaTeX PDF-author-proof build #42838003747](https://github.com/heri-espino/proximitygraphs-siam-figures/actions/runs/42838003747): **success** (this experiment changes no article mathematics or text beyond the online Figure 4 explanatory sentence).
+- [Post-merge Chromium QA #42838664399](https://github.com/heri-espino/proximitygraphs-siam-figures/actions/runs/42838664399): **success**, with the new evidence screenshot [19-article-comparison-parameters.png](../../docs/visual-qa/19-article-comparison-parameters.png) and passed [article-browser-summary.json](../../docs/visual-qa/article-browser-summary.json) **committed** on `main` at commit `cdfda044b926f1cb0d5ad74851641af007a3ceab`.
+- [Post-merge figure/Pages run #42838664748](https://github.com/heri-espino/proximitygraphs-siam-figures/actions/runs/42838664748): authoritative figure tests **succeeded**; the Pages deployment job was still in progress at the last observation when this note was written. **Do not claim public deployment success until the Pages job explicitly concludes successfully.** The public URL is https://heri-espino.github.io/proximitygraphs-siam-figures/#compare.
+- The selected two graph families need not share a parameter. Only the point sites are shared; their distinct β/α values determine topology, and the circular alpha-hull is not the straight alpha-shape.
