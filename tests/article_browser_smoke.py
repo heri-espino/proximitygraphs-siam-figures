@@ -91,6 +91,22 @@ def main():
                     ).inner_text()
                     assert nested.locator("#compare-right-plot polyline").count() > 0
                     assert nested.locator("#compare-left-slider").input_value() == "2.4"
+                    # Switching to a fixed graph hides the slider, restoring β
+                    # later must retain the independently selected value.
+                    nested.locator("#compare-left").select_option("gabriel")
+                    assert nested.locator("#compare-left-parameter").is_hidden()
+                    nested.locator("#compare-left").select_option("beta")
+                    assert nested.locator("#compare-left-parameter").is_visible()
+                    assert nested.locator("#compare-left-slider").input_value() == "2.4"
+                    # Alpha-shape is straight; the same α produces actual
+                    # curved hull arcs after switching back.
+                    nested.locator("#compare-right").select_option("alpha-shape")
+                    assert nested.locator("#compare-right-plot polyline").count() == 0
+                    nested.locator("#compare-right").select_option("alpha-hull")
+                    assert nested.locator("#compare-right-plot polyline").count() > 0
+                    article_figure.screenshot(
+                        path=str(out / "19-article-comparison-parameters.png")
+                    )
                     # All changes are parameter-only; no site can be resampled.
                     def coordinates(side):
                         return nested.locator(f"#compare-{side}-plot circle").evaluate_all(
@@ -140,7 +156,7 @@ def main():
         "figures": report,
         "screenshots": ["13-article-opening.png"]
         + [f"{13+n:02d}-article-figure{n}.png" for n in range(1, 5)]
-        + ["18-article-mobile.png"],
+        + ["18-article-mobile.png", "19-article-comparison-parameters.png"],
     }
     (out / "article-browser-summary.json").write_text(
         json.dumps(result, indent=2), encoding="utf-8"
