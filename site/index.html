@@ -277,7 +277,7 @@
     <section id="compare" class="exhibit compare-exhibit" aria-labelledby="compare-title">
       <div class="section-kicker">04 / Controlled comparison</div>
       <h2 id="compare-title">Same points. Different networks.</h2>
-      <p class="intro">What changes when you keep the locations fixed but change the definition of a neighbor? Select two graph constructions and compare their connections on the <strong>same set of points</strong>—from the sensor example or a random point process.</p>
+      <p class="intro">What changes when you keep the locations fixed but change the definition of a neighbor? Select two graph constructions and compare their connections on the <strong>same set of points</strong>—from the sensor example or a random point process. Use independent β or α sliders when a selected graph needs a parameter.</p>
       <div class="compare-controls">
         <label for="compare-point-set">Choose the points
           <select id="compare-point-set" class="control-select">
@@ -286,20 +286,46 @@
             <option value="poisson">Poisson process</option>
           </select>
         </label>
-        <label for="compare-left">Left-hand graph
-          <select id="compare-left" class="control-select">
-            <option value="delaunay">Delaunay</option><option value="gabriel" selected>Gabriel</option>
-            <option value="rng">Relative neighborhood</option><option value="beta">β-skeleton (β = 1.5)</option>
-            <option value="alpha-shape">Alpha-shape (α = −4)</option>
-          </select>
-        </label>
-        <label for="compare-right">Right-hand graph
-          <select id="compare-right" class="control-select">
-            <option value="delaunay">Delaunay</option><option value="gabriel">Gabriel</option>
-            <option value="rng" selected>Relative neighborhood</option><option value="beta">β-skeleton (β = 1.5)</option>
-            <option value="alpha-shape">Alpha-shape (α = −4)</option>
-          </select>
-        </label>
+        <div class="compare-model">
+          <label for="compare-left">Left-hand graph
+            <select id="compare-left" class="control-select">
+              <option value="delaunay">Delaunay</option>
+              <option value="gabriel" selected>Gabriel</option>
+              <option value="rng">Relative neighborhood</option>
+              <option value="beta">β-skeleton</option>
+              <option value="alpha-shape">Alpha-shape</option>
+              <option value="alpha-hull">Alpha-hull (circular arcs)</option>
+            </select>
+          </label>
+          <div id="compare-left-parameter" class="compare-model-parameter" hidden>
+            <label class="control-label" for="compare-left-slider">
+              <span id="compare-left-parameter-name">β parameter</span>
+              <output id="compare-left-parameter-value" for="compare-left-slider" aria-live="polite">β = 1.5</output>
+            </label>
+            <input id="compare-left-slider" type="range" min="1" max="3" step="0.1"
+                   value="1.5" aria-label="Left-hand graph parameter">
+          </div>
+        </div>
+        <div class="compare-model">
+          <label for="compare-right">Right-hand graph
+            <select id="compare-right" class="control-select">
+              <option value="delaunay">Delaunay</option>
+              <option value="gabriel">Gabriel</option>
+              <option value="rng" selected>Relative neighborhood</option>
+              <option value="beta">β-skeleton</option>
+              <option value="alpha-shape">Alpha-shape</option>
+              <option value="alpha-hull">Alpha-hull (circular arcs)</option>
+            </select>
+          </label>
+          <div id="compare-right-parameter" class="compare-model-parameter" hidden>
+            <label class="control-label" for="compare-right-slider">
+              <span id="compare-right-parameter-name">β parameter</span>
+              <output id="compare-right-parameter-value" for="compare-right-slider" aria-live="polite">β = 1.5</output>
+            </label>
+            <input id="compare-right-slider" type="range" min="1" max="3" step="0.1"
+                   value="1.5" aria-label="Right-hand graph parameter">
+          </div>
+        </div>
         <button id="compare-swap" class="utility" type="button">Swap</button>
         <button id="compare-reset" class="utility" type="button">Reset comparison</button>
       </div>
