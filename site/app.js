@@ -978,9 +978,11 @@ function drawCompare(){
   if(state.comparePointSet!=="sensors")
     detail("compare-realized","Points in this sample: "+points.length);
   const shared=state.comparePointSet==="sensors"?
-    (edited("sensors")?"Modified sensors":"Original sensor sites"):
-    (state.comparePointSet==="poisson"?"Poisson":"binomial")+" realization";
-  detail("compare-source",shared+" in both diagrams. Left: "+origins[0]+
+    (edited("sensors")?"Modified sensor sites in both diagrams":
+      "Original sensor sites in both diagrams"):
+    "Both diagrams use one "+
+      (state.comparePointSet==="poisson"?"Poisson":"binomial")+" sample";
+  detail("compare-source",shared+". Left: "+origins[0]+
     "; right: "+origins[1]+". Slider changes never resample the points.");
 }
 function setPreset(scene,preset){
