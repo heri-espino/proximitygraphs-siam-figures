@@ -74,9 +74,21 @@ The construction inspector explicitly distinguishes **ACCEPTED** and **REJECTED*
 
 The optional **Rejected candidate pairs** layer shows faint rejected pair segments for up to 45 points; for larger sets the user can still inspect arbitrary pairs without rendering thousands of crossing segments. The actual Python default graph is \`pg.Beta_Skeleton(...,type_region="lune",closed=False)\`; browser edits use the same strict-inequality predicate but a separate implementation.
 
-## 4. Same sites, different graphs
+## 4. Same sites, different graphs — independent β and α sliders (experiment017)
 
-The **Compare** section uses exactly the *sensor section's current point coordinates* on both sides. It supports Delaunay, Gabriel (β=1 lune), relative neighborhood (β=2 lune), β=1.5 lune, and alpha-shape (α=−4). It displays edge counts, swaps panels and restores the default comparison. The unchanged default reference edges come directly from the Python library; edited sensors trigger local recalculation for both panels.
+The **Compare** section holds **one exact point set** in common between both panels, sourced either from the editable synthetic sensor network or a seeded binomial/Poisson realization. It supports Delaunay, Gabriel, RNG, β-skeleton, alpha-shape, and a **distinct curved alpha-hull** construction.
+
+Each side has independent graph parameters. The slider appears **only** for a parameterized graph:
+
+- **β-skeleton:** a β parameter in `[1,3]` with 0.1 steps (default β=1.5). Each pair is tested against the intersection of two open disks with radius `β||p−q||/2`; β=1 matches Gabriel and β=2 matches RNG for the adopted open-lune convention.
+- **Alpha-shape:** a signed **negative α** parameter in `[−40,−1]` with 0.5 steps (default α=−4). The inverse radius `R=1/|α|` filters planar Delaunay triangles by circumradius. Its rendered boundary is **straight line segments**.
+- **Alpha-hull:** the **same** negative-alpha Delaunay-simplex boundary edge endpoints but replaced by arcs of circles with radius `R=1/|α|` using the same `fallbackAlpha` circular-arc geometry as the main alpha laboratory. If the boundary forms a degenerate open chain, endpoints may be rendered as straight segments rather than invented arcs. This distinction is geometric, not a cosmetic color change.
+
+The general alpha laboratory supports signed α across positive, zero and negative conventions; this comparison restricts to the **ordinary negative-alpha branch** deliberately so the two alpha constructions are directly comparable. An increase in |α| decreases R and can eliminate retained triangles/edges. This is expected, not a rendering failure.
+
+**Parameter consistency:** The left and right β/α settings are independent. Switching graph families preserves each side's last β and α; swapping transfers the **graph and its settings** to the opposite panel; Reset returns to sensor points, Gabriel left / RNG right, β=1.5 and α=−4 for both hidden settings. Moving either slider **never regenerates the sites**. Adjusting n or λ, changing the point-set type, or pressing Generate new sample is the only stochastic resampling mechanism.
+
+**Source provenance:** Unmodified sensor defaults with β=1.5/α=−4 use the reference edge lists from Python ProximityGraphs where available. A changed parameter or point set is recomputed in independently tested JavaScript using `compareGraphEdges(points,graph,beta,alpha)`. Curved hull arcs are sampled in the browser, not represented falsely as straight alpha-shape edges. Counts always refer to the **underlying boundary graph edges**, not the number of arc vertices.
 
 For generic planar point sets:
 
@@ -84,7 +96,7 @@ For generic planar point sets:
 \mathrm{RNG}\subseteq\mathrm{GG}\subseteq\mathrm{Delaunay}.
 \]
 
-This inclusion is tested for the default configuration. It is not a claim that every such graph is a physical network or a geometric spanner with bounded worst-case dilation.
+This inclusion is tested for the default configuration and does not imply practical route-optimality, physical link feasibility, or bounded dilation for all families.
 
 ## How to reproduce the figures and check the mathematics
 

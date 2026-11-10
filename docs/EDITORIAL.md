@@ -48,3 +48,7 @@ The comprehensive [current official guideline audit](SIAM_SUBMISSION_AUDIT.md) s
 ## experiment015 — Updated authorship and current manuscript
 
 Only **Heriberto Espino-Montelongo** (first author) and **Héctor Maravillo** (second author) are named authors of the SIAM News feature; past notes mentioning Diego as a proposed feature author are superseded. All current editorial decisions belong in `article/main.tex`, which is the sole editable LaTeX manuscript. The earlier Markdown draft remains archived and is not the source of the current PDF. Current feature narration traces the historical development of geographic point partitions, Gabriel/RNG/alpha/beta/gamma models, stochastic geometry and modern uses, and promotes ProximityGraphs as software without unverified domain-performance claims. PDF compilation is permitted as a review step; submission still requires authorization.
+
+## experiment017 — Comparison slider semantics (November 10, 2026)
+
+The fourth online figure now offers independent β (1–3) and negative α (−40 to −1) sliders, revealed contextually. Alpha-shape renders straight boundary edges; alpha-hull renders actual curved supporting arcs at radius 1/|α|. Neither parameter slider regenerates the shared sensor/binomial/Poisson locations. The article remains a two-author, four-figure SIAM News **unsubmitted** author preview. See `docs/CONSTRUCTIONS.md` and `experiments/experiment017/README.md`.
