@@ -1,0 +1,46 @@
+name: Package SIAM News LaTeX and all four figures
+
+on:
+  pull_request:
+    paths:
+      - 'scripts/package_siam_source.py'
+      - '.github/workflows/package-siam-source.yml'
+      - 'article/main.tex'
+      - 'site/assets/figure0*'
+      - 'experiments/experiment018/**'
+  push:
+    branches: [main]
+    paths:
+      - 'scripts/package_siam_source.py'
+      - '.github/workflows/package-siam-source.yml'
+      - 'article/main.tex'
+      - 'site/assets/figure0*'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  source-package:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out canonical LaTeX and committed PNG/SVG figures
+        uses: actions/checkout@v4
+      - name: Check SIAM News article before export
+        run: python scripts/check_article.py
+      - name: Create reproducible source ZIP
+        run: python scripts/package_siam_source.py
+      - name: Validate ZIP content and integrity
+        run: |
+          unzip -t dist/ProximityGraphs_SIAM_News_LaTeX_Source.zip
+          unzip -Z -1 dist/ProximityGraphs_SIAM_News_LaTeX_Source.zip | grep 'ProximityGraphs-SIAM-News/article/main.tex'
+          for n in 01 02 03 04; do
+            unzip -Z -1 dist/ProximityGraphs_SIAM_News_LaTeX_Source.zip | grep -E 'site/assets/figure'"${n}"'-.*\.png$'
+          done
+      - name: Upload downloadable LaTeX source bundle
+        uses: actions/upload-artifact@v4
+        with:
+          name: ProximityGraphs-SIAM-News-LaTeX-source
+          path: dist/ProximityGraphs_SIAM_News_LaTeX_Source.zip
+          if-no-files-found: error
+          retention-days: 90
