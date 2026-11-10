@@ -71,10 +71,61 @@ def main():
                         '[data-editor-scene="water"][data-mode="add"]'
                     ).get_attribute("aria-pressed") == "true"
                 if name == "compare":
-                    nested.locator("#compare-left").select_option("rng")
-                    assert "relative neighborhood" in nested.locator(
+                    nested.locator("#compare-left").select_option("beta")
+                    assert nested.locator("#compare-left-parameter").is_visible()
+                    assert nested.locator("#compare-right-parameter").is_hidden()
+                    left_slider = nested.locator("#compare-left-slider")
+                    left_slider.fill("2.4")
+                    assert "β = 2.4" in nested.locator(
+                        "#compare-left-parameter-value"
+                    ).inner_text()
+                    assert "β = 2.4" in nested.locator(
                         "#compare-left-label"
-                    ).inner_text().lower()
+                    ).inner_text()
+                    # Right-hand alpha-hull is a genuinely curved construction.
+                    nested.locator("#compare-right").select_option("alpha-hull")
+                    assert nested.locator("#compare-right-parameter").is_visible()
+                    nested.locator("#compare-right-slider").fill("-5")
+                    assert "α = −5" in nested.locator(
+                        "#compare-right-label"
+                    ).inner_text()
+                    assert nested.locator("#compare-right-plot polyline").count() > 0
+                    assert nested.locator("#compare-left-slider").input_value() == "2.4"
+                    # Switching to a fixed graph hides the slider, restoring β
+                    # later must retain the independently selected value.
+                    nested.locator("#compare-left").select_option("gabriel")
+                    assert nested.locator("#compare-left-parameter").is_hidden()
+                    nested.locator("#compare-left").select_option("beta")
+                    assert nested.locator("#compare-left-parameter").is_visible()
+                    assert nested.locator("#compare-left-slider").input_value() == "2.4"
+                    # Alpha-shape is straight; the same α produces actual
+                    # curved hull arcs after switching back.
+                    nested.locator("#compare-right").select_option("alpha-shape")
+                    assert nested.locator("#compare-right-plot polyline").count() == 0
+                    nested.locator("#compare-right").select_option("alpha-hull")
+                    assert nested.locator("#compare-right-plot polyline").count() > 0
+                    article_figure.screenshot(
+                        path=str(out / "19-article-comparison-parameters.png")
+                    )
+                    # All changes are parameter-only; no site can be resampled.
+                    def coordinates(side):
+                        return nested.locator(f"#compare-{side}-plot circle").evaluate_all(
+                            "(sites) => sites.map(p => [p.getAttribute('cx'),p.getAttribute('cy')])"
+                        )
+                    original = coordinates("left")
+                    assert coordinates("right") == original
+                    nested.locator("#compare-swap").click()
+                    assert nested.locator("#compare-left").input_value() == "alpha-hull"
+                    assert nested.locator("#compare-left-slider").input_value() == "-5"
+                    assert nested.locator("#compare-right").input_value() == "beta"
+                    assert nested.locator("#compare-right-slider").input_value() == "2.4"
+                    assert coordinates("left") == original
+                    assert coordinates("right") == original
+                    nested.locator("#compare-reset").click()
+                    assert nested.locator("#compare-left").input_value() == "gabriel"
+                    assert nested.locator("#compare-right").input_value() == "rng"
+                    assert nested.locator("#compare-left-parameter").is_hidden()
+                    assert nested.locator("#compare-right-parameter").is_hidden()
                 article_figure.screenshot(
                     path=str(out / f"{13+number:02d}-article-figure{number}.png")
                 )
@@ -105,7 +156,7 @@ def main():
         "figures": report,
         "screenshots": ["13-article-opening.png"]
         + [f"{13+n:02d}-article-figure{n}.png" for n in range(1, 5)]
-        + ["18-article-mobile.png"],
+        + ["18-article-mobile.png", "19-article-comparison-parameters.png"],
     }
     (out / "article-browser-summary.json").write_text(
         json.dumps(result, indent=2), encoding="utf-8"

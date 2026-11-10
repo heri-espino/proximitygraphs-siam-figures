@@ -1,3 +1,19 @@
+# LATEST ACTIVE OVERRIDE — experiment017 (November 10, 2026)
+# In Section 04 / Controlled comparison, independent left/right parameter
+# sliders appear ONLY when beta-skeleton or alpha-shape/alpha-hull is selected.
+# Beta: 1.0–3.0 step .1. Signed negative alpha: -40 to -1 step .5.
+# Alpha-shape displays straight boundary edges; alpha-hull displays actual
+# circular arcs, NOT a relabeled alpha-shape. Reuse fallbackAlpha and keep
+# shape-hull boundary endpoint equivalence in tests.
+# SAME sensor/binomial/Poisson sites appear in both panels; sliders must never
+# regenerate stochastic positions. Swap must move graph + its parameters.
+# Reset restores Gabriel/RNG and β=1.5, α=-4 defaults for BOTH sides.
+# Source reference provenance: only precomputed unchanged-parameter graphs
+# may claim Python reference edges; changed settings are browser geometry.
+# Validate Node geometry, Playwright iframes/desktop/mobile, Actions and Pages.
+# Record in experiments/experiment017/README.md and AI_HANDOFF.md.
+# Author order remains Heriberto first, Héctor second; SIAM unsubmitted.
+
 # LATEST ACTIVE OVERRIDE — experiment016 (November 9, 2026)
 # Two SIAM News authors: Heriberto Espino-Montelongo first, Héctor Maravillo second. No Diego.
 # Canonical human-editable text: article/main.tex; published output is an unsubmitted author PDF proof.

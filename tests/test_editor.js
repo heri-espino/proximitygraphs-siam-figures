@@ -225,10 +225,36 @@ function testShapeAndComparison(){
       scene.compare.options[key],
       "Compare-panel graph "+key+" must match authoritative library.");
   }
+  // Every slider parameter changes the actual graph predicate. Both alpha
+  // modes have the SAME boundary endpoints, but only alpha-hull draws arcs.
+  for(const beta of [1,1.2,1.5,1.8,2,2.5,3])
+    assertEdgeSets(context.compareGraphEdges(sample,"beta",beta),
+      context.betaEdges(sample,beta),
+      "β-skeleton comparison must use selected β="+beta);
+  for(const alpha of [-2,-4,-7,-15,-35]){
+    const expected=context.alphaSimplices(sample,alpha).boundary;
+    assertEdgeSets(context.compareGraphEdges(sample,"alpha-shape",1.5,alpha),
+      expected,"Alpha-shape comparison must use selected α="+alpha);
+    assertEdgeSets(context.compareGraphEdges(sample,"alpha-hull",1.5,alpha),
+      expected,"Alpha-hull endpoints must agree at α="+alpha);
+  }
+  const curved=context.fallbackAlpha(sample,-4).arcs;
+  assert.ok(curved.some(arc=>arc.length>2),
+    "Alpha-hull must have genuinely curved arcs, not only shape segments");
+  // A fixed graph family must not be affected by irrelevant β/α sliders.
+  assertEdgeSets(context.compareGraphEdges(sample,"gabriel",3,-20),
+    context.compareGraphEdges(sample,"gabriel"));
 }
 function testComparisonPointGenerators(){
   assert.equal(vm.runInContext("state.comparePointSet",context),"sensors");
   assert.equal(vm.runInContext("state.compareParameter",context),25);
+  assert.equal(vm.runInContext("state.compareSettings.left.beta",context),1.5);
+  assert.equal(vm.runInContext("state.compareSettings.right.alpha",context),-4);
+  assert.equal(context.compareParameterMode("delaunay"),null);
+  assert.equal(context.compareParameterMode("beta"),"beta");
+  assert.equal(context.compareParameterMode("alpha-shape"),"alpha");
+  assert.equal(context.compareParameterMode("alpha-hull"),"alpha");
+
   const points=context.compareSourcePoints();
   assert.equal(points.length,25,"Default comparison is the original sensor set");
   // Setting these values explicitly exercises the same cached array used
@@ -341,6 +367,19 @@ function testUI(){
     "compare-process-definition","compare-realized","compare-reshuffle","compare-source"])
     assert.ok(html.includes('id="'+id+'"'),"Missing comparison control "+id);
   assert.match(html,/id="compare-process-slider"[^>]*max="80"[^>]*value="25"/);
+  for(const side of ["left","right"]){
+    for(const id of [
+      "compare-"+side+"-parameter","compare-"+side+"-slider",
+      "compare-"+side+"-parameter-name","compare-"+side+"-parameter-value"])
+      assert.ok(html.includes('id="'+id+'"'),"Missing context slider "+id);
+    assert.match(html,new RegExp('id="compare-'+side+'-parameter"[^>]*hidden'));
+    assert.match(html,new RegExp('id="compare-'+side+'-slider"[^>]*min="1"[^>]*max="3"'));
+  }
+  assert.ok(html.includes('value="alpha-hull"'),
+    "Alpha-hull must be a distinct graph choice in both panels");
+  assert.match(css,/\.compare-model-parameter\[hidden\]/,
+    "Irrelevant β/α sliders must be hidden");
+
   assert.match(css,/\.compare-process-controls\[hidden\]/);
   assert.ok(css.includes(".point-toolbar"));
   assert.ok(css.includes(".studio"));

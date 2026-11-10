@@ -211,7 +211,14 @@ function findBlockedBetaPair(points,beta,reference=null) {
   return candidates[0].pair;
 }
 
-function compareGraphEdges(points, graph, beta=1.5) {
+/**
+ * Compare two graph rules on one fixed point cloud.  The optional arguments
+ * are the actual per-panel controls; omitted arguments retain older defaults.
+ * For alpha-hulls, return the boundary endpoint pairs here, while the view
+ * renders their circular arcs using fallbackAlpha() rather than straight lines.
+ * The signed alpha convention follows the rest of the laboratory.
+ */
+function compareGraphEdges(points, graph, beta=1.5, alpha=-4) {
   if(points.length<2)return [];
   if(graph==="delaunay"){
     return points.length===2?[[0,1]]:
@@ -220,7 +227,8 @@ function compareGraphEdges(points, graph, beta=1.5) {
   if(graph==="gabriel")return betaEdges(points,1);
   if(graph==="rng")return betaEdges(points,2);
   if(graph==="beta")return betaEdges(points,beta);
-  if(graph==="alpha-shape")return alphaSimplices(points,-4).boundary;
+  if(graph==="alpha-shape" || graph==="alpha-hull")
+    return alphaSimplices(points,alpha).boundary;
   return [];
 }
 

@@ -538,6 +538,15 @@ svg .editable-site { pointer-events: all; }
   font-weight: 520;
 }
 .compare-controls .control-select { min-width: 210px; }
+.compare-model { display: flex; flex-direction: column; gap: 10px; min-width: 210px; flex: 1 1 220px; }
+.compare-model > label { display: flex; flex-direction: column; gap: 3px; }
+.compare-model-parameter { display: flex; flex-direction: column; gap: 6px; max-width: 360px; }
+.compare-model-parameter[hidden] { display: none !important; }
+.compare-model-parameter .control-label { display: flex; flex-direction: row; justify-content: space-between; align-items: baseline; gap: 12px; }
+.compare-model-parameter output { font-size: 13px; color: var(--ink); font-weight: 650; font-variant-numeric: tabular-nums; }
+.compare-model-parameter input[type="range"] { width: 100%; cursor: pointer; accent-color: var(--ink); }
+.compare-model-parameter input[type="range"]:focus-visible { outline: 3px solid var(--teal, #427278); outline-offset: 4px; }
+
 .compare-process-controls { max-width: 460px; margin: -15px 0 30px; }
 .compare-process-controls[hidden] { display: none; }
 .compare-process-controls .control-label { margin: 12px 0 7px; }
@@ -648,6 +657,8 @@ footer a { color: var(--ink-soft); }
   .exhibit { padding: 64px 0 78px; scroll-margin-top: 128px; }
   .section-heading { margin-bottom: 29px; }
   .studio-panel .toggle { display: flex; margin: 11px 0; }
+  .compare-model { width: 100%; min-width: 0; }
+  .compare-model-parameter { max-width: none; }
   .compare-controls label { width: 100%; }
   .compare-controls .control-select { width: 100%; }
   .compare-grid { gap: 38px; }
