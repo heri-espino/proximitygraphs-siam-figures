@@ -8,6 +8,16 @@ This project develops a proposed **SIAM News — Software and Programming** feat
 
 **[Current two-author LaTeX manuscript](article/main.tex)** · **[Audited graph and bio-inspired model inventory](docs/IMPLEMENTED_FAMILIES.md)** · **[Compiled SIAM News PDF author proof](article/output/proximitygraphs-siam-news-draft.pdf)** · **[Outreach and marketing kit](article/marketing-kit.md)** · **[Editorial pitch](article/pitch.md)** · **[Python library](https://github.com/ProximityGraphs/ProximityGraphs)**
 
+## Current update — experiment016: four interactive proximity-graph figures
+
+**Read the [online interactive article](https://heri-espino.github.io/proximitygraphs-siam-figures/article.html)** before reviewing the PDF. It follows the application-led structure of the [September 2026 SIAM VisualPDE feature](https://www.siam.org/publications/siam-news/articles/visualpde-interactive-spatiotemporal-modeling-via-web-browsers-on-any-device/) with four actual live, lazy-loaded iframe demonstrations, equations, caption numbers, and direct links. This is an author-hosted preview, not an accepted SIAM page.
+
+Figures: (1) Historical Soho pumps with *modern* Voronoi/Delaunay, (2) Synthetic image-traced alpha shape/hull, (3) Beta-skeleton empty-lune sensor witnesses, (4) **the same 25 sites** drawn as Gabriel and relative-neighborhood networks, with optional common binomial/Poisson samples. The fourth PNG/SVG is exported directly by the pinned Python ProximityGraphs library, just like figures 1–3.
+
+**The article focuses only on geometric proximity graph families and applications.** No Physarum, FungalGraph, or bio-inspired sections remain in canonical LaTeX. There are exactly two SIAM feature authors (Heriberto first, Héctor second). The earlier Markdown and all older experiments are archived; the source of truth remains `article/main.tex`.
+
+**Editorial caution:** SIAM News normally recommends 1–3 images, while VisualPDE's online article exhibits four interactive animations. Our four original online demos are proposed subject to editorial approval. They are not embedded on SIAM's site. Their standalone iframe URLs and original graphics are documented in [site/EMBEDDING.md](site/EMBEDDING.md); reproducibility in [experiment016](experiments/experiment016/README.md).
+
 ## Current manuscript — LaTeX source and compiled PDF
 
 **Current authors:** **Heriberto Espino-Montelongo** (first author, UDLAP) and **Héctor Maravillo** (second author, UAM). No third SIAM News coauthor.
