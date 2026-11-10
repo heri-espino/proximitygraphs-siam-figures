@@ -204,3 +204,10 @@ Canonical manuscript source: article/feature.md. The article proof must compile 
 - Feature is a chronological, SIAM News-friendly history of geometric neighborhoods and their applications, culminating in the library's implemented graphs and Physarum/Fungal models. Ten landmark/current references; three original figures; approx. 800–1400 words.
 - Check `python scripts/check_article.py`, direct pdflatex, actual PDF figures, metadata, hyperlinks and author credits. Record all CI details in experiment015 and AI_HANDOFF.
 - External SIAM submission remains subject to Héctor's agreement, confirmed graphics/data permissions and explicit authorization.
+
+## experiment018 — Portable SIAM News LaTeX source packaging (November 10, 2026)
+
+- Canonical two-author manuscript remains `article/main.tex`; the archived `article/feature.md` is **not** current. Current article has four PNG/SVG figures: figure01-water, figure02-habitat, figure03-sensors, figure04-compare. Keep **Heriberto first, Héctor second**, no Diego in this feature.
+- Run `python scripts/package_siam_source.py` for a portable source ZIP. It records commit SHA, bundles exact TeX and both PNG/SVG for four figures, optional last compiled author-proof PDF, README and reproducible TeX command. The ZIP intentionally preserves `article/../site/assets` paths; compile inside `article/`.
+- `.github/workflows/package-siam-source.yml` builds the package and uploads artifact, after existing article-check preflight. It does **not** submit the paper. Use experiment018 README for actual artifact URL, local PDF validation, and editorial caveats.
+- Reproduction rights for historical geodata and serif artwork, SIAM approval for four interactive demonstrations, and coauthor publication consent remain open; a successful source ZIP is not an accepted article.
