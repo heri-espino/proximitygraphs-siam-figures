@@ -8,6 +8,14 @@ on:
       - 'scripts/check_article.py'
       - 'site/assets/**'
       - '.github/workflows/article-pdf.yml'
+  pull_request:
+    paths:
+      - 'article/main.tex'
+      - 'scripts/check_article.py'
+      - 'site/article.html'
+      - 'site/article.css'
+      - 'site/assets/**'
+      - '.github/workflows/article-pdf.yml'
   workflow_dispatch:
 
 permissions:
