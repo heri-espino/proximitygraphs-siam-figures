@@ -27,14 +27,14 @@ if not 800<=count<=1400:
     errors.append(f"Article and caption length {count} outside SIAM News 800-1400 target")
 
 figures=re.findall(r"(?m)^\\pgfigure\{(figure\d\d-[a-z]+)\}",s)
-expected=["figure01-water","figure02-habitat","figure03-sensors"]
+expected=["figure01-water","figure02-habitat","figure03-sensors","figure04-compare"]
 if figures!=expected:errors.append(f"Expected three credited illustrations in order: {figures}")
 for name in expected:
     if not (ROOT/"site"/"assets"/f"{name}.png").is_file():
         errors.append(f"Missing source figure: {name}.png")
-for anchor in ["water","habitat","sensors"]:
-    if f"proximitygraphs-siam-figures/\\#{anchor}" not in s:
-        errors.append(f"Missing external figure deep link: #{anchor}")
+for index in range(1, 5):
+    if f"proximitygraphs-siam-figures/article.html\\#figure{index}" not in s:
+        errors.append(f"Missing online interactive article link: Figure {index}")
 
 header=s.split(r"\begin{document}",1)[0]
 if "pdfauthor={Heriberto Espino-Montelongo; Hector Maravillo}" not in header:
@@ -44,6 +44,19 @@ h=front.rfind("Heriberto Espino-Montelongo")
 m=front.rfind("H\\'ector Maravillo")
 if h<0 or m<0 or h>m:
     errors.append("Article title byline must list Heriberto first and Hector second")
+if re.search(r"Physarum|FungalGraph|bio[- ]inspired|myceli", s, re.I):
+    errors.append("SIAM feature must focus on proximity graphs, not bio-inspired network models")
+online=(ROOT/"site"/"article.html")
+if not online.is_file():
+    errors.append("Missing four-panel web article preview")
+else:
+    html=online.read_text(encoding="utf-8")
+    if html.count("<iframe") != 4:
+        errors.append("Online article must embed exactly four interactive views")
+    for name in ("water","habitat","sensors","compare"):
+        if f'?embed={name}' not in html:
+            errors.append(f"Online article missing live {name} demonstration")
+
 if re.search(r"Diego|Villarreal de la Cerda",s,re.I):
     errors.append("Excluded third author remains in article LaTeX")
 
