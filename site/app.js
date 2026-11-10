@@ -22,7 +22,11 @@ const state = {
   processParameter:PROCESS_DEFAULT_PARAMETER,processSeed:PROCESS_DEFAULT_SEED,
   betaIndex:2,betaPair:null,betaInspectFirst:null,
   comparePointSet:"sensors",compareParameter:COMPARE_DEFAULT_PARAMETER,
-  compareSeed:COMPARE_DEFAULT_SEED,comparePoints:null
+  compareSeed:COMPARE_DEFAULT_SEED,comparePoints:null,
+  compareSettings:{
+    left:{beta:1.5,alpha:-4},
+    right:{beta:1.5,alpha:-4}
+  }
 };
 let dataset = null;
 
@@ -810,6 +814,51 @@ function compareSourcePoints(){
     state.comparePointSet,state.compareParameter,state.compareSeed);
   return state.comparePoints;
 }
+const COMPARE_PARAMETER_MODES={
+  beta:{min:1,max:3,step:.1,symbol:"β",name:"β-skeleton parameter"},
+  alpha:{min:-40,max:-1,step:.5,symbol:"α",name:"Alpha parameter"}
+};
+function compareParameterMode(graph){
+  if(graph==="beta")return "beta";
+  if(graph==="alpha-shape"||graph==="alpha-hull")return "alpha";
+  return null;
+}
+function formatCompareParameter(value){
+  return String(Number(value.toFixed(2))).replace("-", "−");
+}
+/** Keep the two parameter widgets synchronized without resampling points. */
+function syncCompareGraphControls(){
+  for(const side of ["left","right"]){
+    const graph=document.getElementById("compare-"+side).value;
+    const mode=compareParameterMode(graph);
+    const panel=document.getElementById("compare-"+side+"-parameter");
+    panel.hidden=!mode;
+    if(!mode)continue;
+    const cfg=COMPARE_PARAMETER_MODES[mode];
+    const slider=document.getElementById("compare-"+side+"-slider");
+    slider.min=String(cfg.min);
+    slider.max=String(cfg.max);
+    slider.step=String(cfg.step);
+    slider.value=String(state.compareSettings[side][mode]);
+    detail("compare-"+side+"-parameter-name",cfg.name);
+    detail("compare-"+side+"-parameter-value",cfg.symbol+" = "+
+      formatCompareParameter(state.compareSettings[side][mode]));
+    slider.setAttribute("aria-label",
+      (side==="left"?"Left":"Right")+" "+cfg.name);
+  }
+}
+function setComparisonGraphParameter(side,value){
+  if(!["left","right"].includes(side))return;
+  const graph=document.getElementById("compare-"+side).value;
+  const mode=compareParameterMode(graph);
+  const numeric=Number(value);
+  if(!mode||!Number.isFinite(numeric))return;
+  const cfg=COMPARE_PARAMETER_MODES[mode];
+  const bounded=Math.max(cfg.min,Math.min(cfg.max,numeric));
+  state.compareSettings[side][mode]=Number(
+    (Math.round(bounded/cfg.step)*cfg.step).toFixed(5));
+  drawCompare();
+}
 function syncComparisonControls(){
   const stochastic=state.comparePointSet!=="sensors";
   const group=document.getElementById("compare-process-controls");
@@ -827,6 +876,7 @@ function syncComparisonControls(){
       "Exactly n points are placed independently across the square.");
     detail("compare-realized","Points in this sample: "+compareSourcePoints().length);
   }
+  syncCompareGraphControls();
 }
 function setComparisonPointSet(kind){
   if(!["sensors","poisson","binomial"].includes(kind))return;
@@ -850,6 +900,10 @@ function resetComparison(){
   state.compareParameter=COMPARE_DEFAULT_PARAMETER;
   state.compareSeed=COMPARE_DEFAULT_SEED;
   state.comparePoints=null;
+  state.compareSettings={
+    left:{beta:1.5,alpha:-4},
+    right:{beta:1.5,alpha:-4}
+  };
   document.getElementById("compare-left").value="gabriel";
   document.getElementById("compare-right").value="rng";
   syncComparisonControls();
@@ -862,41 +916,72 @@ function drawCompare(){
     !edited("sensors") && !!source?.options;
   const catalog={
     delaunay:"Delaunay triangulation",gabriel:"Gabriel graph",
-    rng:"Relative neighborhood graph",beta:"β-skeleton (β = 1.5)",
-    "alpha-shape":"Alpha-shape boundary (α = −4)"
+    rng:"Relative neighborhood graph",beta:"β-skeleton",
+    "alpha-shape":"Alpha-shape boundary",
+    "alpha-hull":"Alpha-hull circular arcs"
   };
-  const counts=[];
+  syncCompareGraphControls();
+  const counts=[],titles=[],origins=[];
   for(const side of ["left","right"]){
     const graph=document.getElementById("compare-"+side).value;
-    const edges=authoritative&&source.options[graph]?
-      source.options[graph]:compareGraphEdges(points,graph);
+    const setting=state.compareSettings[side];
+    const mode=compareParameterMode(graph);
+    const isDefault=mode==="beta"?setting.beta===1.5:
+      mode==="alpha"?setting.alpha===-4:true;
+    // Python reference edges exist for the original sensor points at exactly
+    // β=1.5 / α=−4; all other parameters use independent browser geometry.
+    const reference=authoritative && isDefault && source.options[graph];
+    const edges=reference||compareGraphEdges(points,graph,
+      setting.beta,setting.alpha);
+    const title=catalog[graph]+(mode==="beta"?
+      " (β = "+formatCompareParameter(setting.beta)+")":
+      mode==="alpha"?
+      " (α = "+formatCompareParameter(setting.alpha)+")":"");
     const svg=document.getElementById("compare-"+side+"-plot");
     background(svg,"04 / "+graph.replace("-"," "));
-    for(const [i,j] of edges)
-      segment(svg,points[i],points[j],
-        side==="left"?"#303338":"#89818a",2.2,.8);
+    const color=side==="left"?"#303338":"#89818a";
+    if(graph==="alpha-hull"){
+      const arcs=fallbackAlpha(points,setting.alpha).arcs;
+      // A hull is a circular-arc construction, not a rebranded straight
+      // alpha-shape.  Fall back to segments only for degenerate open chains.
+      if(arcs.length){
+        for(const arc of arcs)
+          el("polyline",{points:pointsAttr(arc),fill:"none",
+            stroke:color,"stroke-width":2.5,"stroke-opacity":.88,
+            "stroke-linecap":"round","stroke-linejoin":"round"},svg);
+      }else{
+        for(const [i,j] of edges)
+          segment(svg,points[i],points[j],color,2.2,.8);
+      }
+    }else{
+      for(const [i,j] of edges)
+        segment(svg,points[i],points[j],color,2.2,.8);
+    }
     for(const p of points){
       const v=xy(p);
       el("circle",{cx:v[0],cy:v[1],r:5.4,fill:"#303136",
         stroke:"#fff","stroke-width":1.7},svg);
     }
-    detail("compare-"+side+"-label",catalog[graph]);
+    detail("compare-"+side+"-label",title);
     detail("compare-"+side+"-count",edges.length+" edges");
     counts.push(edges.length);
+    titles.push(title);
+    origins.push(reference?"Python reference":"browser geometry");
   }
   const descriptor=state.comparePointSet==="sensors"?
     "sensor network":state.comparePointSet==="poisson"?
       "Poisson sample":"binomial sample";
   detail("compare-details",points.length+" points from the "+descriptor+
-    " appear in both panels. Left: "+counts[0]+" edges; right: "+counts[1]+
-    " edges. Only the connection rule changes.");
+    " appear in both panels. Left: "+titles[0]+", "+counts[0]+
+    " edges; right: "+titles[1]+", "+counts[1]+
+    " edges. Changing either slider keeps the points fixed.");
   if(state.comparePointSet!=="sensors")
     detail("compare-realized","Points in this sample: "+points.length);
-  detail("compare-source",state.comparePointSet==="sensors"?
-    (authoritative?"The sensor positions are the same in both diagrams.":
-      "The modified sensor positions are used in both diagrams."):
-    "Both diagrams use one "+(state.comparePointSet==="poisson"?"Poisson":"binomial")+
-    " sample. Generate a new sample to explore another arrangement.");
+  const shared=state.comparePointSet==="sensors"?
+    (edited("sensors")?"Modified sensors":"Original sensor sites"):
+    (state.comparePointSet==="poisson"?"Poisson":"binomial")+" realization";
+  detail("compare-source",shared+" in both diagrams. Left: "+origins[0]+
+    "; right: "+origins[1]+". Slider changes never resample the points.");
 }
 function setPreset(scene,preset){
   const presets={
@@ -1046,10 +1131,19 @@ async function start(){
   });
   for(const side of ["left","right"]){
     document.getElementById("compare-"+side).addEventListener("change",drawCompare);
+    const slider=document.getElementById("compare-"+side+"-slider");
+    // Input keeps the value, label and actual graph synchronized while
+    // dragging. Change also handles keyboard, touch and automation.
+    slider.addEventListener("input",()=>setComparisonGraphParameter(side,slider.value));
+    slider.addEventListener("change",()=>setComparisonGraphParameter(side,slider.value));
   }
   document.getElementById("compare-swap").addEventListener("click",function(){
     const a=document.getElementById("compare-left"),b=document.getElementById("compare-right");
-    const v=a.value;a.value=b.value;b.value=v;drawCompare();
+    const v=a.value;a.value=b.value;b.value=v;
+    const temp=state.compareSettings.left;
+    state.compareSettings.left=state.compareSettings.right;
+    state.compareSettings.right=temp;
+    drawCompare();
   });
   document.getElementById("compare-reset").addEventListener("click",
     resetComparison);
@@ -1103,5 +1197,6 @@ if(typeof module!=="undefined" && module.exports){
     waterPoints,betaPoints,habitatPoints,smileyPoints,pgWordmarkPoints,PG_MAX_INTERIOR,
     switchAlphaPreset,setPgInteriorCount,setSmileyInteriorCount,
     setProcessParameter,compareSourcePoints,setComparisonPointSet,
-    setComparisonParameter,resetComparison};
+    setComparisonParameter,setComparisonGraphParameter,
+    compareParameterMode,syncCompareGraphControls,resetComparison};
 }
