@@ -1,6 +1,6 @@
-% SIAM News — Software and Programming | AUTHOR PROOF (not a journal template)
+% Completely rewritten SIAM News / Software and Programming author draft
 % Canonical editorial source: article/main.tex. Never auto-overwrite from Markdown.
-% Figure 4 is regenerated as a same-site Gabriel/RNG comparison by the pinned Python exporter; keep all four as external interactive links.
+% Three printed figures; fourth same-point comparison retained online (and in original assets).
 \documentclass[10pt,letterpaper]{article}
 \usepackage[T1]{fontenc}
 \usepackage[utf8]{inputenc}
@@ -12,12 +12,12 @@
 \definecolor{PGInk}{HTML}{223D4B}
 \definecolor{PGGray}{HTML}{596D77}
 \hypersetup{colorlinks=true,urlcolor=PGTeal,linkcolor=PGTeal,
-pdftitle={Who Counts as a Neighbor? A Short History of Proximity Graphs},
+pdftitle={The Empty Space That Makes a Network},
 pdfauthor={Heriberto Espino-Montelongo; Hector Maravillo},
 pdfsubject={SIAM News Software and Programming author draft}}
 \captionsetup{font=footnotesize,labelfont={bf,color=PGInk},justification=raggedright,singlelinecheck=false}
 \setlength{\parindent}{0pt}
-\setlength{\parskip}{.30em}
+\setlength{\parskip}{.25em}
 \raggedbottom
 \newcommand{\pgfigure}[3]{%
 \begin{figure}[H]\centering
@@ -28,60 +28,70 @@ pdfsubject={SIAM News Software and Programming author draft}}
 \begin{document}
 \begin{center}
 {\footnotesize\bfseries\color{PGTeal} SIAM NEWS\enspace/\enspace SOFTWARE AND PROGRAMMING\quad\textbullet\quad AUTHOR DRAFT}\\[6pt]
-{\LARGE\bfseries\color{PGInk} Who Counts as a Neighbor?}\\[4pt]
-{\large\color{PGGray} From geographic maps to a Python laboratory of proximity graphs}\\[9pt]
+{\LARGE\bfseries\color{PGInk} The Empty Space That Makes a Network}\\[4pt]
+{\large\color{PGGray} What a cholera map, a letterform, and random points reveal about geometric graphs}\\[9pt]
 {\small\textbf{Heriberto Espino-Montelongo} (Universidad de las Am\'ericas Puebla)\quad\textbf{H\'ector Maravillo} (Universidad Aut\'onoma Metropolitana)}\\[3pt]
 {\scriptsize\color{PGGray} Proposed author proof; not submitted or approved by SIAM News}
 \end{center}
 \vspace{2pt}\hrule\vspace{8pt}
 
-\textbf{Who decides which points are neighbors?} A map of water stations, a set of image pixels, or a cloud of learned embeddings supplies points but not a unique network. Connecting every pair is usually uninformative; connecting only the nearest pairs may hide a meaningful boundary. A \emph{proximity graph} makes that decision explicit through geometry. Our open-source \href{https://github.com/ProximityGraphs/ProximityGraphs}{\textbf{ProximityGraphs}} Python library lets readers build, compare, and experiment with these competing models rather than accept a single default.
+A map records where things are. It does not tell us which ones ought to be connected. The distinction mattered in London's Soho district in 1854, when physician John Snow assembled evidence linking a cholera outbreak to contaminated drinking water. His map identified deaths and public pumps; it did not contain a geometric network assigning every household to its nearest pump. Yet making precisely that modern construction exposes both the usefulness and the danger of treating \emph{near} as an unquestioned fact.
 
-\section*{How Did Proximity Graphs Emerge?}
+Using the \href{https://friendly.github.io/HistData/reference/Snow.html}{HistData digitization}, we plot 13 water pumps and 578 recorded death locations. Their Euclidean Voronoi cells partition the map by nearest pump; Delaunay edges connect pumps whose cells touch. The clean geometry is immediately informative---and insufficient. People could walk along streets, choose a familiar pump, or encounter contaminated water elsewhere. Neither a Voronoi cell nor a short edge proves exposure. It instead states a hypothesis that can be inspected and challenged.
 
-Spatial partitions originated long before modern graph software. Voronoi formalized nearest-site regions in 1908, and Delaunay triangulations subsequently represented which regions meet. An earlier historical setting was John Snow's map of London cholera deaths in 1854: our \emph{modern} Voronoi overlay places pump coordinates into nearest-site cells. Snow neither used Voronoi cells nor established water use by straight-line distance. Still, the example immediately poses a practical question: which facility serves which location, and when does geometric proximity misrepresent street access?
+\pgfigure{figure01-water}{\textbf{An anachronism with a purpose.} Historical Soho pump and death locations, with a modern Voronoi--Delaunay overlay. Pumps are graph vertices; 578 death marks are not. Data: HistData; figure: the authors using ProximityGraphs.}{https://heri-espino.github.io/proximitygraphs-siam-figures/article.html\#figure1}
 
-\pgfigure{figure01-water}{\textbf{Historical geography and facility allocation.} Thirteen digitized Soho water pumps define modern Voronoi regions and Delaunay connections; 578 cholera death locations remain contextual observations, not graph vertices. Locations: HistData digitization; artwork: the authors using ProximityGraphs.}{https://heri-espino.github.io/proximitygraphs-siam-figures/article.html\#figure1}
+\section*{Why Should an Empty Region Create an Edge?}
 
-In 1969, Gabriel and Sokal proposed joining sampled populations only if the diameter disk between their sites contained no third point. Toussaint (1980) replaced the disk with the intersection of two endpoint-centered disks, yielding the \emph{relative neighborhood graph} (RNG). Alpha-shapes (Edelsbrunner, Kirkpatrick, and Seidel, 1983), $\beta$-skeletons (Kirkpatrick and Radke, 1985), and $\gamma$-neighborhood graphs (Veltkamp, 1992) broadened the family by varying scale or the exclusion region. The survey by Jaromczyk and Toussaint (1992) already described applications in morphology, geographic analysis, classification, and computer vision. Today, these mathematical alternatives can be tested under a common software interface.
+The curious insight behind many proximity graphs is that a relationship between two sites may be decided by the \emph{absence} of a third. In 1969, Gabriel and Sokal used this idea to study geographic variation in biological populations: join two observations when the disk having their connecting segment as diameter contains no other observation. Toussaint's relative neighborhood graph (1980) asks a stricter question: is there a third point closer to \emph{both} endpoints than they are to each other? Its forbidden region is the intersection of two equal disks, a lens or \emph{lune}.
 
-\section*{What Can You Explore?}
-
-\textbf{Recover shapes and holes.} A convex hull conceals concavities. Alpha-shapes retain scale-selected Delaunay simplices with straight boundary edges; related alpha-hulls draw circular arcs through the same boundary sites. In our typographic point cloud, decreasing the selected radius changes the two enclosed counters and the connectivity of the letters. Applications range from scanned-object reconstruction to image morphology and exploratory topology; a geometric envelope is not, by itself, a statistical confidence region.
-
-\pgfigure{figure02-habitat}{\textbf{Reconstructing shapes from scattered observations.} A synthetic serif \emph{Pg} point cloud illustrates an alpha-shape, circular alpha-hull arcs, and enclosed counters. Change the radius or density, reveal supporting circles, or select a smiley preset. Artwork and samples: the authors.}{https://heri-espino.github.io/proximitygraphs-siam-figures/article.html\#figure2}
-
-\textbf{Decide whether an edge survives.} For an empty-region graph, a pair $p,q$ is adjacent only when a designated region $K(p,q)$ contains no competing point:
+This is a reusable mathematical recipe. For a finite set $P\subset\mathbb R^d$ and a region $K(p,q)$ determined by two sites, let
 \begin{equation}
-  \{p,q\}\in E_K(P)\quad\Longleftrightarrow\quad
-  K(p,q)\cap(P\setminus\{p,q\})=\varnothing .
-  \label{eq:empty}
+\{p,q\}\in E(P)\quad\Longleftrightarrow\quad
+K(p,q)\cap\bigl(P\setminus\{p,q\}\bigr)=\varnothing.
+\label{eq:empty}
 \end{equation}
-Gabriel graphs use diameter disks; RNGs and many $\beta$-skeletons use lenses. For generic planar samples, the minimum spanning tree, RNG, Gabriel graph, and Delaunay triangulation obey
-$\mathrm{MST}\subseteq\mathrm{RNG}\subseteq\mathrm{GG}\subseteq\mathrm{DT}$.
-Sparser edges can reduce infrastructure length, but not necessarily route detours or communication failures. A drawn sensor link is a geometric candidate, not verified radio coverage.
+Changing $K$ changes the graph. The $\beta$-skeleton family continuously adjusts lune geometry; $\gamma$-neighborhood graphs admit a wider, two-parameter range of regions. Stepping-stone and elliptic variants ask related but distinct questions. These are not merely alternative drawings: their edges encode different definitions of locality, sparsity, and obstruction.
 
-\pgfigure{figure03-sensors}{\textbf{Wireless-network candidate links.} Twenty-five synthetic sites in two clusters with relays illustrate a $\beta$-skeleton. Select two sites to inspect the defining disks, the common lune, and any point that blocks their connection. Layout and artwork: the authors.}{https://heri-espino.github.io/proximitygraphs-siam-figures/article.html\#figure3}
+\section*{When a Hole Is Part of the Data}
 
-\textbf{Compare network designs under controlled conditions.} The same point set may produce different total edge lengths, connected components, average degrees, and graph detours. This matters when designing potential road or sensor networks (Aldous and Shun, 2010), reconstructing cyclic street tilings (Maravillo G\'omez et al., 2023), or constructing neighborhoods for manifold learning (Dyballa and Zucker, 2023). Figure~4 uses the \emph{same} synthetic locations under Gabriel and RNG rules, then lets visitors replace them with binomial or Poisson samples. Changes reflect the graph rule rather than a different realization.
+Empty space also describes shape. Consider the counters---the enclosed blank regions---in the letters \emph{P} and \emph{g}. A convex hull would fill them in. An alpha-shape instead retains selected Delaunay simplices according to a geometric scale, leaving holes and concavities when the scale permits. The related alpha-hull replaces straight boundary segments with circular arcs. In the interactive figure, a change in the radius can merge components, erase a counter, or expose a narrow gap; the supporting circles explain where the arcs came from.
 
-\pgfigure{figure04-compare}{\textbf{One sample, competing network rules.} Gabriel and relative-neighborhood graphs are constructed on identical 25-site synthetic coordinates; compare their edges and densities. Online, select other graph rules or regenerate a common random point sample. Artwork: the authors using ProximityGraphs.}{https://heri-espino.github.io/proximitygraphs-siam-figures/article.html\#figure4}
+\pgfigure{figure02-habitat}{\textbf{A contour is a scale-dependent decision.} Synthetic points traced from a serif \emph{Pg}; straight alpha-shape edges and circular alpha-hull arcs reveal the letter counters. Point design and illustration: the authors.}{https://heri-espino.github.io/proximitygraphs-siam-figures/article.html\#figure2}
 
-\section*{What Happens When the Points Are Random?}
+The same question arises in microscopy, scanned surfaces, porous materials, and the outlines recovered from sparse observations. A boundary is useful only together with its construction scale: a shape inferred from points is not automatically the physical boundary or a confidence region. Alpha constructions also connect to topological questions about components and holes, although the library should not be mistaken for a persistent-homology package.
 
-In a stationary Poisson point process of intensity $\rho$ in $\mathbb R^d$, suppose a pair at separation $r$ has an exclusion region of volume $a_Kr^d$. Its emptiness probability is $\exp(-\rho a_Kr^d)$, so the typical mean degree becomes
+\section*{A Network's Missing Edges Have Consequences}
+
+Imagine two clusters of sensors joined by a few relay positions. For a candidate pair, our $\beta$-skeleton inspector displays the two disks and highlights any point inside their intersection that rules out the edge. The reason for a missing connection is therefore visible; it is not hidden in an arbitrary adjacency list.
+
+\pgfigure{figure03-sensors}{\textbf{The point that vetoes a link.} A synthetic 25-site relay layout with a $\beta$-skeleton; the online view reveals accepted pairs, rejected candidates, and blocking points in the lune. Illustration: the authors.}{https://heri-espino.github.io/proximitygraphs-siam-figures/article.html\#figure3}
+
+The difference is measurable even before changing coordinates. On the \emph{same} 25 sites, our Gabriel construction yields 46 edges, while the relative neighborhood graph retains 31. Fifteen fewer links may lower a proposed network's construction cost, but can lengthen detours or change vulnerability to failure. In generic planar position, the minimum spanning tree, relative neighborhood graph, Gabriel graph, and Delaunay triangulation satisfy $\mathrm{MST}\subseteq\mathrm{RNG}\subseteq\mathrm{GG}\subseteq\mathrm{DT}$; this nesting offers an organized set of comparisons, not a universal ranking of transport quality. Research on cyclic tilings and street layouts (Maravillo G\'omez et al., 2023) illustrates why the distinction matters.
+
+A fourth \href{https://heri-espino.github.io/proximitygraphs-siam-figures/article.html\#figure4}{online comparison} lets readers switch rules while keeping exactly the same coordinates. The outcome isolates \emph{model choice} from variation in the sample.
+
+\section*{The Surprising Statistics of Empty Space}
+
+Geometry becomes probability when the sites are random. Suppose they form a homogeneous Poisson point process of intensity $\rho$ in $\mathbb R^d$, and an edge's forbidden region has volume $a_Kr^d$ at endpoint separation $r$. Poisson emptiness then gives an edge probability; integrating over possible neighbors gives a mean degree:
 \begin{equation}
- \Pr(\{p,q\}\in E_K\mid r)=e^{-\rho a_Kr^d},
- \qquad \mathbb E[\deg]=\frac{v_d}{a_K},
- \label{eq:degree}
+\Pr(p\sim q\mid\|p-q\|=r)=e^{-\rho a_Kr^d},\qquad
+\mathbb E[\deg]=\frac{v_d}{a_K}.
+\label{eq:poisson}
 \end{equation}
-where $v_d$ is unit-ball volume (Devroye, 1988). Surprisingly, the limiting degree depends on the exclusion-region geometry, not the density. This gives a measurable prediction: the planar Gabriel graph has mean degree $4$, while the RNG has approximately $2.56$. The theory extends to $\mathbb R^d$; the present library and these interactive demonstrations remain primarily planar.
+Here $v_d$ is the unit-ball volume. The intensity disappears from the second expression: increasing point density shortens typical edges, yet \emph{does not alter the typical mean degree} for this idealized, scale-invariant model (Devroye, 1988). In the plane, it predicts degree $4$ for the Gabriel graph and approximately $2.56$ for the relative neighborhood graph. Our deliberately structured 25-site example has average degrees $92/25=3.68$ and $62/25=2.48$ instead; it is not a Poisson sample. Boundaries, inhomogeneous sampling, and other connection rules also change the conclusion.
 
-\section*{From Theory to an Interactive Python Laboratory}
+Nor does a mean tell the whole story. Edge counts and total length fluctuate; under appropriate assumptions they satisfy central limit theorems, and quantitative bounds on normal approximation are available for forbidden-region graphs (Penrose and Yukich, 2001; Goldstein et al., 2018). A graph family therefore offers not just a picture but testable statistical predictions about infrastructure, sampling, and uncertainty.
 
-ProximityGraphs provides more than a single graph drawing. Its \texttt{SetPoints} tools generate structured and stochastic inputs; constructors cover Voronoi/Delaunay, Gabriel, RNG, nearest-neighbor, minimum-spanning, alpha, $\beta$, $\gamma$, stepping-stone, and elliptic neighborhood variants. The \texttt{Experiment} interface supports seeded repetitions, graph statistics, and comparisons. The current library is distributed on \href{https://pypi.org/project/proximitygraphs/}{PyPI} (\texttt{pip install proximitygraphs}), with \href{https://github.com/ProximityGraphs/ProximityGraphs}{open source} and documented algorithms.
+\clearpage\section*{Beyond the Plane}
+\noindent
+The defining empty-region rule makes sense in \emph{every} Euclidean dimension $d$, not only on a map. That opens mathematical questions for high-dimensional scientific observations and learned representations. For example, graph neighborhoods influence how manifold-learning methods estimate geodesic distance; Dyballa and Zucker (2023) explicitly begin from a Gabriel graph. But high-dimensional distance geometry is delicate, and most current \href{https://github.com/ProximityGraphs/ProximityGraphs}{ProximityGraphs Python} constructors and interactive demonstrations are primarily planar: mathematical generality must not be confused with implementation coverage.
 
-Our \href{https://heri-espino.github.io/proximitygraphs-siam-figures/article.html}{\textbf{online interactive article}} reproduces all four demonstrations as live panels: drag, add, or remove points; reveal geometric construction witnesses; adjust parameters; and export the resulting images. Default scientific scenes are generated by the pinned Python package; edited scenes run an independent browser implementation, explicitly distinguished from the reference. Readers can use \href{https://heri-espino.github.io/proximitygraphs-siam-figures/}{the full geometry laboratory} to explore further. Proximity graphs do not dictate one correct notion of a neighbor---\textbf{they let us make that notion testable.}
+\section*{Making the Choice Reproducible}
+
+Our open-source \href{https://pypi.org/project/proximitygraphs/}{\textbf{ProximityGraphs}} library brings these constructions into a common Python workflow. Researchers can generate seeded point sets, switch between Gabriel, relative neighborhood, $\beta$-, $\gamma$-, nearest-neighbor, Delaunay, and shape-based constructions, and compare degree, length, components, and other graph properties. The \href{https://heri-espino.github.io/proximitygraphs-siam-figures/article.html}{interactive article} exposes the construction step by step: move points, examine blocking regions and circular supports, or hold coordinates fixed while the definition of an edge changes.
+
+The next challenge is to measure sensitivity, not to collect more drawings. Would a short link that saves construction material also create a long detour? Could one spurious edge bridge two folds of a learned manifold? Would one noisy microscope observation seal a pore that should remain open? Keeping the coordinates fixed while varying the graph rule, then fixing the rule while resampling the coordinates, separates these questions. A useful proximity model should survive a harder test: \emph{What changes in the problem when we draw this edge---or refuse to draw it?}
 
 \section*{References}
 {\footnotesize\setlength{\parskip}{1pt}
