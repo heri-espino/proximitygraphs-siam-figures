@@ -17,10 +17,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-        with:
-          # Checkout the actual same-repo PR branch, not GitHub's temporary merge SHA,
-          # so verified generated artwork can be committed without merging this PR.
-          ref: ${{ github.head_ref || github.ref_name }}
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
@@ -54,20 +50,6 @@ jobs:
         with:
           name: proximitygraphs-siam-site-preview
           path: site/
-      - name: Archive updated alpha and comparison figures on this author-review PR
-        if: github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository && github.head_ref == 'feature/experiment019-rewrite-siam-news'
-        env:
-          PR_BRANCH: ${{ github.head_ref }}
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add -f site/assets/figure02-habitat.png site/assets/figure02-habitat.svg
-          git add -f site/assets/figure04-compare.png site/assets/figure04-compare.svg
-          git add -f site/data/figure02-current-preset.json
-          if ! git diff --cached --quiet; then
-            git commit -m "Archive current 645-site alpha figure and shared comparison artwork"
-            git push origin "HEAD:$PR_BRANCH"
-          fi
       - name: Commit verified generated results
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         run: |
