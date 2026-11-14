@@ -1,3 +1,14 @@
+# LATEST ACTIVE OVERRIDE — experiment021 (November 14, 2026)
+# Keep article/main.tex and site/article.html aligned on Cardinal et al.'s
+# 2009 empty-region graphs, with K1 subset K2 implies E(K2) subset E(K1).
+# Print assets 01, 02, 04 correspond to PDF figures 1, 2, 3;
+# browser embeds include online figures 1, 2, 3 (sensors), 4 (comparison).
+# article/INTERACTIVE_COMPANION.md MUST ship in the LaTeX source bundle.
+# Snow's revised 1855 map used a road-distance equidistance boundary, unlike
+# our modern full Euclidean 13-pump Voronoi overlay. Do not repeat old error.
+# Never assume PR-only edits are live on public Pages; no PR merge or
+# editorial submission without explicit authorization.
+#
 # LATEST ACTIVE OVERRIDE — experiment020 (November 14, 2026)
 # Historical correction: Snow's revised 1855 parish map DID use a nearest-road
 # equidistance boundary around the Broad Street pump, an early network Voronoi
