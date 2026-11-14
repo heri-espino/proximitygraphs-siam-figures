@@ -33,7 +33,7 @@
     <p class="article-lead">A map records where things are; it does not decide which ones should be connected. A surprising class of geometric networks answers that question by inspecting the <em>space between points</em>—often, the absence of a third point determines whether an edge exists.</p>
     <section id="history" class="article-section">
       <h2>A Map Was Never a Network</h2>
-      <p>In 1854 John Snow mapped cholera deaths and water pumps in London's Soho district. He did not assign households to their closest pump through a Voronoi diagram. Our modern overlay does: thirteen pumps create nearest-site cells, while 578 death locations remain historical observations. The resulting partition is useful precisely because its limitations are visible—street access, individual water use and exposure cannot be read from Euclidean distance alone.</p>
+      <p>In his revised map for the 1855 parish inquiry, John Snow drew a dotted <em>walking-distance equidistance boundary</em> around the Broad Street pump: a historically important precursor of a street-network Voronoi region. Our reconstruction instead partitions 13 digitized pumps by straight-line Euclidean distance, with 578 historical deaths as observations rather than vertices. The key is not that Snow's reasoning failed, but that his distance metric followed streets and our geometric model uses straight lines. <a href="https://doi.org/10.1080/13658816.2011.577433" target="_blank" rel="noopener noreferrer">Shiode (2012)</a> revisited the case using network-based Voronoi analysis.</p>
       <p>Gabriel and Sokal made emptiness a connection rule in their 1969 study of geographic variation: two sample sites became neighbors when their diameter disk contained no competing point. Toussaint's relative neighborhood graph (1980) replaced that disk with the intersection of two equal disks, a <em>lune</em>. Later β-skeletons, γ-neighborhoods and other variants changed the excluded region. Each alternative makes a different assumption about what counts as nearby.</p>
     </section>
     <section id="applications" class="article-section">
@@ -42,20 +42,25 @@
     </section>
     <figure class="interactive-figure" id="figure1">
       <div class="figure-top"><h3>Spatial allocation and historical maps</h3><a href="./?embed=water" target="_blank" rel="noopener noreferrer">Open Figure 1 in a new tab</a></div>
-      <p>Move a historical pump to explore a hypothetical facility arrangement. The resulting Euclidean Voronoi cells answer a nearest-site question, not a causal question about disease transmission.</p>
+      <p>Snow's road-distance boundary and our Euclidean cells answer related but distinct nearest-facility questions. Moving a pump in this interactive model changes a hypothetical modern partition, not the historical records.</p>
       <div class="embed-shell">
         <iframe src="./?embed=water" title="Interactive Figure 1: John Snow water pumps, Voronoi cells and Delaunay edges" loading="lazy"></iframe>
       </div>
-      <figcaption><strong>Interactive Figure 1.</strong> Thirteen digitized Soho water pumps determine modern Voronoi cells and Delaunay adjacencies; 578 cholera death-location marks provide historical context only. Data: HistData; interactive diagram: the authors. <a href="#history">Historical context</a>.</figcaption>
+      <figcaption><strong>Interactive Figure 1.</strong> Snow drew a road-distance catchment boundary in 1855; these are modern Euclidean Voronoi cells and Delaunay edges from 13 digitized pump sites. The 578 death marks remain historical observations. Data: HistData; illustration: the authors. <a href="#history">Historical context</a>.</figcaption>
     </figure>
     <figure class="interactive-figure" id="figure2">
       <div class="figure-top"><h3>Shape reconstruction, holes and scale</h3><a href="./?embed=habitat" target="_blank" rel="noopener noreferrer">Open Figure 2 in a new tab</a></div>
-      <p>Alpha-shapes retain scale-selected simplices with straight boundaries, whereas the related alpha-hull includes circular arcs. Adjust the radius or point density to see when the two letter counters, gaps, and connected pieces change.</p>
+      <p>Alpha-shapes and alpha-hulls define a family of geometric reconstructions indexed by scale, not a single canonical contour. Distinct scales may reveal or suppress components and holes; that variation leads naturally to <em>persistent homology</em>, which records how long features survive in a filtration.</p>
       <div class="embed-shell">
         <iframe src="./?embed=habitat" title="Interactive Figure 2: serif Pg alpha shape, circular alpha hull, and supporting circles" loading="lazy"></iframe>
       </div>
-      <figcaption><strong>Interactive Figure 2.</strong> A synthetic letterform point set demonstrates straight alpha-shape edges, circular alpha-hull arcs, and supporting circles; a smiley is an optional preset. Data and interactive diagram: the authors.</figcaption>
+      <figcaption><strong>Interactive Figure 2.</strong> The improved live default uses 645 synthetic letterform sites and α = −48.65245. The resulting complex contains recognizable counters together with smaller scale-dependent features. The smiley remains optional. Point design and visualization: the authors.</figcaption>
     </figure>
+    <section class="article-section" id="persistent-homology">
+      <h2>From Alpha Boundaries to Persistent Topology</h2>
+      <p><a href="https://doi.org/10.1007/s00454-002-2885-2" target="_blank" rel="noopener noreferrer">Edelsbrunner, Letscher, and Zomorodian (2002)</a> developed persistence to distinguish durable topological features from those appearing briefly as scale changes. <a href="https://doi.org/10.1073/pnas.1520877113" target="_blank" rel="noopener noreferrer">Hiraoka et al. (2016)</a> used such persistence diagrams to identify hierarchical ring structures in amorphous materials; <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC10951800/" target="_blank" rel="noopener noreferrer">more recent microscopy work</a> uses three-dimensional persistent homology in cell and organelle segmentation.</p>
+      <p><strong>Collaboration invitation:</strong> ProximityGraphs does not currently compute persistence diagrams. Researchers in computational topology are invited to help design and validate alpha-complex filtrations, Betti curves, persistence barcodes, and stability tests on sampled geometric data. <a href="https://github.com/ProximityGraphs/ProximityGraphs/issues" target="_blank" rel="noopener noreferrer">Discuss or propose an implementation on GitHub</a>.</p>
+    </section>
     <section class="article-section" id="empty-regions">
       <h2>The Third Point Has a Veto</h2>
       <p>An edge between <em>p</em> and <em>q</em> survives when their excluded region contains no other observed site. For a finite point set <em>P</em> and forbidden region <em>K(p,q)</em>, the decision is</p>
@@ -74,11 +79,11 @@
     </figure>
     <figure class="interactive-figure" id="figure4">
       <div class="figure-top"><h3>Controlled network comparison and random samples</h3><a href="./?embed=compare" target="_blank" rel="noopener noreferrer">Open Figure 4 in a new tab</a></div>
-      <p>Compare Gabriel, relative-neighborhood, Delaunay, β-skeleton, alpha-shape and circular alpha-hull connections under a shared coordinate set. Each side reveals its own β or α slider whenever the selected rule needs one. You can replace the original 25 synthetic sites with a fixed-size binomial sample or a homogeneous Poisson realization.</p>
+      <p>Keeping locations fixed while changing the empty-region rule distinguishes geometric modeling assumptions from sampling variation. Compare Gabriel, RNG, Delaunay, β-skeletons, alpha-shapes and alpha-hulls on identical sites. Then repeat with common binomial or Poisson realizations to study the sensitivity of each graph family.</p>
       <div class="embed-shell">
         <iframe src="./?embed=compare" title="Interactive Figure 4: two geometric graphs constructed on the exact same points" loading="lazy"></iframe>
       </div>
-      <figcaption><strong>Interactive Figure 4.</strong> Gabriel yields 46 edges and RNG 31 on the same 25 sites. Changing the rule, rather than resampling coordinates, changes the observed adjacency. Original coordinates, experiments and interactive comparison: the authors.</figcaption>
+      <figcaption><strong>Interactive Figure 4.</strong> With the same 25 locations, Gabriel has 46 links (total Euclidean length 7.87), while RNG keeps 31 (length 4.79). Across all 300 pairs, mean shortest-route stretch rises from 1.10 to 1.27. This is a concrete sparsity-versus-detour tradeoff, not a claim of physical network deployment. Original coordinates, experiments and interactive comparison: the authors.</figcaption>
     </figure>
     <section class="article-section" id="probability">
       <h2>How Many Neighbors Should Random Points Have?</h2>
