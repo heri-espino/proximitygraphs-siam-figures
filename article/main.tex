@@ -51,7 +51,7 @@ This is a reusable mathematical recipe. For a finite set $P\subset\mathbb R^d$ a
 K(p,q)\cap\bigl(P\setminus\{p,q\}\bigr)=\varnothing.
 \label{eq:empty}
 \end{equation}
-Changing $K$ changes the graph. The $\beta$-skeleton family continuously adjusts lune geometry; $\gamma$-neighborhood graphs admit a wider, two-parameter range of regions. Stepping-stone and elliptic variants ask related but distinct questions. These are not merely alternative drawings: their edges encode different definitions of locality, sparsity, and obstruction.
+Cardinal, Collette, and Langerman (2009) formalized these constructions as \emph{empty-region graphs} (ERGs), using the excluded region as a design parameter. A useful ordering principle follows: if $K_1(p,q)\subseteq K_2(p,q)$ for all pairs, then $E_{K_2}(P)\subseteq E_{K_1}(P)$. A larger forbidden region can only delete edges. The $\beta$-skeleton family varies this geometry continuously; $\gamma$-neighborhood, stepping-stone, and elliptic rules offer further choices. Each is a different, inspectable assumption about locality.
 
 \section*{When a Hole Is Part of the Data}
 
@@ -85,7 +85,7 @@ Nor does a mean tell the whole story. Under appropriate hypotheses, totals such 
 
 \clearpage\section*{Beyond the Plane}
 \noindent
-The defining empty-region rule makes sense in \emph{every} Euclidean dimension $d$, not only on a map. That opens mathematical questions for high-dimensional scientific observations and learned representations. For example, graph neighborhoods influence how manifold-learning methods estimate geodesic distance; Dyballa and Zucker (2023) explicitly begin from a Gabriel graph. But high-dimensional distance geometry is delicate, and most current \href{https://github.com/ProximityGraphs/ProximityGraphs}{ProximityGraphs Python} constructors and interactive demonstrations are primarily planar: mathematical generality must not be confused with implementation coverage.
+The defining empty-region rule makes sense in \emph{every} Euclidean dimension $d$, not only on a map. That opens mathematical questions for high-dimensional scientific observations and learned representations. For example, manifold-learning methods often approximate geodesic distances with shortest paths on neighborhood graphs; a spurious shortcut may connect distant folds of the same manifold. This is a testable modeling risk, not an established advantage for any particular graph. High-dimensional distance geometry is delicate, and most current \href{https://github.com/ProximityGraphs/ProximityGraphs}{ProximityGraphs Python} constructors and interactive demonstrations are primarily planar: mathematical generality must not be confused with implementation coverage.
 
 \section*{Making the Choice Reproducible}
 
@@ -97,7 +97,7 @@ The next challenge is to measure sensitivity, not to collect more drawings. Woul
 {\footnotesize\setlength{\parskip}{1pt}
 \begin{enumerate}\setlength{\itemsep}{1pt}\setlength{\parsep}{0pt}
 \item Devroye, L. (1988). The expected size of some graphs in computational geometry. \emph{Computers \& Mathematics with Applications, 15}(1), 53--64.
-\item Dyballa, L., \& Zucker, S. W. (2023). IAN: Iterated adaptive neighborhoods for manifold learning and dimensionality estimation. \emph{Neural Computation, 35}(3), 453--524. \href{https://doi.org/10.1162/neco_a_01566}{doi:10.1162/neco\_a\_01566}.
+\item Cardinal, J., Collette, S., \& Langerman, S. (2009). Empty region graphs. \emph{Computational Geometry, 42}(3), 183--195. \href{https://doi.org/10.1016/j.comgeo.2008.09.003}{doi:10.1016/j.comgeo.2008.09.003}.
 \item Edelsbrunner, H., Kirkpatrick, D. G., \& Seidel, R. (1983). On the shape of a set of points in the plane. \emph{IEEE Transactions on Information Theory, 29}(4), 551--559. \href{https://doi.org/10.1109/TIT.1983.1056714}{doi:10.1109/TIT.1983.1056714}.
 \item Edelsbrunner, H., Letscher, D., \& Zomorodian, A. (2002). Topological persistence and simplification. \emph{Discrete \& Computational Geometry, 28}(4), 511--533. \href{https://doi.org/10.1007/s00454-002-2885-2}{doi:10.1007/s00454-002-2885-2}.
 \item Gabriel, K. R., \& Sokal, R. R. (1969). A new statistical approach to geographic variation analysis. \emph{Systematic Zoology, 18}(3), 259--278. \href{https://doi.org/10.2307/2412323}{doi:10.2307/2412323}.
