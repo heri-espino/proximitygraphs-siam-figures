@@ -27,12 +27,12 @@ if not 800<=count<=1400:
     errors.append(f"Article and caption length {count} outside SIAM News 800-1400 target")
 
 figures=re.findall(r"(?m)^\\pgfigure\{(figure\d\d-[a-z]+)\}",s)
-expected=["figure01-water","figure02-habitat","figure03-sensors"]
+expected=["figure01-water","figure02-habitat","figure04-compare"]
 if figures!=expected:errors.append(f"Expected three printed illustrations in order: {figures}")
 for name in expected:
     if not (ROOT/"site"/"assets"/f"{name}.png").is_file():
         errors.append(f"Missing source figure: {name}.png")
-for index in range(1, 4):
+for index in (1, 2, 4):
     if f"proximitygraphs-siam-figures/article.html\\#figure{index}" not in s:
         errors.append(f"Missing online interactive article link: Figure {index}")
 
