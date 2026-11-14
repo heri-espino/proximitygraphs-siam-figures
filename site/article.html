@@ -32,13 +32,13 @@
     </header>
     <p class="article-lead">A map records where things are; it does not decide which ones should be connected. A surprising class of geometric networks answers that question by inspecting the <em>space between points</em>—often, the absence of a third point determines whether an edge exists.</p>
     <section id="history" class="article-section">
-      <h2>A Map Was Never a Network</h2>
+      <h2>When Distance Defines a Neighborhood</h2>
       <p>In his revised map for the 1855 parish inquiry, John Snow drew a dotted <em>walking-distance equidistance boundary</em> around the Broad Street pump: a historically important precursor of a street-network Voronoi region. Our reconstruction instead partitions 13 digitized pumps by straight-line Euclidean distance, with 578 historical deaths as observations rather than vertices. The key is not that Snow's reasoning failed, but that his distance metric followed streets and our geometric model uses straight lines. <a href="https://doi.org/10.1080/13658816.2011.577433" target="_blank" rel="noopener noreferrer">Shiode (2012)</a> revisited the case using network-based Voronoi analysis.</p>
-      <p>Gabriel and Sokal made emptiness a connection rule in their 1969 study of geographic variation: two sample sites became neighbors when their diameter disk contained no competing point. Toussaint's relative neighborhood graph (1980) replaced that disk with the intersection of two equal disks, a <em>lune</em>. Later β-skeletons, γ-neighborhoods and other variants changed the excluded region. Each alternative makes a different assumption about what counts as nearby.</p>
+      <p>Gabriel and Sokal made emptiness a connection rule in their 1969 study of geographic variation: two sample sites became neighbors when their diameter disk contained no competing point. Toussaint's relative neighborhood graph (1980) replaced that disk with the intersection of two equal disks, a <em>lune</em>. Later β-skeletons, γ-neighborhoods and other variants changed the excluded region. Cardinal, Collette, and Langerman (2009) brought these rules together as <em>empty-region graphs</em> (ERGs), showing how the choice of region constrains graph properties. Each alternative makes a different assumption about what counts as nearby.</p>
     </section>
     <section id="applications" class="article-section">
       <h2>Inspect the Decisions, Not Just the Drawings</h2>
-      <p>The print-oriented draft selects three figures; this online companion keeps all <strong>four</strong> live constructions. Move one point and watch a cell move, a letter's counter close, or a candidate link disappear. Then keep the points fixed and switch graph rules: the difference comes from the mathematical model, not the sample.</p>
+      <p>The print-oriented draft selects three figures (historical map, alpha shape, and graph comparison); this online companion keeps all <strong>four</strong> live constructions. Print Figure 3 corresponds to Interactive Figure 4; the empty-lune sensor inspector is Interactive Figure 3 and remains online-only. Move one point and watch a cell move, a letter's counter close, or a candidate link disappear. Then keep the points fixed and switch graph rules: the difference comes from the mathematical model, not the sample.</p>
     </section>
     <figure class="interactive-figure" id="figure1">
       <div class="figure-top"><h3>Spatial allocation and historical maps</h3><a href="./?embed=water" target="_blank" rel="noopener noreferrer">Open Figure 1 in a new tab</a></div>
@@ -67,7 +67,8 @@
       <div class="equation" role="math" aria-label="An edge p q exists if and only if K of p q intersection P without p and q is empty. Equation one.">
         <span>{p,q} ∈ E<sub>K</sub>(P) ⇔ K(p,q) ∩ (P ∖ {p,q}) = ∅</span><span class="equation-number">(1)</span>
       </div>
-      <p>Change the region and the connections change. Gabriel uses a disk; relative neighborhood uses a lune; β-skeletons adjust its geometry continuously. A rejected edge carries a geometric explanation, but a surviving edge is still only a <em>candidate</em> physical radio link.</p>
+      <p><strong>A useful inclusion law:</strong> if K<sub>1</sub>(p,q) ⊆ K<sub>2</sub>(p,q) for every candidate pair, then E<sub>K2</sub>(P) ⊆ E<sub>K1</sub>(P). Enlarging the forbidden region can only remove links, not create them. This is the empty-region graph principle studied by <a href="https://doi.org/10.1016/j.comgeo.2008.09.003" target="_blank" rel="noopener noreferrer">Cardinal, Collette, and Langerman (2009)</a>.</p>
+      <p>Gabriel uses a disk; relative neighborhood uses a larger lune; β-skeletons vary the excluded geometry continuously. A rejected edge carries a geometric explanation, but a surviving edge is still only a <em>candidate</em> physical radio link.</p>
     </section>
     <figure class="interactive-figure" id="figure3">
       <div class="figure-top"><h3>Sensor-network candidates and empty lenses</h3><a href="./?embed=sensors" target="_blank" rel="noopener noreferrer">Open Figure 3 in a new tab</a></div>
