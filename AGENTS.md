@@ -1,3 +1,19 @@
+# LATEST ACTIVE OVERRIDE — experiment020 (November 14, 2026)
+# Historical correction: Snow's revised 1855 parish map DID use a nearest-road
+# equidistance boundary around the Broad Street pump, an early network Voronoi
+# cell. Our Euclidean partition of 13 pump locations is DIFFERENT, not evidence
+# that Snow did not use Voronoi-like geometry. Cite Shiode (2012) and Snow.
+# Print 3 figures: fig01 water, fig02 revised 645-point alpha at -48.65245,
+# and fig04 Gabriel/RNG comparison (printed as Figure 3).
+# Preserve fig03 sensors as an interactive-only inspector and all 4 source
+# image pairs. The current 645-point, fine-scale alpha complex has additional
+# tiny holes; do not claim exactly 2 holes at that alpha.
+# Persistent homology is NOT implemented; cite Edelsbrunner et al. (2002)
+# and Hiraoka et al. (2016) and invite researchers to build/validate it.
+# Source code derives 25-site route metrics in experiment020; retain values
+# 46/31 edges, lengths 7.87337/4.79105 and mean stretches 1.1008/1.2712.
+# Preserve history and previous experiments; don't merge PR #16 without approval.
+#
 # LATEST ACTIVE OVERRIDE — experiment019 (November 14, 2026)
 # The current SIAM News article has been completely rewritten as
 # "The Empty Space That Makes a Network" in canonical article/main.tex.
