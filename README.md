@@ -1,4 +1,4 @@
-# Who Counts as a Neighbor? — ProximityGraphs for SIAM News
+# The Empty Space That Makes a Network — ProximityGraphs for SIAM News
 
 **Status:** working editorial draft, **not** submitted, accepted, peer reviewed, or endorsed by SIAM.
 
@@ -7,6 +7,12 @@ This project develops a proposed **SIAM News — Software and Programming** feat
 **[Explore the deployed GitHub Pages companion](https://heri-espino.github.io/proximitygraphs-siam-figures/)** — editable points, interactive geometry and image export. The redesigned site was rebuilt and deployed on November 5, 2026; verify the live page after future releases.
 
 **[Current two-author LaTeX manuscript](article/main.tex)** · **[Audited graph and bio-inspired model inventory](docs/IMPLEMENTED_FAMILIES.md)** · **[Compiled SIAM News PDF author proof](article/output/proximitygraphs-siam-news-draft.pdf)** · **[Outreach and marketing kit](article/marketing-kit.md)** · **[Editorial pitch](article/pitch.md)** · **[Python library](https://github.com/ProximityGraphs/ProximityGraphs)**
+
+## Current author manuscript — experiment019 (November 14, 2026)
+
+The original SIAM News feature was rewritten from the ground up as **[The Empty Space That Makes a Network](article/main.tex)**. The story now develops from John Snow's 1854 Soho map to the 1969 Gabriel–Sokal empty-disk construction, relative-neighborhood rules, alpha-shape topology, a **46-versus-31-edge controlled comparison**, the **Poisson mean-degree formula in arbitrary Euclidean dimension**, and conditions for statistical limit laws. It ends with specific research questions for infrastructure, microscopy, manifold learning and graph sensitivity rather than a generic applications list.
+
+**Three figures are embedded in the PDF** (Snow, Pg shape, sensor β-skeleton); the unchanged **fourth same-point comparison stays live online**, and its PNG/SVG source files remain available. The manuscript has ten references and exactly two authors: Heriberto Espino-Montelongo (first) and Héctor Maravillo (second). Most existing software constructors are planar even though the exclusion-rule theory is valid in `R^d`. The article is **not submitted**. See [experiment019](experiments/experiment019/README.md), [SIAM News source](article/main.tex) and the [interactive online version](https://heri-espino.github.io/proximitygraphs-siam-figures/article.html).
 
 ## Current update — experiment016: four interactive proximity-graph figures
 
