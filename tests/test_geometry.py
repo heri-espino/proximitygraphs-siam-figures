@@ -164,6 +164,18 @@ class GeometryTests(unittest.TestCase):
                                  sorted(option["kept_triangles"]))
                 self.assertEqual(alpha_topology(computed), option["topology"])
 
+
+    def test_printed_figure02_matches_current_live_default(self):
+        """Static Figure 2 must match the 645-site, fine-scale live Pg view."""
+        import json
+        meta_path = Path(__file__).resolve().parents[1] / "site/data/figure02-current-preset.json"
+        self.assertTrue(meta_path.is_file())
+        meta = json.loads(meta_path.read_text(encoding="utf-8"))
+        self.assertEqual(meta["point_count"], 645)
+        self.assertAlmostEqual(meta["alpha"], -48.65245, places=5)
+        self.assertEqual(meta["topology"]["components"], 4)
+        self.assertEqual(meta["topology"]["holes"], 10)
+
     def test_compare_reference_graphs(self):
         compare = self.scenes["compare"]
         self.assertEqual(len(compare["points"]), len(BETA))
