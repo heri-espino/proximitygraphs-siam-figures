@@ -15,6 +15,7 @@ import zipfile
 ROOT = Path(__file__).resolve().parents[1]
 TOP = "ProximityGraphs-SIAM-News"
 FIGURES = ["figure01-water", "figure02-habitat", "figure03-sensors", "figure04-compare"]
+PRINT_FIGURES = ["figure01-water", "figure02-habitat", "figure04-compare"]
 SOURCE = ROOT / "article" / "main.tex"
 PROOF = ROOT / "article" / "output" / "proximitygraphs-siam-news-draft.pdf"
 
@@ -54,8 +55,8 @@ Install a standard TeX Live distribution with `geometry`, `helvet`,
 
 ## Editorial/source caveats
 
-The print manuscript has three illustrations (SIAM News normally
-recommends one to three); the fourth remains online. No submitted or approved proof is implied.
+The print manuscript includes historical, alpha, and graph-comparison figures (SIAM News normally
+recommends one to three); the separate sensor inspector remains online. No submitted or approved proof is implied.
 Interactive figures remain external links and are not part of this ZIP.
 The historical John Snow point digitization and source typeface
 artwork require final reproduction-rights confirmation before submission.
@@ -68,8 +69,8 @@ Interactive article: https://heri-espino.github.io/proximitygraphs-siam-figures/
 def build(out: Path, include_proof: bool = False) -> list[str]:
     tex = SOURCE.read_text(encoding="utf-8")
     expected = re.findall(r"\\pgfigure\{(figure\d\d-[a-z]+)\}", tex)
-    if expected != FIGURES[:3]:
-        raise RuntimeError(f"Three print figures expected; fourth comparison remains online: {expected!r}")
+    if expected != PRINT_FIGURES:
+        raise RuntimeError(f"Three print figures expected; third sensor inspector remains online: {expected!r}")
     if "pdfauthor={Heriberto Espino-Montelongo; Hector Maravillo}" not in tex:
         raise RuntimeError("Author metadata is not the current two-author order")
     files = [Path("article/main.tex")]
