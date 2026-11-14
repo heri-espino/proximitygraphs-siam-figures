@@ -29,9 +29,10 @@ Héctor Maravillo (second author).
 ## Contents
 
 - `article/main.tex` — canonical, editable LaTeX manuscript.
+- `article/INTERACTIVE_COMPANION.md` — editorial print/online figure mapping, stable links, and iframe-versus-link alternatives.
 - `site/assets/figure01-water.*` through `figure04-compare.*` —
-  three printed illustrations plus a fourth online-only comparison, all
-  preserved as PNG and SVG (the TeX uses the first three PNGs).
+  four original scene exports as PNG and SVG; the TeX prints
+  figures 01, 02, and 04, with sensor figure 03 online-only.
 - An optional, previously compiled PDF proof can be included with
   `--include-proof`, but is not bundled by default because it may be stale.
 - `SOURCE_REVISION.txt` — revision from which the ZIP was exported.
@@ -73,7 +74,7 @@ def build(out: Path, include_proof: bool = False) -> list[str]:
         raise RuntimeError(f"Three print figures expected; third sensor inspector remains online: {expected!r}")
     if "pdfauthor={Heriberto Espino-Montelongo; Hector Maravillo}" not in tex:
         raise RuntimeError("Author metadata is not the current two-author order")
-    files = [Path("article/main.tex")]
+    files = [Path("article/main.tex"), Path("article/INTERACTIVE_COMPANION.md")]
     for stem in FIGURES:
         files.extend([Path(f"site/assets/{stem}.{ext}") for ext in ("png", "svg")])
     if include_proof and PROOF.is_file():
