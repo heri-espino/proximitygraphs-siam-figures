@@ -377,3 +377,19 @@ Cited Edelsbrunner/Letscher/Zomorodian 2002 and Hiraoka et al. 2016, linked 3D m
 Replaced third printed sensor figure with existing source-generated fig04 Gabriel/RNG comparison, but kept sensor inspector live at online figure3. 25 identical synthetic sites: Gabriel 46 edges, total normalized edge length 7.873373853, mean 300-pair shortest-route stretch 1.100802912; RNG 31 edges, length 4.791049476, mean stretch 1.271160882. Standard-library reproducibility in experiments/experiment020/compare_graph_metrics.py + committed results.json; CI now gates this metric. Three print illustrations total; all four original PNG/SVG source pairs preserved.
 
 Ten APA-order references now include Shiode 2012, Edelsbrunner et al. 2002 and Hiraoka et al. 2016. Full reproducibility and citations in experiments/experiment020/README.md. Check exact PR #16 CI, current figure2 artifact, PDF proof and source bundle, then leave PR unmerged for coauthor review. No SIAM submission or merge was authorized.
+
+
+## Final source, artifact, and CI validation — November 14, 2026
+
+The temporary GitHub Actions step that archived regenerated artwork to the PR branch successfully saved **site/assets/figure02-habitat.png/.svg**, **figure04-compare.png/.svg**, and **site/data/figure02-current-preset.json** on commit `8352e7dbb009231d9b1f3b2b0fd40d83c774b996`. The one-time step was removed afterward; the regular reproducible workflow and numerical regression test remain in place. Thus the artifact is part of the repository, not only a temporary Actions download.
+
+The latest source revision `9e53f1f7a846ca207fa9092f45d3c9467e6775e6` passed all four CI runs:
+
+- [Scientific figure generation, topology and graph routing checks #43639804430](https://github.com/heri-espino/proximitygraphs-siam-figures/actions/runs/43639804430): success.
+- [Actual interactive browser Visual QA #43639804491](https://github.com/heri-espino/proximitygraphs-siam-figures/actions/runs/43639804491): success.
+- [LaTeX PDF author proof compilation and verification #43639804432](https://github.com/heri-espino/proximitygraphs-siam-figures/actions/runs/43639804432): success.
+- [Portable LaTeX source ZIP packaging #43639804436](https://github.com/heri-espino/proximitygraphs-siam-figures/actions/runs/43639804436): success.
+
+The PDF proof was also compiled twice independently from the updated author source and actual regenerated figure assets. Visual review confirmed **four US Letter pages, three embedded printed images, no clipping, readable math and correctly ordered two-author byline**. The self-contained ZIP contains LaTeX source, PDF, all four original PNG/SVG pairs, and experiment020 numeric results, and passed ZIP integrity checks.
+
+**No merge or SIAM editorial submission has been authorized.** PR #16 remains open for coauthor review.
