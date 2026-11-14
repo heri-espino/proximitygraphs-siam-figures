@@ -1,3 +1,9 @@
+# CURRENT STATUS — experiment021, November 14, 2026
+
+**Canonical manuscript:** `article/main.tex`, three printed figures (Snow, alpha, Gabriel/RNG); **author-hosted article:** `site/article.html`, four interactive figures (including sensors). PDF Figure 3 is online Figure 4. `article/INTERACTIVE_COMPANION.md` is now bundled with the portable LaTeX project, documenting URLs, provenance and iframe-versus-link alternatives. Cardinal et al. (2009) and the general empty-region graph inclusion principle now appear in both manuscript and website. The pitch no longer says Snow lacked a Voronoi-like construction. **PR #16 is unmerged; main-branch GitHub Pages cannot be claimed updated.** No SIAM submission has occurred.
+
+---
+
 # ACTIVE AUDIT — experiment016, November 9, 2026
 
 The currently editable SIAM News feature is `article/main.tex`, with **Heriberto Espino-Montelongo first** and **Héctor Maravillo second**, and **no third author**. The manuscript discusses **only geometric proximity graphs**, not the software's separate biological heuristics. It contains **four** numbered static figures with corresponding live interactive figures on the author's [online article](https://heri-espino.github.io/proximitygraphs-siam-figures/article.html), two numbered equations, ten alphabetized references and credited source data. `scripts/check_article.py` enforces this current state.
