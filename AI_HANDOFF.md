@@ -1,3 +1,9 @@
+# Latest active handoff — experiment021, 2026-11-14
+
+Canonical TeX: `article/main.tex`. Online preview: `site/article.html`. Print/online manifest: `article/INTERACTIVE_COMPANION.md`. Latest continued work on PR #16 cites Cardinal, Collette, and Langerman (2009), explains reverse exclusion-region/edge inclusion, corrects the older editorial pitch about Snow's 1855 boundary, and keeps the 645-point alpha preset and Gabriel/RNG comparison unchanged. Three figures print; all four remain interactive on the author-hosted site. The checker gates correspondence and ZIP packaging includes the manifesto. Verify CI and the actual Pages deployment independently. No merger or SIAM News submission has been authorized.
+
+---
+
 # AI handoff
 
 ## Objective
