@@ -53,7 +53,7 @@ Install a standard TeX Live distribution with `geometry`, `helvet`,
 
 ## Editorial/source caveats
 
-The manuscript has four illustrations, although SIAM News normally
+The print manuscript has three illustrations; the fourth remains online, although SIAM News normally
 recommends one to three. Editors may request reducing this count.
 Interactive figures remain external links and are not part of this ZIP.
 The historical John Snow point digitization and source typeface
@@ -67,8 +67,8 @@ Interactive article: https://heri-espino.github.io/proximitygraphs-siam-figures/
 def build(out: Path, include_proof: bool = True) -> list[str]:
     tex = SOURCE.read_text(encoding="utf-8")
     expected = re.findall(r"\\pgfigure\{(figure\d\d-[a-z]+)\}", tex)
-    if expected != FIGURES:
-        raise RuntimeError(f"Figure list differs from canonical TeX: {expected!r}")
+    if expected != FIGURES[:3]:
+        raise RuntimeError(f"Three print figures expected; fourth comparison remains online: {expected!r}")
     if "pdfauthor={Heriberto Espino-Montelongo; Hector Maravillo}" not in tex:
         raise RuntimeError("Author metadata is not the current two-author order")
     files = [Path("article/main.tex")]
