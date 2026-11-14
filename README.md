@@ -1,3 +1,7 @@
+## Latest editorial integration — experiment021 (2026-11-14)
+
+The SIAM News **LaTeX manuscript and online article** now both explain the [2009 empty-region graph framework](https://doi.org/10.1016/j.comgeo.2008.09.003) and region inclusion. The new [interactive companion manifest](article/INTERACTIVE_COMPANION.md) ships within the portable [LaTeX source ZIP](scripts/package_siam_source.py), mapping the three printed figures (01, 02, 04) to the four online scenes (1, 2, 3, 4). The outdated [pitch](article/pitch.md) was corrected to acknowledge Snow's own 1855 road-distance boundary. The work is an **unsubmitted, unmerged PR draft**: public Pages does not update from PR-only commits. See [experiment021](experiments/experiment021/README.md).
+
 # The Empty Space That Makes a Network — ProximityGraphs for SIAM News
 
 **Status:** working editorial draft, **not** submitted, accepted, peer reviewed, or endorsed by SIAM.
