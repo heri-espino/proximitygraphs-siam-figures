@@ -1,3 +1,20 @@
+# LATEST ACTIVE OVERRIDE — experiment019 (November 14, 2026)
+# The current SIAM News article has been completely rewritten as
+# "The Empty Space That Makes a Network" in canonical article/main.tex.
+# Keep Heriberto first, Hector second, no third SIAM feature author.
+# Three print figures (water, alpha, beta) meet the SIAM News 1–3 preference;
+# the fourth Gabriel/RNG comparison is preserved online with source assets.
+# Do not regress the quantified 46-vs-31 same-point example, Poisson void
+# probability and mean-degree expectation v_d/a_K, or their explicit
+# homogeneous/homothetic/infinite-window hypotheses and dimensional caveats.
+# Mathematics works in R^d, most package constructors remain planar.
+# Keep all 10 accurate citations, including Goldstein et al. 2018,
+# Penrose/Yukich 2001, and Devroye 1988; retain original prior-main.tex
+# under experiments/experiment019 and all existing visual artifacts.
+# No bio-inspired section in the SIAM feature per experiment016 scope.
+# Reproduce LaTeX, preflight, source ZIP and browser HTML; do not merge PR
+# or submit to editors without explicit authorization.
+#
 # LATEST ACTIVE OVERRIDE — experiment017 (November 10, 2026)
 # In Section 04 / Controlled comparison, independent left/right parameter
 # sliders appear ONLY when beta-skeleton or alpha-shape/alpha-hull is selected.
