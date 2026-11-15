@@ -1,0 +1,20 @@
+{
+  "point_count": 25,
+  "pair_count": 300,
+  "graphs": {
+    "gabriel": {
+      "edges": 46,
+      "total_edge_length": 7.8733738530780055,
+      "mean_route_stretch": 1.100802911928765,
+      "max_route_stretch": 1.5026649897995423,
+      "connected_components": 1
+    },
+    "rng": {
+      "edges": 31,
+      "total_edge_length": 4.791049476151511,
+      "mean_route_stretch": 1.2711608824133354,
+      "max_route_stretch": 2.2986664022627865,
+      "connected_components": 1
+    }
+  }
+}

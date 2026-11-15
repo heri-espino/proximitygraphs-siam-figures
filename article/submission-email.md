@@ -5,9 +5,9 @@
 
 Dear SIAM News Editors,
 
-We are preparing “Who Counts as a Neighbor? From Geographic Maps to a Python Laboratory of Proximity Graphs” for your Software and Programming section.
+We are preparing “The Empty Space That Makes a Network” for your Software and Programming section.
 
-The article introduces an open-source Python library for geometric proximity graphs, explains how neighborhood definitions emerged and why they matter, and connects their mathematics to shape reconstruction, spatial allocation, sensor-network candidates and stochastic-network comparisons. It includes numbered equations, references and credited illustrations.
+The article introduces an open-source Python library for geometric proximity graphs, explains the historical progression from Snow's 1855 road-distance boundary to modern Euclidean partitions and empty-region graphs, and why neighborhood definitions matter, and connects their mathematics to shape reconstruction, spatial allocation, sensor-network candidates and stochastic-network comparisons. It includes numbered equations, references and credited illustrations.
 
 In the spirit of your recent VisualPDE feature, we have built [four live interactive illustrations](https://heri-espino.github.io/proximitygraphs-siam-figures/article.html) with numbered captions: historical Voronoi/Delaunay geography, alpha-shape and alpha-hull reconstruction, beta-skeleton empty-region witnesses, and side-by-side comparisons on identical points. Each can also be opened in a standalone interactive view.
 

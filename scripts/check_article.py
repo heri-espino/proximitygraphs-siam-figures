@@ -27,12 +27,12 @@ if not 800<=count<=1400:
     errors.append(f"Article and caption length {count} outside SIAM News 800-1400 target")
 
 figures=re.findall(r"(?m)^\\pgfigure\{(figure\d\d-[a-z]+)\}",s)
-expected=["figure01-water","figure02-habitat","figure03-sensors","figure04-compare"]
-if figures!=expected:errors.append(f"Expected three credited illustrations in order: {figures}")
+expected=["figure01-water","figure02-habitat","figure04-compare"]
+if figures!=expected:errors.append(f"Expected three printed illustrations in order: {figures}")
 for name in expected:
     if not (ROOT/"site"/"assets"/f"{name}.png").is_file():
         errors.append(f"Missing source figure: {name}.png")
-for index in range(1, 5):
+for index in (1, 2, 4):
     if f"proximitygraphs-siam-figures/article.html\\#figure{index}" not in s:
         errors.append(f"Missing online interactive article link: Figure {index}")
 
@@ -68,6 +68,19 @@ entries=re.findall(r"(?m)^\\item\s+([^,\n]+),",refs)
 if len(entries)!=10:errors.append(f"References count {len(entries)} instead of 10")
 if entries!=sorted(entries,key=str.casefold):
     errors.append("APA first-author entries not in surname alphabetical order")
+if "Cardinal, J., Collette, S." not in s or "10.1016/j.comgeo.2008.09.003" not in s:
+    errors.append("Foundational ERG reference (Cardinal et al. 2009) missing from LaTeX")
+if not (ROOT/"article"/"INTERACTIVE_COMPANION.md").is_file():
+    errors.append("Missing editor-facing interactive companion manifest")
+if online.is_file():
+    html=online.read_text(encoding="utf-8")
+    if "empty-region graphs" not in html.lower() or "10.1016/j.comgeo.2008.09.003" not in html:
+        errors.append("Online article lacks the canonical empty-region graph framing")
+    for stem,number in (("figure01-water",1),("figure02-habitat",2),("figure04-compare",4)):
+        if f'id="figure{number}"' not in html:
+            errors.append(f"Missing online figure anchor figure{number} for {stem}")
+    if 'id="figure3"' not in html:
+        errors.append("Online-only empty-lune inspector Figure 3 missing")
 if "not submitted" not in s.lower():
     errors.append("Author-proof submission disclaimer missing")
 

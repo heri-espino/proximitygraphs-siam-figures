@@ -15,6 +15,7 @@ import zipfile
 ROOT = Path(__file__).resolve().parents[1]
 TOP = "ProximityGraphs-SIAM-News"
 FIGURES = ["figure01-water", "figure02-habitat", "figure03-sensors", "figure04-compare"]
+PRINT_FIGURES = ["figure01-water", "figure02-habitat", "figure04-compare"]
 SOURCE = ROOT / "article" / "main.tex"
 PROOF = ROOT / "article" / "output" / "proximitygraphs-siam-news-draft.pdf"
 
@@ -28,10 +29,12 @@ Héctor Maravillo (second author).
 ## Contents
 
 - `article/main.tex` — canonical, editable LaTeX manuscript.
+- `article/INTERACTIVE_COMPANION.md` — editorial print/online figure mapping, stable links, and iframe-versus-link alternatives.
 - `site/assets/figure01-water.*` through `figure04-compare.*` —
-  four publication illustrations in PNG and SVG (the TeX uses PNG).
-- `article/output/proximitygraphs-siam-news-draft.pdf` — available
-  previous author proof, provided solely for convenient comparison.
+  four original scene exports as PNG and SVG; the TeX prints
+  figures 01, 02, and 04, with sensor figure 03 online-only.
+- An optional, previously compiled PDF proof can be included with
+  `--include-proof`, but is not bundled by default because it may be stale.
 - `SOURCE_REVISION.txt` — revision from which the ZIP was exported.
 
 ## Compile
@@ -53,8 +56,8 @@ Install a standard TeX Live distribution with `geometry`, `helvet`,
 
 ## Editorial/source caveats
 
-The manuscript has four illustrations, although SIAM News normally
-recommends one to three. Editors may request reducing this count.
+The print manuscript includes historical, alpha, and graph-comparison figures (SIAM News normally
+recommends one to three); the separate sensor inspector remains online. No submitted or approved proof is implied.
 Interactive figures remain external links and are not part of this ZIP.
 The historical John Snow point digitization and source typeface
 artwork require final reproduction-rights confirmation before submission.
@@ -64,14 +67,14 @@ Source: https://github.com/heri-espino/proximitygraphs-siam-figures
 Interactive article: https://heri-espino.github.io/proximitygraphs-siam-figures/article.html
 """
 
-def build(out: Path, include_proof: bool = True) -> list[str]:
+def build(out: Path, include_proof: bool = False) -> list[str]:
     tex = SOURCE.read_text(encoding="utf-8")
     expected = re.findall(r"\\pgfigure\{(figure\d\d-[a-z]+)\}", tex)
-    if expected != FIGURES:
-        raise RuntimeError(f"Figure list differs from canonical TeX: {expected!r}")
+    if expected != PRINT_FIGURES:
+        raise RuntimeError(f"Three print figures expected; third sensor inspector remains online: {expected!r}")
     if "pdfauthor={Heriberto Espino-Montelongo; Hector Maravillo}" not in tex:
         raise RuntimeError("Author metadata is not the current two-author order")
-    files = [Path("article/main.tex")]
+    files = [Path("article/main.tex"), Path("article/INTERACTIVE_COMPANION.md")]
     for stem in FIGURES:
         files.extend([Path(f"site/assets/{stem}.{ext}") for ext in ("png", "svg")])
     if include_proof and PROOF.is_file():
@@ -105,9 +108,10 @@ def build(out: Path, include_proof: bool = True) -> list[str]:
 def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--output", type=Path, default=ROOT / "dist" / "ProximityGraphs_SIAM_News_LaTeX_Source.zip")
-    ap.add_argument("--no-proof", action="store_true")
+    ap.add_argument("--include-proof", action="store_true",
+                    help="include a manually verified current PDF; omitted by default")
     args = ap.parse_args()
-    exported = build(args.output, include_proof=not args.no_proof)
+    exported = build(args.output, include_proof=args.include_proof)
     print(f"Created {args.output} with {len(exported)} files")
     for filename in exported:
         print(" ", filename)

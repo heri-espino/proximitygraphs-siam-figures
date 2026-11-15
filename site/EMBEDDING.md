@@ -1,6 +1,6 @@
 # Embedding the four ProximityGraphs interactive figures
 
-These are original browser-based graphics hosted by the authors. Each is a **live computational widget**, not a video, animation loop, or pre-rendered screenshot. The complete [SIAM-style online article preview](article.html) embeds all four.
+These are original browser-based graphics hosted by the authors. Each is a **live computational widget**, not a video, animation loop, or pre-rendered screenshot. The complete [SIAM-style online article preview](article.html) embeds all four. For the print-to-online numbering and editorial alternatives, see [the companion manifest](../article/INTERACTIVE_COMPANION.md): PDF Figure 3 maps to online Figure 4, while online Figure 3 is the sensor inspector.
 
 ## Live URLs
 
@@ -37,7 +37,7 @@ The pinned ProximityGraphs exporter creates four reproducible PNG/SVG source fig
 - figure03-sensors: synthetic relay-sensor beta-skeleton, empty-lune witness
 - figure04-compare: Gabriel versus RNG, **same 25 synthetic site positions and edges from Python library exports**
 
-The fourth graph is a genuine two-panel *scientific figure*. The repository's prior visual-qa screenshot may temporarily seed the filename in the PR to let PDF checks run; the authoritative Python exporter overwrites it with a clean PNG and SVG before the final main-branch proof is archived. Never claim an edited JavaScript configuration is recomputed by Python.
+The fourth graph is a genuine two-panel *scientific figure*, committed in both PNG and SVG from the pinned Python exporter. The updated 645-point alpha figure and graph comparison were preserved in experiment020; do not replace them with older screenshots. Never claim an edited JavaScript configuration is recomputed by Python.
 
 ## Reproduce
 

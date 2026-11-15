@@ -1,3 +1,55 @@
+# LATEST ACTIVE OVERRIDE — experiment022 (November 14, 2026)
+# New paragraph uses 'other sampled points', not an emphasized 'third point'.
+# Every LaTeX section should lead into the next through its concluding prose.
+# The invitation to topology researchers must be plain (no textbf/bold).
+# Keep 3 print figures, 4 interactive views, all empirical results, citations,
+# historical correction, and non-submission/PR review status unchanged.
+# See experiments/experiment022/README.md.
+#
+# LATEST ACTIVE OVERRIDE — experiment021 (November 14, 2026)
+# Keep article/main.tex and site/article.html aligned on Cardinal et al.'s
+# 2009 empty-region graphs, with K1 subset K2 implies E(K2) subset E(K1).
+# Print assets 01, 02, 04 correspond to PDF figures 1, 2, 3;
+# browser embeds include online figures 1, 2, 3 (sensors), 4 (comparison).
+# article/INTERACTIVE_COMPANION.md MUST ship in the LaTeX source bundle.
+# Snow's revised 1855 map used a road-distance equidistance boundary, unlike
+# our modern full Euclidean 13-pump Voronoi overlay. Do not repeat old error.
+# Never assume PR-only edits are live on public Pages; no PR merge or
+# editorial submission without explicit authorization.
+#
+# LATEST ACTIVE OVERRIDE — experiment020 (November 14, 2026)
+# Historical correction: Snow's revised 1855 parish map DID use a nearest-road
+# equidistance boundary around the Broad Street pump, an early network Voronoi
+# cell. Our Euclidean partition of 13 pump locations is DIFFERENT, not evidence
+# that Snow did not use Voronoi-like geometry. Cite Shiode (2012) and Snow.
+# Print 3 figures: fig01 water, fig02 revised 645-point alpha at -48.65245,
+# and fig04 Gabriel/RNG comparison (printed as Figure 3).
+# Preserve fig03 sensors as an interactive-only inspector and all 4 source
+# image pairs. The current 645-point, fine-scale alpha complex has additional
+# tiny holes; do not claim exactly 2 holes at that alpha.
+# Persistent homology is NOT implemented; cite Edelsbrunner et al. (2002)
+# and Hiraoka et al. (2016) and invite researchers to build/validate it.
+# Source code derives 25-site route metrics in experiment020; retain values
+# 46/31 edges, lengths 7.87337/4.79105 and mean stretches 1.1008/1.2712.
+# Preserve history and previous experiments; don't merge PR #16 without approval.
+#
+# LATEST ACTIVE OVERRIDE — experiment019 (November 14, 2026)
+# The current SIAM News article has been completely rewritten as
+# "The Empty Space That Makes a Network" in canonical article/main.tex.
+# Keep Heriberto first, Hector second, no third SIAM feature author.
+# Three print figures (water, alpha, beta) meet the SIAM News 1–3 preference;
+# the fourth Gabriel/RNG comparison is preserved online with source assets.
+# Do not regress the quantified 46-vs-31 same-point example, Poisson void
+# probability and mean-degree expectation v_d/a_K, or their explicit
+# homogeneous/homothetic/infinite-window hypotheses and dimensional caveats.
+# Mathematics works in R^d, most package constructors remain planar.
+# Keep all 10 accurate citations, including Goldstein et al. 2018,
+# Penrose/Yukich 2001, and Devroye 1988; retain original prior-main.tex
+# under experiments/experiment019 and all existing visual artifacts.
+# No bio-inspired section in the SIAM feature per experiment016 scope.
+# Reproduce LaTeX, preflight, source ZIP and browser HTML; do not merge PR
+# or submit to editors without explicit authorization.
+#
 # LATEST ACTIVE OVERRIDE — experiment017 (November 10, 2026)
 # In Section 04 / Controlled comparison, independent left/right parameter
 # sliders appear ONLY when beta-skeleton or alpha-shape/alpha-hull is selected.

@@ -490,43 +490,62 @@ def render_water(s):
     save(fig,"figure01-water")
 
 
-def render_habitat(s):
-    fig,ax=axis("Figure 2 · Image-traced serif Pg · alpha-shape counters")
-    # Keep the material visible: the two empty counters are actual holes
-    # in the retained simplicial complex, not decorative white circles.
-    from matplotlib.collections import PolyCollection
-    selected=s["alpha"]["options"][str(ALPHAS[5])]
-    kept = selected["kept_triangles"]
-    ax.add_collection(PolyCollection(
-        [HABITAT[t] for t in kept],
-        facecolor="#c4c0ba", alpha=.33, edgecolor="none", zorder=1))
-    for i,j in selected["shape_edges"]:
-        p,q=HABITAT[[i,j]]
-        ax.plot([p[0],q[0]],[p[1],q[1]],
-                c="#73717c",lw=1.0,alpha=.7,linestyle="--",zorder=4)
-    for i,a in enumerate(selected["arcs"]):
-        p=np.asarray(a)
-        ax.plot(p[:,0],p[:,1],c="#6d6c75" if i==0 else "#34383c",
-                lw=3 if i==0 else 2.2,zorder=5,solid_capstyle="round")
-    # Draw the supporting circle of the highlighted library-generated arc.
-    exemplar=np.asarray(selected["arcs"][0])
-    p,q,r=exemplar[[0,len(exemplar)//2,-1]]
-    matrix=2*np.stack([q-p,r-p])
-    rhs=np.array([q@q-p@p,r@r-p@p])
-    if abs(np.linalg.det(matrix))>1e-12:
-        center=np.linalg.solve(matrix,rhs)
-        ax.add_patch(Circle(center,np.linalg.norm(p-center),
-                            fill=False,edgecolor="#96939b",linestyle="--",
-                            linewidth=1.4,alpha=.78,zorder=3))
-        ax.scatter([center[0]],[center[1]],s=24,color="#96939b",zorder=4)
-    # Boundary samples define the letters; denser transparent interior
-    # points communicate stroke weight without painting a literal font.
-    ax.scatter(HABITAT[:298,0],HABITAT[:298,1],s=20,
-               facecolor="#30302e",edgecolor="white",linewidth=.45,zorder=7)
-    ax.scatter(HABITAT[298:,0],HABITAT[298:,1],s=13,
-               facecolor="#66635f",alpha=.65,edgecolor="none",zorder=6)
-    save(fig,"figure02-habitat")
+# The public site launches the Pg preset with 347 interior sites and alpha
+# -48.65245. The historical reference library scene stays fixed at 600 sites
+# for reproducibility; this exported print figure reproduces the newer 645-site
+# viewing configuration with the same pinned Python library constructors.
+PRINT_PG_INTERIOR = 347
+PRINT_PG_ALPHA = -48.65245
 
+def render_habitat(s):
+    from matplotlib.collections import PolyCollection
+    points = densify_pg_strokes(
+        PG_REFERENCE_POINTS, additional=PRINT_PG_INTERIOR - 82,
+        seed=PG_RANDOM_SEED
+    )
+    assert len(points) == 298 + PRINT_PG_INTERIOR == 645
+    sp = pg.SetPoints(points.copy())
+    shape = pg.Alpha_Shape(sp, alpha=PRINT_PG_ALPHA)
+    hull = pg.Alpha_Hull(sp, alpha=PRINT_PG_ALPHA, n_points_per_arc=72)
+    triangles = triangulation_data(points)
+    radius = 1 / abs(PRINT_PG_ALPHA)
+    kept = [t["vertices"] for t in triangles if t["r"] <= radius + 1e-12]
+    topo = alpha_topology(kept)
+    # At this fine scale the two letter counters coexist with additional
+    # small components and holes. Do not label the count as exactly two.
+    assert topo["components"] >= 2 and topo["holes"] >= 2, topo
+    fig, ax = axis("Figure 2 · Current Pg preset · scale-dependent alpha geometry")
+    ax.add_collection(PolyCollection(
+        [points[t] for t in kept],
+        facecolor="#c4c0ba", alpha=.33, edgecolor="none", zorder=1))
+    for i, j in edges(shape):
+        p, q = points[[i, j]]
+        ax.plot([p[0], q[0]], [p[1], q[1]],
+                c="#73717c", lw=1.0, alpha=.7, linestyle="--", zorder=4)
+    for i, arc in enumerate(hull.arcs):
+        path = np.asarray(arc)
+        ax.plot(path[:, 0], path[:, 1], c="#6d6c75" if i == 0 else "#34383c",
+                lw=3 if i == 0 else 2.2, zorder=5, solid_capstyle="round")
+    if hull.arcs:
+        exemplar = np.asarray(hull.arcs[0])
+        p, q, r = exemplar[[0, len(exemplar)//2, -1]]
+        matrix = 2 * np.stack([q-p, r-p])
+        rhs = np.array([q@q-p@p, r@r-p@p])
+        if abs(np.linalg.det(matrix)) > 1e-12:
+            center = np.linalg.solve(matrix, rhs)
+            ax.add_patch(Circle(center, np.linalg.norm(p-center),
+                                fill=False, edgecolor="#96939b",
+                                linestyle="--", linewidth=1.4,
+                                alpha=.78, zorder=3))
+            ax.scatter([center[0]], [center[1]], s=24,
+                       color="#96939b", zorder=4)
+    ax.scatter(points[:298, 0], points[:298, 1], s=20,
+               facecolor="#30302e", edgecolor="white", linewidth=.45, zorder=7)
+    ax.scatter(points[298:, 0], points[298:, 1], s=13,
+               facecolor="#66635f", alpha=.65, edgecolor="none", zorder=6)
+    save(fig, "figure02-habitat")
+    return {"point_count": len(points), "alpha": PRINT_PG_ALPHA,
+            "radius": radius, "topology": topo}
 
 def render_sensors(s):
     fig,ax=axis("Figure 3 · Relay corridor: beta-skeleton links")
@@ -587,7 +606,7 @@ def render_comparison(scene):
                      weight="bold", color="#30302e")
         for spine in ax.spines.values():
             spine.set_color("#e4e2dc")
-    fig.suptitle("Figure 4 · One point cloud, two definitions of neighbor",
+    fig.suptitle("One point cloud · two definitions of neighbor",
                  fontsize=13, weight="bold", x=.04, ha="left", color="#30302e")
     save(fig, "figure04-compare")
 
@@ -613,8 +632,12 @@ def main():
     )
     DATA.mkdir(parents=True,exist_ok=True)
     (DATA/"scenes.json").write_text(json.dumps(scene,indent=2)+"\n",encoding="utf-8")
-    render_water(scene);render_habitat(scene);render_sensors(scene);render_comparison(scene)
-    print("Exported seeded-random serif Pg (600 default sites), original smiley, historical Snow and sensor geometry.")
+    render_water(scene)
+    figure2 = render_habitat(scene)
+    render_sensors(scene)
+    render_comparison(scene)
+    (DATA/"figure02-current-preset.json").write_text(json.dumps(figure2, indent=2)+"\n", encoding="utf-8")
+    print("Exported reference Pg (600 sites), updated static Pg (645 sites, alpha=-48.65245), Snow and graph comparisons.")
 
 
 if __name__=="__main__":

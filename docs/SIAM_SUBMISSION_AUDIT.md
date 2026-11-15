@@ -1,3 +1,9 @@
+# CURRENT STATUS — experiment021, November 14, 2026
+
+**Canonical manuscript:** `article/main.tex`, three printed figures (Snow, alpha, Gabriel/RNG); **author-hosted article:** `site/article.html`, four interactive figures (including sensors). PDF Figure 3 is online Figure 4. `article/INTERACTIVE_COMPANION.md` is now bundled with the portable LaTeX project, documenting URLs, provenance and iframe-versus-link alternatives. Cardinal et al. (2009) and the general empty-region graph inclusion principle now appear in both manuscript and website. The pitch no longer says Snow lacked a Voronoi-like construction. **PR #16 is unmerged; main-branch GitHub Pages cannot be claimed updated.** No SIAM submission has occurred.
+
+---
+
 # ACTIVE AUDIT — experiment016, November 9, 2026
 
 The currently editable SIAM News feature is `article/main.tex`, with **Heriberto Espino-Montelongo first** and **Héctor Maravillo second**, and **no third author**. The manuscript discusses **only geometric proximity graphs**, not the software's separate biological heuristics. It contains **four** numbered static figures with corresponding live interactive figures on the author's [online article](https://heri-espino.github.io/proximitygraphs-siam-figures/article.html), two numbered equations, ten alphabetized references and credited source data. `scripts/check_article.py` enforces this current state.
@@ -89,3 +95,7 @@ The article GitHub Actions workflow regenerates the PDF and commits both manuscr
 The lead author clarified the first and second byline positions: **Heriberto Espino-Montelongo (first)**; **Héctor Maravillo (second)**. **Diego Villarreal de la Cerda** remains the third proposed contributor. All must confirm the final submitted list.
 
 The official SIAM News style guide requests **PDF or Word**, and says LaTeX is helpful for equations; Markdown is an internal authoring format and is the canonical source `article/feature.md`. Our previous PDF/TeX files are **historical proofs with superseded author attribution**. After genuine coauthor approval, manually run `article-pdf.yml` with `approved_by_all_authors=true` to regenerate and archive approved LaTeX and PDF. No build on draft Markdown pushes. The older statement in this audit that the current stored PDF is 'ready' refers to its historical mechanics, **not** current author approval. Details in [MANUSCRIPT_WORKFLOW.md](MANUSCRIPT_WORKFLOW.md).
+
+## experiment020 — print figure selection and source verification
+
+Printed figure set is **historical Snow (1), current Pg alpha geometry (2), fixed-site Gabriel/RNG graph comparison (3)**. The **sensor exclusion-lune inspector** remains online at `article.html#figure3`; online Figure 4 compares graph families. Package all original PNG/SVG sources, but the author's PDF only embeds three illustrations. The displayed nearest-site partition is **Euclidean**, whereas Snow's revised 1855 equidistance line used **nearest-road distance** (Shiode 2012). A source-backed comparison script and current 645-point print preset are described in [experiment020](../experiments/experiment020/README.md).

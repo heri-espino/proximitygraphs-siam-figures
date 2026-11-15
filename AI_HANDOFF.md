@@ -1,3 +1,15 @@
+# Latest active handoff — experiment022, 2026-11-14
+
+The lead author requested an editorial pass on canonical `article/main.tex` and synchronized `site/article.html`: remove repetitive 'third point' rhetoric in favor of 'other sampled points', build transitions from the end of each topic into the next, and unbold the persistent-homology collaboration invitation. The changes are preserved as [experiment022](experiments/experiment022/README.md) on the open PR #16 branch, without altering any geometry, plotted results, authorship, or submission status. Approximate text-length preflight before CI: 1,304 words. Re-run source packaging, LaTeX proof, and visual QA for final head; do not merge or send to editors without approval.
+
+---
+
+# Latest active handoff — experiment021, 2026-11-14
+
+Canonical TeX: `article/main.tex`. Online preview: `site/article.html`. Print/online manifest: `article/INTERACTIVE_COMPANION.md`. Latest continued work on PR #16 cites Cardinal, Collette, and Langerman (2009), explains reverse exclusion-region/edge inclusion, corrects the older editorial pitch about Snow's 1855 boundary, and keeps the 645-point alpha preset and Gabriel/RNG comparison unchanged. Three figures print; all four remain interactive on the author-hosted site. The checker gates correspondence and ZIP packaging includes the manifesto. Verify CI and the actual Pages deployment independently. No merger or SIAM News submission has been authorized.
+
+---
+
 # AI handoff
 
 ## Objective
@@ -355,3 +367,41 @@ Next: check PR #14 CI, fix any failed geometry/browser assertions, merge after v
 User requested a downloadable ZIP with current LaTeX manuscript and figures. Inspected main branch and docs; newest current source is **article/main.tex**, not historical Markdown. There are exactly **four** original figure pairs (water, habitat, sensors, same-point Gabriel/RNG), and only two SIAM article authors (Heriberto first, Héctor second). No scientific content was changed.
 
 Created `scripts/package_siam_source.py` and new GitHub source-package workflow; both verify the latest LaTeX and figures and upload an exact portable ZIP; documented method in `experiments/experiment018/README.md`. PR #15 was opened for these changes. The source-ZIP workflow [run #42839459769](https://github.com/heri-espino/proximitygraphs-siam-figures/actions/runs/42839459769) succeeded, as did figures run #42839459459. Downloaded artifact, exported to the user's sandbox as `/mnt/data/ProximityGraphs_SIAM_News_LaTeX_Source.zip`, validated all 12 files, extracted to an isolated directory, compiled twice with `pdflatex`, and rendered all pages. Verified US Letter 4-page PDF, 4 embedded images, 19 hyperlinks and correct two-author metadata. Also supplied freshly compiled preview PDF. This is **not** an SIAM submission. Permissions and four-figure editorial approval remain pending.
+
+## experiment019 — Rewritten SIAM News manuscript, statistics and dimensional scope (November 14, 2026)
+
+The user rejected generic, vague wording and requested a much stronger history/application/future/statistical account. Inspected the **exact attached source ZIP** (canonical LaTeX, four figure pairs), the current repo and AGENTS overrides, and user-uploaded primary PDFs (Gabriel & Sokal 1969, Devroye 1988, Penrose & Yukich 2001, Goldstein et al. 2018, Veltkamp 1992, Watanabe 2008, Maravillo Gómez 2023). Verified HistData's 13 historical pumps/578 death marks, Goldstein's normal bounds and Dyballa/Zucker's Gabriel initialization. Official SIAM News guide recommends 800–1400 words and 1–3 illustrations.
+
+New title: **The Empty Space That Makes a Network**. Completely replaced generic narrative with historical Soho context; original empty-region formula; geometric Gabriel/RNG/beta/gamma and scale-sensitive alpha-shape/hull; observed 46-vs-31 same-site edges on 25 synthetic sensors; Poisson intensity-invariant mean-degree formula under explicit homothetic/homogeneous assumptions (Gabriel 4, RNG ~2.56); finite samples and CLTs; dimensional generality vs principally 2D implemented library; research questions about route detours, manifold shortcuts and noisy shape holes. Ten APA-sorted references. No biological-model section (per experiment016). Two authors: Heriberto first, Héctor second.
+
+Three figures are printed in article/main.tex (John Snow, alpha, beta), while the fourth comparison remains an unchanged live fourth iframe on site/article.html and both PNG/SVG pairs in source ZIP. Online article prose has been aligned. Full previous canonical source archived in experiments/experiment019/previous-main.tex. Read experiments/experiment019/README.md for precise statistical assumptions, source provenance and reproduction.
+
+Local isolated LaTeX compilation succeeded twice and produced four US Letter pages; all pages were rendered and checked for clipping; the ZIP includes an original reading copy and all four source figure pairs. GitHub PR and CI results should be checked, documented, then left for review without unapproved merge. No editorial submission.
+
+## experiment020 — Correction requested by lead author (November 14, 2026)
+
+The user correctly challenged experiment019's claim that John Snow did not use proximity partitions. PRIMARY EVIDENCE: Snow's 1855 St James parish inquiry map added a dotted **road-distance equidistance boundary** around Broad Street (a one-pump network Voronoi catchment; see original account https://epi-snow.ph.ucla.edu/Stream2_BSPoutbreak_a.html, historical comparison https://epi-snow.ph.ucla.edu/Stream2_BSPoutbreak_f.html, and Shiode 2012 https://doi.org/10.1080/13658816.2011.577433). The library demo uses the 13-pump **Euclidean** modern partition (HistData 578 death marks), not Snow's original road-route geometry. The old text was factually overbroad and is corrected in article/main.tex, site/article.html, data/historical/README.md and docs/EDITORIAL.md.
+
+The user's preferred new Figure 2 default is 645 points (298 immutable contours + 347 interior) and alpha=-48.65245, not the old static 600/-28.57. Updated scripts/export_scenes.py to regenerate article PNG/SVG from the pinned Python `pg.Alpha_Shape` and `pg.Alpha_Hull`, while leaving the 600-point reference scene intact. A deterministic topology audit of 645-site retained triangles gives **4 components and 10 holes**, so the revised caption avoids asserting exactly 2; extra fine-scale features motivate persistent-homology development.
+
+Cited Edelsbrunner/Letscher/Zomorodian 2002 and Hiraoka et al. 2016, linked 3D microscopy PH research and invited contributions to alpha-complex filtration / Betti curves / persistence. Do not claim persistent homology is implemented.
+
+Replaced third printed sensor figure with existing source-generated fig04 Gabriel/RNG comparison, but kept sensor inspector live at online figure3. 25 identical synthetic sites: Gabriel 46 edges, total normalized edge length 7.873373853, mean 300-pair shortest-route stretch 1.100802912; RNG 31 edges, length 4.791049476, mean stretch 1.271160882. Standard-library reproducibility in experiments/experiment020/compare_graph_metrics.py + committed results.json; CI now gates this metric. Three print illustrations total; all four original PNG/SVG source pairs preserved.
+
+Ten APA-order references now include Shiode 2012, Edelsbrunner et al. 2002 and Hiraoka et al. 2016. Full reproducibility and citations in experiments/experiment020/README.md. Check exact PR #16 CI, current figure2 artifact, PDF proof and source bundle, then leave PR unmerged for coauthor review. No SIAM submission or merge was authorized.
+
+
+## Final source, artifact, and CI validation — November 14, 2026
+
+The temporary GitHub Actions step that archived regenerated artwork to the PR branch successfully saved **site/assets/figure02-habitat.png/.svg**, **figure04-compare.png/.svg**, and **site/data/figure02-current-preset.json** on commit `8352e7dbb009231d9b1f3b2b0fd40d83c774b996`. The one-time step was removed afterward; the regular reproducible workflow and numerical regression test remain in place. Thus the artifact is part of the repository, not only a temporary Actions download.
+
+The latest source revision `9e53f1f7a846ca207fa9092f45d3c9467e6775e6` passed all four CI runs:
+
+- [Scientific figure generation, topology and graph routing checks #43639804430](https://github.com/heri-espino/proximitygraphs-siam-figures/actions/runs/43639804430): success.
+- [Actual interactive browser Visual QA #43639804491](https://github.com/heri-espino/proximitygraphs-siam-figures/actions/runs/43639804491): success.
+- [LaTeX PDF author proof compilation and verification #43639804432](https://github.com/heri-espino/proximitygraphs-siam-figures/actions/runs/43639804432): success.
+- [Portable LaTeX source ZIP packaging #43639804436](https://github.com/heri-espino/proximitygraphs-siam-figures/actions/runs/43639804436): success.
+
+The PDF proof was also compiled twice independently from the updated author source and actual regenerated figure assets. Visual review confirmed **four US Letter pages, three embedded printed images, no clipping, readable math and correctly ordered two-author byline**. The self-contained ZIP contains LaTeX source, PDF, all four original PNG/SVG pairs, and experiment020 numeric results, and passed ZIP integrity checks.
+
+**No merge or SIAM editorial submission has been authorized.** PR #16 remains open for coauthor review.
