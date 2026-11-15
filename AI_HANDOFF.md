@@ -1,3 +1,9 @@
+# Latest active handoff — experiment022, 2026-11-14
+
+The lead author requested an editorial pass on canonical `article/main.tex` and synchronized `site/article.html`: remove repetitive 'third point' rhetoric in favor of 'other sampled points', build transitions from the end of each topic into the next, and unbold the persistent-homology collaboration invitation. The changes are preserved as [experiment022](experiments/experiment022/README.md) on the open PR #16 branch, without altering any geometry, plotted results, authorship, or submission status. Approximate text-length preflight before CI: 1,304 words. Re-run source packaging, LaTeX proof, and visual QA for final head; do not merge or send to editors without approval.
+
+---
+
 # Latest active handoff — experiment021, 2026-11-14
 
 Canonical TeX: `article/main.tex`. Online preview: `site/article.html`. Print/online manifest: `article/INTERACTIVE_COMPANION.md`. Latest continued work on PR #16 cites Cardinal, Collette, and Langerman (2009), explains reverse exclusion-region/edge inclusion, corrects the older editorial pitch about Snow's 1855 boundary, and keeps the 645-point alpha preset and Gabriel/RNG comparison unchanged. Three figures print; all four remain interactive on the author-hosted site. The checker gates correspondence and ZIP packaging includes the manifesto. Verify CI and the actual Pages deployment independently. No merger or SIAM News submission has been authorized.
