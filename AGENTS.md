@@ -1,3 +1,11 @@
+# LATEST ACTIVE OVERRIDE — experiment022 (November 14, 2026)
+# New paragraph uses 'other sampled points', not an emphasized 'third point'.
+# Every LaTeX section should lead into the next through its concluding prose.
+# The invitation to topology researchers must be plain (no textbf/bold).
+# Keep 3 print figures, 4 interactive views, all empirical results, citations,
+# historical correction, and non-submission/PR review status unchanged.
+# See experiments/experiment022/README.md.
+#
 # LATEST ACTIVE OVERRIDE — experiment021 (November 14, 2026)
 # Keep article/main.tex and site/article.html aligned on Cardinal et al.'s
 # 2009 empty-region graphs, with K1 subset K2 implies E(K2) subset E(K1).
